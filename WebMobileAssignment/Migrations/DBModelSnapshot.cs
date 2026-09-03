@@ -37,7 +37,7 @@ namespace WebMobileAssignment.Migrations
                     b.ToTable("AnimeGenre");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Anime", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Anime", b =>
                 {
                     b.Property<int>("AnimeId")
                         .ValueGeneratedOnAdd()
@@ -53,7 +53,7 @@ namespace WebMobileAssignment.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateOnly>("ReleaseDate")
+                    b.Property<DateOnly?>("ReleaseDate")
                         .HasColumnType("date");
 
                     b.Property<string>("Status")
@@ -68,6 +68,9 @@ namespace WebMobileAssignment.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
+                    b.Property<string>("TrailerLink")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("AnimeId");
 
                     b.HasIndex("StudioId");
@@ -75,7 +78,7 @@ namespace WebMobileAssignment.Migrations
                     b.ToTable("Animes");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+AnimeImage", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.AnimeImage", b =>
                 {
                     b.Property<int>("AnimeImageId")
                         .ValueGeneratedOnAdd()
@@ -103,7 +106,7 @@ namespace WebMobileAssignment.Migrations
                     b.ToTable("AnimeImages");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+AnimeWatchList", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.AnimeWatchList", b =>
                 {
                     b.Property<int>("AnimeWatchListId")
                         .ValueGeneratedOnAdd()
@@ -140,7 +143,7 @@ namespace WebMobileAssignment.Migrations
                     b.ToTable("AnimeWatchLists");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Genre", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Genre", b =>
                 {
                     b.Property<int>("GenreId")
                         .ValueGeneratedOnAdd()
@@ -158,7 +161,7 @@ namespace WebMobileAssignment.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Review", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Review", b =>
                 {
                     b.Property<int>("ReviewId")
                         .ValueGeneratedOnAdd()
@@ -195,7 +198,7 @@ namespace WebMobileAssignment.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Studio", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Studio", b =>
                 {
                     b.Property<int>("StudioId")
                         .ValueGeneratedOnAdd()
@@ -220,7 +223,7 @@ namespace WebMobileAssignment.Migrations
                     b.ToTable("Studios");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+User", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -256,7 +259,7 @@ namespace WebMobileAssignment.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+WatchList", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.WatchList", b =>
                 {
                     b.Property<int>("WatchListId")
                         .ValueGeneratedOnAdd()
@@ -275,38 +278,38 @@ namespace WebMobileAssignment.Migrations
                     b.ToTable("WatchLists");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Admin", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Admin", b =>
                 {
-                    b.HasBaseType("WebMobileAssignment.Models.DB+User");
+                    b.HasBaseType("WebMobileAssignment.Models.User");
 
                     b.HasDiscriminator().HasValue("Admin");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Member", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Member", b =>
                 {
-                    b.HasBaseType("WebMobileAssignment.Models.DB+User");
+                    b.HasBaseType("WebMobileAssignment.Models.User");
 
                     b.HasDiscriminator().HasValue("Member");
                 });
 
             modelBuilder.Entity("AnimeGenre", b =>
                 {
-                    b.HasOne("WebMobileAssignment.Models.DB+Anime", null)
+                    b.HasOne("WebMobileAssignment.Models.Anime", null)
                         .WithMany()
                         .HasForeignKey("AnimesAnimeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebMobileAssignment.Models.DB+Genre", null)
+                    b.HasOne("WebMobileAssignment.Models.Genre", null)
                         .WithMany()
                         .HasForeignKey("GenresGenreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Anime", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Anime", b =>
                 {
-                    b.HasOne("WebMobileAssignment.Models.DB+Studio", "Studio")
+                    b.HasOne("WebMobileAssignment.Models.Studio", "Studio")
                         .WithMany("Animes")
                         .HasForeignKey("StudioId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -315,9 +318,9 @@ namespace WebMobileAssignment.Migrations
                     b.Navigation("Studio");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+AnimeImage", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.AnimeImage", b =>
                 {
-                    b.HasOne("WebMobileAssignment.Models.DB+Anime", "Anime")
+                    b.HasOne("WebMobileAssignment.Models.Anime", "Anime")
                         .WithMany("AnimeImages")
                         .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -326,15 +329,15 @@ namespace WebMobileAssignment.Migrations
                     b.Navigation("Anime");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+AnimeWatchList", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.AnimeWatchList", b =>
                 {
-                    b.HasOne("WebMobileAssignment.Models.DB+Anime", "Anime")
+                    b.HasOne("WebMobileAssignment.Models.Anime", "Anime")
                         .WithMany("AnimeWatchLists")
                         .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebMobileAssignment.Models.DB+WatchList", "WatchList")
+                    b.HasOne("WebMobileAssignment.Models.WatchList", "WatchList")
                         .WithMany("AnimeWatchLists")
                         .HasForeignKey("WatchListId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -345,15 +348,15 @@ namespace WebMobileAssignment.Migrations
                     b.Navigation("WatchList");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Review", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Review", b =>
                 {
-                    b.HasOne("WebMobileAssignment.Models.DB+Anime", "Anime")
+                    b.HasOne("WebMobileAssignment.Models.Anime", "Anime")
                         .WithMany("Reviews")
                         .HasForeignKey("AnimeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebMobileAssignment.Models.DB+Member", "Member")
+                    b.HasOne("WebMobileAssignment.Models.Member", "Member")
                         .WithMany("Reviews")
                         .HasForeignKey("MemberUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -364,18 +367,18 @@ namespace WebMobileAssignment.Migrations
                     b.Navigation("Member");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+WatchList", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.WatchList", b =>
                 {
-                    b.HasOne("WebMobileAssignment.Models.DB+Member", "Member")
+                    b.HasOne("WebMobileAssignment.Models.Member", "Member")
                         .WithOne("WatchList")
-                        .HasForeignKey("WebMobileAssignment.Models.DB+WatchList", "UserId")
+                        .HasForeignKey("WebMobileAssignment.Models.WatchList", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Member");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Anime", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Anime", b =>
                 {
                     b.Navigation("AnimeImages");
 
@@ -384,17 +387,17 @@ namespace WebMobileAssignment.Migrations
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Studio", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Studio", b =>
                 {
                     b.Navigation("Animes");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+WatchList", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.WatchList", b =>
                 {
                     b.Navigation("AnimeWatchLists");
                 });
 
-            modelBuilder.Entity("WebMobileAssignment.Models.DB+Member", b =>
+            modelBuilder.Entity("WebMobileAssignment.Models.Member", b =>
                 {
                     b.Navigation("Reviews");
 

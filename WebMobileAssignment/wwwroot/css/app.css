@@ -1,5 +1,13 @@
 ﻿/* Font ----------------------------------------------------------------------- */
+*{
+    padding:0;
+    margin:0;
+    box-sizing: border-box;
+}
 
+body {
+    background-color: #f0f0f0;
+}
 body, input, select, textarea, button {
     font: 16px Roboto, sans-serif;
 }
@@ -91,4 +99,241 @@ label > * {
 .field-validation-error,
 .validation-summary-errors {
     color: red;
+    padding-left:1rem;
 }
+
+/*_AdminLayout.cshtml*/
+.admin_body {
+    display: flex;
+    flex-direction: column;
+    min-height:100vh;
+}
+
+.admin_topnav {
+    background-color: #FFB2BD;
+    height: 10vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    font-weight:bold;
+    font-size:1.5rem;
+}
+
+.admin_topnav-home a{
+    display:flex;
+    align-items: center;
+    text-decoration:none;
+    color:inherit;
+    gap:0.5rem;
+}
+.admin_topnav-icon{
+    width:50px;
+    height:50px;
+}
+
+.admin_wrapper {
+    display: flex;
+    height:85vh;
+}
+
+.admin_aside {
+    width: 30vh;
+    background-color: #FFCDB2;
+    border: 2px: solid black;
+}
+
+.admin_sidenav {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.admin_sidenav a {
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-top: 3px solid black;
+    font-weight: bold;
+    font-size:1.5rem;
+    text-decoration:none;
+    color:inherit;
+}
+.admin_sidenav a:first-child{
+    border-top: none;
+}
+
+.admin_sidenav-active {
+    background-color: #B2E4FF;
+    box-shadow: 0px 0px 12px 0px rgba(32,36,42,0.35);
+}
+
+.admin_main{
+    display:flex;
+    padding:2rem;
+    flex-direction:column;
+    flex:1;
+    gap:1rem;
+    overflow-y:auto;
+}
+.admin_card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    width:100%;
+}
+.admin_footer {
+    background-color: #FFB2BD;
+}
+.copyright {
+    text-align: center;
+    padding:0.5rem;
+}
+
+/*Anime/Management.cshtml*/
+.anime_table-form {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap:1rem;
+    padding-top:1rem;
+}
+.anime_table-form select{
+    padding:0.5rem;
+}
+.admin_searchbar{
+
+    padding:0.5rem;
+}
+.admin_search{
+
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.addanime_form{
+    padding-top:1rem;
+    display:flex;
+    flex-direction:column;
+    gap:1rem;
+}
+.addanime_input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.addanime_label {
+    width: 8rem;
+    flex-shrink: 0;
+}
+
+.addanime_input-text,
+.addanime_input-number,
+.addanime_input-date,
+.addanime_select{
+    flex: 1;
+    height:2rem;
+    padding:0 0.5rem;
+}
+.addanime_input-checkbox{
+    margin-left:0.5rem;
+}
+.addanime_textarea {
+    flex: 1;
+    field-sizing: content;
+    resize: none;
+    min-height: 2lh;
+    max-height: 4lh;
+    padding:0 0.5rem;
+}
+
+.addanime_photo-label {
+    border: 1px solid black;
+}
+.addanime_photo-label:hover {
+    cursor:pointer;
+}
+.image-previews{
+    display:flex;
+    padding:0 1rem;
+}
+.image-previews img {
+    border: 1px solid black;
+    height: 300px;
+    width: 200px;
+    object-fit: cover;
+    margin: 0 1rem;
+}
+.addanime_button-area{
+    display:flex;
+    gap:2rem;
+}
+.addanime_button {
+    flex: 1;
+    background-color: #FFB2BD;
+    border:none;
+    border-radius:4px;
+    height:2rem;
+    font-weight:bold;
+}
+.addanime_button:hover {
+    cursor: pointer;
+    background-color: #FF8A9B;
+}
+/*AdminAnimeTable.cshtml*/
+.anime_table{
+    border-collapse:collapse;
+    width:100%;
+    margin: 1rem 0;
+}
+.anime_table thead tr {
+    background-color: #FFB2BD;
+    border: 2px solid black;
+}
+.anime_table thead tr a {
+    color: inherit;
+}
+.anime_table thead th{
+    border: 2px solid black;
+}
+.anime_table-notsort{
+    text-decoration: none;
+}
+.anime_table th a.asc::after {
+    content: ' ▴';
+}
+
+.anime_table th a.des::after {
+    content: ' ▾';
+}
+.anime_table th a::after {
+    content:'';
+    display: inline-block;
+    width: 1.2em;
+    margin-left: 0.25em;
+}
+.anime_table th, .anime_table td{
+    padding:1rem 0;
+}
+.anime_table tbody tr {
+    background-color: #FFCDB2;
+    border:2px solid black;
+}
+.anime_table tbody td {
+    border:2px solid black;
+    padding:1rem;
+}
+.anime_table-imgtd{
+    width:80px;
+}
+.anime_thumbnail{
+    object-fit:cover;
+    width:80px;
+    height:100px;
+    display:block;
+    margin:auto;
+}
+.anime_empty{
+    text-align:center;
+}
+

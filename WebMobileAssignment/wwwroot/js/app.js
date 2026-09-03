@@ -76,3 +76,23 @@ $('.upload input').on('change', e => {
     // Trigger input validation
     $(e.target).valid();
 });
+
+$('.addanime_photo-label input').on('change', e => {
+    const files = e.target.files;
+    const container = $(e.target).closest('.addanime_input-container').find('.image-previews');
+    container.empty();
+    for (const f of files) {
+        if (f && f.type.startsWith('image/')) {
+            const img = $('<img>');
+            img.attr('src', URL.createObjectURL(f), 'class','image-previews_img');
+            img.onload = e => URL.revokeObjectURL(img.src);
+            container.append(img);
+        }
+    }
+    // Trigger input validation
+    $(e.target).valid();
+});
+
+$(document).on('change', $('.filter_select') ,e => {
+    $('.anime_table-form').submit();
+})
