@@ -58,10 +58,17 @@
                 <td>
                     @string.Join(", ", anime.Genres.Select(g => g.Name))
                 </td>
-                <td class="anime_table-imgtd"><img class="anime_thumbnail" src="@anime.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink"/></td>
+                @if (anime.AnimeImages.Count < 1)
+                {
+                    <td class="anime_table-imgtd"><img class="anime_thumbnail" src="/images/photo.jpg" /></td>
+                }
+                else
+                {
+                    <td class="anime_table-imgtd"><img class="anime_thumbnail" src="@anime.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink"/></td>
+                }
                 <td>
-                    <a href="/Anime/ManagementDetails">Details</a>
-                    <a href="/Anime/Delete">Delete</a>
+                    <a asp-controller="Anime" asp-action="ManagementDetails" asp-route-animeId="@anime.AnimeId">Details</a>
+                    <a data-post="/Anime/Delete?animeId=@anime.AnimeId">Delete</a>
                 </td>
             </tr>
         }

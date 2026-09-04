@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 using X.PagedList.Extensions;
 
 namespace WebMobileAssignment.Controllers;
@@ -149,6 +150,7 @@ public class AnimeController(DB db, Helper hp) : Controller
             }
             db.Animes.Add(anime);
             db.SaveChanges();
+            TempData["Info"] = "Anime has been added.";
             return RedirectToAction("Management");
         }
         ViewBag.StatusList = new SelectList(status);
@@ -158,8 +160,144 @@ public class AnimeController(DB db, Helper hp) : Controller
         return View("Management", AdminManagementVM);
     }
 
-    public IActionResult ManagementDetails()
+    public IActionResult ManagementDetails(int animeId)
     {
-        return View();
+        var anime = db.Animes.Include(a => a.Studio).Include(a => a.AnimeImages).Include(a => a.Genres).FirstOrDefault(a => a.AnimeId == animeId);
+        if (anime == null)
+        {
+            return RedirectToAction("Management");
+        }
+        AnimeVM animeVM = new()
+        {
+            AnimeID = animeId,
+            Name = anime.Name,
+            Episodes = anime.Episodes,
+            Synopsis = anime.Synopsis,
+            ReleaseDate = anime.ReleaseDate,
+            TrailerLink = anime.TrailerLink,
+            Status = anime.Status,
+            StudioId = anime.Studio.StudioId,
+            AnimeImages = anime.AnimeImages,
+        };
+        animeVM.Genres = db.Genres.ToList().Select(g => new GenreVM
+        {
+            GenreID = g.GenreId,
+            Name = g.Name,
+            Selected = anime.Genres.Any(ag => ag.GenreId == g.GenreId)
+        }).ToList();
+        string[] status = ["Upcoming", "Airing", "Completed"];
+        ViewBag.StatusList = new SelectList(status);
+        ViewBag.StudioList = new SelectList(db.Studios, "StudioId", "Name");
+        return View(animeVM);
+    }
+    [HttpPost]
+    public IActionResult Edit(AnimeVM animeVM)
+    {
+        var anime = db.Animes.Include(a => a.Studio).Include(a => a.AnimeImages).Include(a => a.Genres).FirstOrDefault(a => a.AnimeId == animeVM.AnimeID);
+        if (anime == null)
+        {
+            return RedirectToAction("Management");
+        }
+        string[] status = ["Upcoming", "Airing", "Completed"];
+        if (ModelState.IsValid("StudioId") && !db.Studios.Any(s => s.StudioId == animeVM.StudioId))
+        {
+            ModelState.AddModelError("StudioId", "Please select a valid studio.");
+        }
+        if (db.Animes.Any(a => a.Name.Equals(animeVM.Name) && a.AnimeId != animeVM.AnimeID))
+        {
+            ModelState.AddModelError("Name", "This anime already exists.");
+        }
+        if (!status.Contains(animeVM.Status))
+        {
+            ModelState.AddModelError("Status", "Please select a valid status.");
+        }
+        if (!animeVM.Genres.Any(g => g.Selected))
+        {
+            ModelState.AddModelError("Genres", "Please select at least one genre");
+        }
+        foreach (var genre in animeVM.Genres.Where(g => g.Selected))
+        {
+            if (!db.Genres.Any(g => g.GenreId == genre.GenreID))
+            {
+                ModelState.AddModelError("Genres", "One or more selected genres are invalid.");
+                break;
+            }
+        }
+        if (animeVM.AnimeImageFiles != null && ModelState.IsValid("AnimeImageFiles"))
+        {
+            foreach (var photo in animeVM.AnimeImageFiles)
+            {
+                var e = hp.ValidatePhoto(photo);
+                if (e != "")
+                {
+                    ModelState.AddModelError("AnimeImageFiles", e);
+                    break;
+                }
+            }
+        }
+        if (ModelState.IsValid)
+        {
+            anime.Name = animeVM.Name;
+            anime.Episodes = animeVM.Episodes;
+            anime.Status = animeVM.Status;
+            anime.Synopsis = animeVM.Synopsis;
+            anime.TrailerLink = animeVM.TrailerLink;
+            anime.ReleaseDate = animeVM.ReleaseDate;
+            anime.Studio = db.Studios.First(s => s.StudioId == animeVM.StudioId);
+            anime.Genres.Clear();
+            foreach (var genre in animeVM.Genres.Where(g => g.Selected))
+            {
+                anime.Genres.Add(db.Genres.First(g => g.GenreId == genre.GenreID));
+            }
+            if (animeVM.AnimeImageFiles?.Count > 0)
+            {
+                int displayOrder = 1;
+                foreach (var image in anime.AnimeImages)
+                {
+                    hp.DeletePhoto(image.ImageLink, "anime");
+                }
+                anime.AnimeImages.Clear();
+                foreach (var photo in animeVM.AnimeImageFiles)
+                {
+                    var imageURL = hp.SavePhoto(photo, "anime");
+                    anime.AnimeImages.Add(new()
+                    {
+                        ImageLink = imageURL,
+                        IsThumbnail = displayOrder == 1,
+                        DisplayOrder = displayOrder++,
+                    });
+                }
+            }
+
+            db.SaveChanges();
+            TempData["Info"] = "Anime has been updated.";
+            return RedirectToAction("Management");
+        }
+        animeVM.Genres = db.Genres.ToList().Select(g => new GenreVM
+        {
+            GenreID = g.GenreId,
+            Name = g.Name,
+            Selected = anime.Genres.Any(ag => ag.GenreId == g.GenreId)
+        }).ToList();
+        ViewBag.StatusList = new SelectList(status);
+        ViewBag.StudioList = new SelectList(db.Studios, "StudioId", "Name");
+        animeVM.AnimeImages = anime.AnimeImages;
+        return View("ManagementDetails",animeVM);
+    }
+    [HttpPost]
+    public IActionResult Delete(int animeId)
+    {
+        var anime = db.Animes.Include(a => a.AnimeImages).FirstOrDefault(a => a.AnimeId == animeId);
+        if (anime != null)
+        {
+            foreach (var image in anime.AnimeImages)
+            {
+                hp.DeletePhoto(image.ImageLink, "anime");
+            }
+            db.Animes.Remove(anime);
+            db.SaveChanges();
+            TempData["Info"] = "Anime has been deleted.";
+        }
+        return RedirectToAction("Management");
     }
 }

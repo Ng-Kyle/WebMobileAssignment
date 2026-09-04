@@ -1,5 +1,97 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model AnimeVM
 @{
+    Layout = "_AdminLayout";
+    ViewBag.AdminAnimes = "admin_sidenav-active";
 }
+<div class="admin_card">
+    <h1>Anime Details</h1>
+    <div class="animedetail_wrapper">
+        <div class="animedetail_images">
+            <div class="animedetail_thumbnail">
+                @if (Model.AnimeImages.Count < 1)
+                {
+                    <img src="/images/photo.jpg"/>
+                }
+                else
+                {
+                    <img src="/anime/@Model.AnimeImages.FirstOrDefault(i => i.IsThumbnail)?.ImageLink" />
+                }
+            </div>
+            <div class="animedetail_extraimg">
+                @foreach(var img in Model.AnimeImages.Where(i => !i.IsThumbnail))
+                {
+                    <img src="/anime/@img.ImageLink"/>
+                }
+            </div>
+        </div>
+        <div class="animedetail_info">
+            <form class="addanime_form" method="post" asp-controller="Anime" asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly"></div>
+                <input type="hidden" asp-for="AnimeID" />
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="Name">Name</label>
+                    <input class="addanime_input-text" asp-for="Name" placeholder="Your Lie in April"/>
+                    <span asp-validation-for="Name"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="Episodes">Episode Count</label>
+                    <input class="addanime_input-number" asp-for="Episodes" value="1" min="1" max="10000"/>
+                    <span asp-validation-for="Episodes"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="Status">Status</label>
+                    <select class="addanime_select"asp-for="Status" asp-items="ViewBag.StatusList">
+                        <option value="">- Select One -</option>
+                    </select>
+                    <span asp-validation-for="Status"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="Synopsis">Synopsis</label>
+                    <textarea asp-for="Synopsis" placeholder="Enter anime synopsis..." class="addanime_textarea"></textarea>
+                    <span asp-validation-for="Synopsis"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="TrailerLink">Trailer Link</label>
+                    <input class="addanime_input-text" asp-for="TrailerLink" placeholder="https://youtube.com/" />
+                    <span asp-validation-for="TrailerLink"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="ReleaseDate">Release Date (Optional)</label>
+                    <input class="addanime_input-date" asp-for="ReleaseDate" />
+                    <span asp-validation-for="ReleaseDate"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="StudioId">Studio</label>
+                    <select class="addanime_select" asp-for="StudioId" asp-items="ViewBag.StudioList">
+                        <option value="">- Select One -</option>
+                    </select>
+                    <span asp-validation-for="StudioId"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <p class="addanime_label">Genres</p>
+                    @for (var i = 0; i < Model.Genres.Count; i++)
+                    {
+                        <input type="checkbox" asp-for="@Model.Genres[i].Selected" class="addanime_input-checkbox"/>
+                        <label asp-for="@Model.Genres[i].Selected">@Model.Genres[i].Name</label>
+                        <input type="hidden" asp-for="@Model.Genres[i].GenreID"/>
+                        <input type="hidden" asp-for="@Model.Genres[i].Name" />
+                    }
+                    <span asp-validation-for="Genres"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="AnimeImageFiles">Replace Anime Images</label>
+                    <label class="addanime_photo-label">
+                        <input asp-for="AnimeImageFiles" accept="image/jpeg,image/png" hidden multiple/>
+                        <img src="/images/photo.jpg"/>
+                    </label>
+                    <div class="image-previews"></div>
+                    <span asp-validation-for="AnimeImageFiles"></span>
+                </div>
+                <div class="addanime_button-area">
+                    <button class="addanime_button">Edit Anime</button>
+                    <button class="addanime_button" asp-controller="Anime" asp-action="ManagementDetails" asp-route-animeId="@Model.AnimeID">Reset</button>
+                </div>
+                </form>
+        </div>
+    </div>
+</div>

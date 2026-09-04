@@ -38,6 +38,7 @@ public class AnimeVM
     [Required(ErrorMessage = "A studio must be selected.")]
     public int StudioId { get; set; }
     public List<IFormFile>? AnimeImageFiles { get; set; } = [];
+    public List<AnimeImage> AnimeImages { get; set; } = [];
 }
 
 public class GenreVM

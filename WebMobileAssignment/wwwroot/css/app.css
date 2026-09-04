@@ -337,3 +337,34 @@ label > * {
     text-align:center;
 }
 
+/*ManagementDetails.cshtml*/
+.animedetail_wrapper{
+    padding-top:1rem;
+    display:flex;
+    gap:5rem;
+    align-items:stretch;
+}
+.animedetail_thumbnail{
+    border: 2px solid black;
+    height:350px;
+    flex:1;
+}
+.animedetail_thumbnail img{
+    width:100%;
+    height:100%;
+    object-fit: contain;
+}
+.animedetail_images{
+    display:flex;
+    flex-direction:column;
+}
+.animedetail_extraimg{
+    display:flex;
+    overflow-x: scroll;
+}
+.animedetail_extraimg img{
+    width:100px;
+}
+.animedetail_info{
+    flex:1;
+}
