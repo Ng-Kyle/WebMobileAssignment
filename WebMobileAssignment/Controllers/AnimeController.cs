@@ -117,6 +117,13 @@ public class AnimeController(DB db, Helper hp) : Controller
                 }
             }
         }
+        if (vm.Status != status[0] && ModelState.IsValid("AnimeVMs[0].ReleaseDate"))
+        {
+            if(vm.ReleaseDate == null || vm.ReleaseDate > DateTime.Today.ToDateOnly())
+            {
+                ModelState.AddModelError("AnimeVMs[0].ReleaseDate", "Airing and Completed anime must have a date today or in the past!");
+            }
+        }
         if (ModelState.IsValid)
         {
             Anime anime = new()

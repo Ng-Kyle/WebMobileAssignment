@@ -71,6 +71,13 @@ public class StudioController(DB db, Helper hp) : Controller
                 ModelState.AddModelError("StudioVM.StudioImage", e);
             }
         }
+        foreach (var state in ModelState)
+        {
+            foreach (var error in state.Value.Errors)
+            {
+                Console.WriteLine($"{state.Key}: {error.ErrorMessage}");
+            }
+        }
         if (ModelState.IsValid)
         {
 
@@ -113,7 +120,7 @@ public class StudioController(DB db, Helper hp) : Controller
     }
     public IActionResult ManagementDetails(int studioId)
     {
-        var studio  = db.Studios.Include(a => a.Animes).FirstOrDefault(s => s.StudioId == studioId);
+        var studio  = db.Studios.Include(a => a.Animes).ThenInclude(a => a.AnimeImages).FirstOrDefault(s => s.StudioId == studioId);
         if (studio == null)
         {
             return RedirectToAction("Management");
@@ -170,6 +177,7 @@ public class StudioController(DB db, Helper hp) : Controller
             TempData["Info"] = "Studio has been updated.";
             return RedirectToAction("Management");
         }
+        studioVM.ImageLink = studio.ImageLink; 
         return View("ManagementDetails", studioVM);
     }
 }

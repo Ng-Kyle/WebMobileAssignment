@@ -408,3 +408,31 @@ label > * {
     display: block;
     margin: auto;
 }
+
+/*StudioManagementDetails*/
+.studio_anime-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap:1rem;
+    margin-top:2rem;
+}
+.studio_anime-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: #FFB2BD;
+    border-radius:10px;
+    align-items: center;
+    padding: 2rem 0;
+}
+.studio_anime-item a {
+    font-weight: bold;
+    color:inherit;
+    font-size:1.5rem;
+}
+.studio_anime-img {
+    border: 1px solid black;
+    height: 300px;
+    width: 200px;
+    object-fit: cover;
+}

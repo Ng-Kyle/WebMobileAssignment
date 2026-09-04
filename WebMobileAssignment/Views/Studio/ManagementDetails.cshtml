@@ -4,7 +4,7 @@
     ViewBag.AdminStudios = "admin_sidenav-active";
 }
 <div class="admin_card">
-    <h1>Anime Details</h1>
+    <h1>Studio Details</h1>
     <div class="animedetail_wrapper">
         <div class="animedetail_images">
             <div class="animedetail_thumbnail">
@@ -41,9 +41,37 @@
                 </div>
                 <div class="addanime_button-area">
                     <button class="addanime_button">Edit Studio</button>
-                    <button class="addanime_button" asp-controller="Studio" asp-action="Management">Reset</button>
+                    <button class="addanime_button" asp-controller="Studio" asp-action="ManagementDetails" asp-route-studioId="@Model.StudioID">Reset</button>
                 </div>
             </form>
         </div>
     </div>
+</div>
+<div class="admin_card">
+    <h1>Animes Released</h1>
+    @if (Model.Animes.Count == 0)
+    {
+        <p>There are no animes created by this studio in the database!</p>
+    }
+    else
+    {
+        <div class="studio_anime-grid">
+            @foreach (var anime in Model.Animes)
+            {
+                <div class="studio_anime-item">
+                    <a href="/Anime/ManagementDetails/?animeId=@anime.AnimeId">
+                    @if(anime.AnimeImages.Count > 0)
+                    {
+                        <img class="studio_anime-img" src="/anime/@anime.AnimeImages.FirstOrDefault(i => i.IsThumbnail).ImageLink" />
+                    }
+                    else
+                    {
+                        <img class="studio_anime-img" src="/images/photo.jpg" />
+                    }
+                    </a>
+                    <a href="/Anime/ManagementDetails/?animeId=@anime.AnimeId">@anime.Name</a>
+                </div>
+            }
+        </div>
+    }
 </div>
