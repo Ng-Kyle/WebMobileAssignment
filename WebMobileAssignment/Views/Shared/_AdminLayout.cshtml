@@ -1,0 +1,54 @@
+﻿@inject DB db
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link rel="shortcut icon" href="/images/favicon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <link rel="stylesheet" href="/css/pager.css">
+    <link rel="stylesheet" href="/css/app.css" asp-append-version="true">
+    @RenderSection("head", false)
+</head>
+<body class="admin_body">
+    <div class="info">@Html.Raw(TempData["Info"])</div>
+    <header>
+        <nav class="admin_topnav">
+            <div class="admin_topnav-home">
+                <a href="/Admin"><img class="admin_topnav-icon" src="/images/favicon.png"/>AnonAnimeList</a>
+            </div>
+            <a>Logout</a>
+        </nav>
+    </header>
+    <div class="admin_wrapper">
+        <aside class="admin_aside">
+            <nav class="admin_sidenav">
+                <a class="@ViewBag.AdminHome" href="/Admin">Home</a>
+                <a class="@ViewBag.AdminAnimes" href="/Anime/Management">Animes</a>
+                <a class="@ViewBag.AdminStudios">Studios</a>
+                <a class="@ViewBag.AdminMembers">Members</a>
+                <a class="@ViewBag.AdminReviews">Reviews</a>
+                <a class="@ViewBag.AdminProfile">Profile</a>
+            </nav>
+        </aside>
+        <main class="admin_main">
+            <div class="info">@Html.Raw(TempData["Info"])</div>
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="admin_footer">
+        <div class="copyright">
+            <p>All Rights Reserved &copy; 2026. AnonAnimeList</p>
+        </div>
+    </footer>
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="/js/jquery.validate.min.js"></script>
+    <script src="/js/jquery.validate.unobtrusive.min.js"></script>
+    <script src="/js/app.js" asp-append-version="true"></script>
+    @RenderSection("foot", false)
+</body>
+</html>

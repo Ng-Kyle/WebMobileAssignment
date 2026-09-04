@@ -1,0 +1,108 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<Anime>
+
+@{
+    string[] fields = ["Name", "Episodes", "Release Date"];
+}
+
+@Html.Hidden("sort", "", new { form = "f" })
+@Html.Hidden("direction", "", new { form = "f" })
+
+
+<table class="anime_table">
+    <thead>
+        <tr>
+            @foreach (var f in fields)
+            {
+                string d = "asc";
+                string c = "";
+
+                if (f == ViewBag.Sort)
+                {
+                    d = ViewBag.Direction == "des" ? "asc" : "des";
+                    c = ViewBag.Direction;
+                }
+
+                <th>
+                    <a data-ajax="true"
+                       data-ajax-update="#target"
+                       data-ajax-loading="#loader"
+                       href="?name=@ViewBag.Name&StudioId=@ViewBag.StudioId&GenreId=@ViewBag.GenreId&Status=@ViewBag.Status&sort=@f&direction=@d" class="@c">@f</a>
+                </th>
+            }
+            <th class="anime_table-notsort">Status</th>
+            <th class="anime_table-notsort">Studio</th>
+            <th class="anime_table-notsort">Genres</th>
+            <th class="anime_blank"></th>
+            <th class="anime_blank"></th>
+        </tr>
+    </thead>
+    @if (Model.Count() > 0)
+    {
+        @foreach (var anime in Model)
+        {
+            <tr>
+                <td>@anime.Name</td>
+                <td>@anime.Episodes</td>
+                @if(anime.ReleaseDate == null)
+                {
+                    <td>Unannounced</td>
+                }
+                else
+                {
+                    <td>@anime.ReleaseDate</td>
+                }
+                <td>@anime.Status</td>
+                <td>@anime.Studio.Name</td>
+                <td>
+                    @string.Join(", ", anime.Genres.Select(g => g.Name))
+                </td>
+                @if (anime.AnimeImages.Count < 1)
+                {
+                    <td class="anime_table-imgtd"><img class="anime_thumbnail" src="/images/photo.jpg" /></td>
+                }
+                else
+                {
+                    <td class="anime_table-imgtd"><img class="anime_thumbnail" src="@anime.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink"/></td>
+                }
+                <td>
+                    <a asp-controller="Anime" asp-action="ManagementDetails" asp-route-animeId="@anime.AnimeId">Details</a>
+                    <a data-post="/Anime/Delete?animeId=@anime.AnimeId">Delete</a>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td class="anime_empty" colspan="8">There are no added animes currently.</td>
+        </tr>
+    }
+</table>
+
+<p>
+    @Model.Count() of @Model.TotalItemCount record(s) |
+    Page @Model.PageNumber of @Model.PageCount
+</p>
+
+@{
+    var options = PagedListRenderOptions.ClassicPlusFirstAndLast;
+    options.LinkToFirstPageFormat = "First";
+    options.LinkToLastPageFormat = "Last";
+    options.LinkToPreviousPageFormat = "Previous";
+    options.LinkToNextPageFormat = "Next";
+
+    var ajaxOptions = new AjaxOptions
+    {
+        HttpMethod = "get",
+        UpdateTargetId = "target",
+        LoadingElementId = "#loader",
+    };
+}
+
+@Html.PagedListPager(
+    Model,
+    p => $"?name={ViewBag.Name}&StudioId={ViewBag.StudioId}&GenreId={ViewBag.GenreId}&Status={ViewBag.Status}&sort={ViewBag.Sort}&direction={ViewBag.Direction}&page={p}",
+    PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(options, ajaxOptions)
+)

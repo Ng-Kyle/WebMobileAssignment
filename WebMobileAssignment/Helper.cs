@@ -39,16 +39,8 @@ namespace WebMobileAssignment
         {
             var file = Guid.NewGuid().ToString("n") + ".jpg";
             var path = Path.Combine(en.WebRootPath, folder, file);
-
-            var options = new ResizeOptions
-            {
-                Size = new(200, 200),
-                Mode = ResizeMode.Crop,
-            };
-
             using var stream = f.OpenReadStream();
             using var img = Image.Load(stream);
-            img.Mutate(x => x.Resize(options));
             img.Save(path);
 
             return file;
