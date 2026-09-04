@@ -336,13 +336,41 @@ label > * {
 .anime_empty{
     text-align:center;
 }
+.anime_table tbody td.anime_table-buttons-td {
+    padding: 0.5rem;
+}
+.anime_table-buttons {
+    display: flex;
+    justify-content: space-evenly;
+
+}
+.anime_table-buttons a:hover {
+    cursor: pointer;
+    background-color: #FF8A9B
+}
+.anime_table-buttons a {
+    color: inherit;
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #FFB2BD;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+.studio-previews .image-previews_img {
+    border: 1px solid black;
+    height: 150px;
+    width: 400px;
+    object-fit: cover;
+    margin: 0 1rem;
+}
 
 /*ManagementDetails.cshtml*/
-.animedetail_wrapper{
-    padding-top:1rem;
-    display:flex;
-    gap:5rem;
-    align-items:stretch;
+.animedetail_wrapper {
+    padding-top: 1rem;
+    display: flex;
+    gap: 5rem;
+    align-items: stretch;
 }
 .animedetail_thumbnail{
     border: 2px solid black;
@@ -367,4 +395,16 @@ label > * {
 }
 .animedetail_info{
     flex:1;
+}
+
+/*AdminStudioTable.cshtml*/
+.studio_table-imgtd {
+    width: 200px;
+}
+.studio_thumbnail {
+    object-fit: cover;
+    width: 200px;
+    height: 80px;
+    display: block;
+    margin: auto;
 }

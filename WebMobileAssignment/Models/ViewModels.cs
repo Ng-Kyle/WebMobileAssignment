@@ -47,3 +47,22 @@ public class GenreVM
     public string Name { get; set; }
     public bool Selected { get; set; }
 }
+public class StudioManagementVM
+{
+    public StudioVM StudioVM{  get; set; }
+    [ValidateNever]
+    public IPagedList<Studio> Studios { get; set; } 
+}
+public class StudioVM
+{
+    public int StudioID { get; set; }
+    [StringLength(100, MinimumLength = 1)]
+    public string Name { get; set; }
+    [StringLength(1000)]
+    public string? Description { get; set; }
+    [DataType(DataType.Date)]
+    public DateOnly DateEstablished { get; set; }
+    public IFormFile StudioImage { get; set; }
+    public List<Anime> Animes { get; set; } = [];
+    public string ImageLink { get; set; }
+}

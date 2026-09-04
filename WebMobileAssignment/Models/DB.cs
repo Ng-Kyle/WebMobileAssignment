@@ -95,6 +95,7 @@ public class Studio
     public string? Description { get; set; }
     public DateOnly DateEstablished { get; set; }
     public List<Anime> Animes { get; set; } = [];
+    public string ImageLink { get; set; }
 }
 public class Genre
 {

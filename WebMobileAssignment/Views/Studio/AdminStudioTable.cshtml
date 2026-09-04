@@ -1,0 +1,88 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<Studio>
+
+@{
+    string[] fields = ["Name", "Animes Released", "Date Established"];
+}
+
+@Html.Hidden("sort", "", new { form = "f" })
+@Html.Hidden("direction", "", new { form = "f" })
+
+
+<table class="anime_table">
+    <thead>
+        <tr>
+            @foreach (var f in fields)
+            {
+                string d = "asc";
+                string c = "";
+
+                if (f == ViewBag.Sort)
+                {
+                    d = ViewBag.Direction == "des" ? "asc" : "des";
+                    c = ViewBag.Direction;
+                }
+
+                <th>
+                    <a data-ajax="true"
+                       data-ajax-update="#target"
+                       data-ajax-loading="#loader"
+                       href="?name=@ViewBag.Name&sort=@f&direction=@d" class="@c">@f</a>
+                </th>
+            }
+            <th class="anime_blank"></th>
+            <th class="anime_blank"></th>
+        </tr>
+    </thead>
+    @if (Model.Count() > 0)
+    {
+        @foreach (var studio in Model)
+        {
+            <tr>
+                <td>@studio.Name</td>
+                <td>@studio.Animes.Count</td>
+                <td>@studio.DateEstablished</td>
+                <td class="studio_table-imgtd"><img class="studio_thumbnail" src="@studio.ImageLink" /></td>
+                <td class="anime_table-buttons-td">
+                    <div class="anime_table-buttons">
+                        <a class="anime_table-details" asp-controller="Studio" asp-action="ManagementDetails" asp-route-studioId="@studio.StudioId">Details</a>
+                        <a class="anime_table-delete" data-post="/Studio/Delete?studioId=@studio.StudioId">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td class="anime_empty" colspan="5">There were no studios found.</td>
+        </tr>
+    }
+</table>
+
+<p>
+    @Model.Count() of @Model.TotalItemCount record(s) |
+    Page @Model.PageNumber of @Model.PageCount
+</p>
+
+@{
+    var options = PagedListRenderOptions.ClassicPlusFirstAndLast;
+    options.LinkToFirstPageFormat = "First";
+    options.LinkToLastPageFormat = "Last";
+    options.LinkToPreviousPageFormat = "Previous";
+    options.LinkToNextPageFormat = "Next";
+
+    var ajaxOptions = new AjaxOptions
+    {
+        HttpMethod = "get",
+        UpdateTargetId = "target",
+        LoadingElementId = "#loader",
+    };
+}
+
+@Html.PagedListPager(
+    Model,
+    p => $"?name={ViewBag.Name}&sort={ViewBag.Sort}&direction={ViewBag.Direction}&page={p}",
+    PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(options, ajaxOptions)
+)

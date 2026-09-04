@@ -84,7 +84,8 @@ $('.addanime_photo-label input').on('change', e => {
     for (const f of files) {
         if (f && f.type.startsWith('image/')) {
             const img = $('<img>');
-            img.attr('src', URL.createObjectURL(f), 'class','image-previews_img');
+            img.attr('src', URL.createObjectURL(f));
+            img.addClass('image-previews_img');
             img.onload = e => URL.revokeObjectURL(img.src);
             container.append(img);
         }

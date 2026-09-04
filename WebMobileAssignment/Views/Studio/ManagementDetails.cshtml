@@ -1,0 +1,49 @@
+﻿@model StudioVM
+@{
+    Layout = "_AdminLayout";
+    ViewBag.AdminStudios = "admin_sidenav-active";
+}
+<div class="admin_card">
+    <h1>Anime Details</h1>
+    <div class="animedetail_wrapper">
+        <div class="animedetail_images">
+            <div class="animedetail_thumbnail">
+                <img src="/studio/@Model.ImageLink" />
+            </div>
+        </div>
+        <div class="animedetail_info">
+            <form class="addanime_form" method="post" asp-controller="Studio" asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly"></div>
+                <input type="hidden" asp-for="StudioID" />
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="Name">Name</label>
+                    <input class="addanime_input-text" asp-for="Name" placeholder="Kyoto Animation" />
+                    <span asp-validation-for="Name"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="Description">Description</label>
+                    <textarea asp-for="Description" placeholder="Enter Studio Description..." class="addanime_textarea"></textarea>
+                    <span asp-validation-for="Description"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="DateEstablished">Date Established</label>
+                    <input class="addanime_input-date" asp-for="DateEstablished" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="DateEstablished"></span>
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label" asp-for="StudioImage">Studio Image</label>
+                    <label class="addanime_photo-label">
+                        <input asp-for="StudioImage" accept="image/jpeg,image/png" hidden />
+                        <img src="/images/photo.jpg" />
+                    </label>
+                    <div class="image-previews studio-previews"></div>
+                    <span asp-validation-for="StudioImage"></span>
+                </div>
+                <div class="addanime_button-area">
+                    <button class="addanime_button">Edit Studio</button>
+                    <button class="addanime_button" asp-controller="Studio" asp-action="Management">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -66,9 +66,11 @@
                 {
                     <td class="anime_table-imgtd"><img class="anime_thumbnail" src="@anime.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink"/></td>
                 }
-                <td>
-                    <a asp-controller="Anime" asp-action="ManagementDetails" asp-route-animeId="@anime.AnimeId">Details</a>
-                    <a data-post="/Anime/Delete?animeId=@anime.AnimeId">Delete</a>
+                <td class="anime_table-buttons-td">
+                    <div class="anime_table-buttons">
+                        <a class="anime_table-details" asp-controller="Anime" asp-action="ManagementDetails" asp-route-animeId="@anime.AnimeId">Details</a>
+                        <a class="anime_table-delete" data-post="/Anime/Delete?animeId=@anime.AnimeId">Delete</a>
+                    </div>
                 </td>
             </tr>
         }
@@ -76,7 +78,7 @@
     else
     {
         <tr>
-            <td class="anime_empty" colspan="8">There are no added animes currently.</td>
+            <td class="anime_empty" colspan="8">There were no animes found.</td>
         </tr>
     }
 </table>
@@ -103,6 +105,6 @@
 
 @Html.PagedListPager(
     Model,
-    p => $"?name={ViewBag.Name}&StudioId={ViewBag.StudioId}&GenreId={ViewBag.GenreId}&Status={ViewBag.Status}&sort={ViewBag.Sort}&direction={ViewBag.Direction}&page={p}",
+    p => $"?name={ViewBag.Name}&sort={ViewBag.Sort}&direction={ViewBag.Direction}&page={p}",
     PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(options, ajaxOptions)
 )
