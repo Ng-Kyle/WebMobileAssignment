@@ -1,0 +1,326 @@
+﻿body {
+}
+
+/* list.php */
+.productListSearchBar {
+    text-align: center;
+    margin: 20px;
+}
+
+.productListSearchBar input {
+    width: 50%;
+    padding: 10px;
+    border-radius: 20px;
+    border: 3px solid #FF5E7E;
+}
+
+.productListSearchBar input:focus {
+    border-color: #ff1f4b;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 94, 126, 0.3);
+}
+
+.productListSidebar {
+    width: 250px;
+    flex-shrink: 0; /*this is to prevent shrinking for the sidebar*/
+    border-right: 3px solid #FF5E7E;
+}
+
+.productListContent {
+    flex-grow: 1; /* this is to let the content div to take up the remaining spaces in the page. */
+}
+
+.productListProductsSide {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+    padding: 40px;
+}
+
+.productListProductsCard {
+    border: 3px solid #FF5E7E;
+    background: #ffdbdb;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.productListProductsCard img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+}
+
+.productListProductsCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.productListQuickAdd {
+    background-color: rgb(255, 255, 255);
+    color: black;
+    border: 3px solid #FF5E7E;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2;
+    width: fit-content;
+}
+
+.productListQuickAdd:hover {
+    background-color: #ff93a5;
+    border-color: #ff93a5
+}
+
+.productListWishlist {
+    background-color: rgb(255, 255, 255);
+    color: black;
+    border-radius: 5px;
+    border: 3px solid #FF5E7E;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2;
+    width: fit-content;
+}
+
+.productListWishlist:hover {
+    background-color: #ff93a5;
+    border-color: #ff93a5
+}
+
+.productListFilterContainer {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.productListFilterContainer h3 {
+    color: #FF5E7E;
+    font-size: 1.1em;
+    margin: 25px 0 12px 0;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #ffdbdb;
+    display: flex;
+    align-items: center;
+}
+
+.productListFilterContainer h3::before {
+    content: '✨';
+    margin-right: 8px;
+    font-size: 0.9rem;
+}
+
+.productListFilterGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px; /*wow thiz is for limiting the height, so can add scroll*/
+    overflow-y: auto;
+    padding-right: 5px;
+    margin-bottom: 15px;
+}
+
+.productListFilterGroup::-webkit-scrollbar {
+    width: 5px;
+}
+
+.productListFilterGroup::-webkit-scrollbar-thumb {
+    background: #ffdbdb;
+    border-radius: 10px;
+}
+
+.productListFilterGroup input[type="number"]:focus {
+    border-color: #FF5E7E;
+    outline: none;
+}
+
+.productListFilterGroup label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.productListFilterGroup:hover {
+    color: #FF5E7E;
+}
+
+.productListFilterGroup input[type="checkbox"] {
+    accent-color: #FF5E7E;
+    width: 16px;
+    height: 16px;
+}
+
+.productListFilter button[type="submit"] {
+    width: 97%;
+    background-color: rgb(255, 255, 255);
+    color: black;
+    border-radius: 5px;
+    border: 3px solid #FF5E7E;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.productListFilter button[type="submit"]:hover {
+    background-color: #ff93a5;
+    border-color: #ff93a5
+}
+
+.productListFilter a {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #888;
+    text-decoration: none;
+    font-size: 0.9rem;
+    color: #FF5E7E;
+    text-decoration: underline;
+}
+
+.productListProductsCard a {
+    text-decoration: none;
+    color: black;
+}
+
+/* productDetails.php */
+.productDetailsProductContent {
+    display: flex;
+    gap: 40px;
+    padding: 40px;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.productDetailsProductImgContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 45%;
+}
+
+.productDetailsThumbnailBar {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    white-space: nowrap;
+}
+
+.productDetailsThumbnailInner {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: max-content;
+}
+
+.productDetailsThumbIMG {
+    width: 100px;
+    height: 70px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border: 2px solid #FFA1AF;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.productDetailsThumbIMG:hover {
+    border-color: #FF5E7E;
+}
+
+.productDetailsImgView {
+    flex: 1;
+    height: 450px;
+    border: 1px solid #FFA1AF;
+    border-radius: 12px;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#productDetailsDisplayIMG {
+    max-width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.productDetailsProductDetails {
+    flex: 1;
+    background-color: #ffa9ba26;
+    border: 1px solid #ffa9ba5c;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.productDetailsProductDetails h2 {
+    color: #FF5E7E;
+    margin-top: 0;
+    font-size: 2.2em;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+}
+
+.productDetailsPrice {
+    font-size: 2em;
+    font-weight: bold;
+    color: #FF5E7E;
+    margin: 15px 0;
+    display: block;
+}
+
+.productDetailsSizeStatus, .productDetailsDescriptionBox {
+    font-weight: normal;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+.productDetailsAddCartButton {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.productDetailsQuantityInput {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9em;
+}
+
+.productDetailsQuantityInput input {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid #FFA1AF;
+    border-radius: 6px;
+    outline: none;
+    text-align: center;
+}
+
+.productDetailsBtn {
+    background-color: rgb(255, 255, 255);
+    color: black;
+    border-radius: 5px;
+    border: 3px solid #FF5E7E;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    width: fit-content;
+}
+
+.productDetailsBtn:hover {
+    background-color: #ff93a5;
+    border-color: #ff93a5
+}
+

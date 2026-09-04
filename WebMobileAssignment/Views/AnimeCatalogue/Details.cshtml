@@ -1,0 +1,42 @@
+﻿@model WebMobileAssignment.Models.AnimeCardViewModel
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/anime-catalogue.css" asp-append-version="true" />
+}
+
+<div class="productDetailsProductContent">
+    <div class="productDetailsProductImgContainer">
+        <div class="productDetailsImgView">
+            <img id="productDetailsDisplayIMG" src="@Model.ImageUrl" alt="@Model.Title cover">
+        </div>
+    </div>
+
+    <div class="productDetailsProductDetails">
+        <div class="inner-box">
+            <h2>@Model.Title</h2>
+            <p class="productDetailsPrice">Score: @Model.Score.ToString("0.0")</p>
+
+            <div class="productDetailsSizeStatus">
+                <p><strong>Studio:</strong> @Model.Studio</p>
+                <p><strong>Episodes:</strong> @Model.Episodes</p>
+            </div>
+
+            <div class="productDetailsDescriptionBox">
+                <p><strong>Synopsis:</strong></p>
+                <p>@Model.Synopsis</p>
+            </div>
+
+            <form method="post" class="productDetailsAddCartButton">
+                <div class="productDetailsQuantityInput">
+                    <label>Watch Status:</label>
+                    <select class="form-control">
+                        <option>Watching</option>
+                        <option>Completed</option>
+                        <option>Plan to Watch</option>
+                    </select>
+                </div>
+                <button type="button" class="productDetailsBtn">Save to List</button>
+            </form>
+        </div>
+    </div>
+</div>
