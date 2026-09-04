@@ -1,0 +1,36 @@
+﻿@model GenreManagementVM
+@{
+    Layout = "_AdminLayout";
+    ViewBag.AdminGenres = "admin_sidenav-active";
+}
+<div class="admin_card">
+    <h1>Genre List</h1>
+    <form data-ajax="true"
+          data-ajax-update="#target"
+          data-ajax-loading="#loader"
+          id="f" class="anime_table-form">
+
+        @Html.TextBox("name", "",
+                              new { @class = "admin_searchbar", type = "search", autofocus = "", data_trim = "", placeholder = "MAPPA" })
+        <label class="admin_search">Search</label>
+    </form>
+    <div id="target">
+        <partial name="AdminGenreTable" model="Model.Genres" />
+    </div>
+</div>
+<div class="admin_card">
+    <h1>Add Genre</h1>
+    <form class="addanime_form" method="post" asp-controller="Genre" asp-action="Add">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="addanime_input-container">
+            <label class="addanime_label" asp-for="Name">Name</label>
+            <input class="addanime_input-text" asp-for="Name" placeholder="Action" />
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div class="addanime_button-area">
+            <button class="addanime_button">Add Genre</button>
+            <button class="addanime_button" asp-controller="Genre" asp-action="Management">Reset</button>
+        </div>
+    </form>
+</div>
+

@@ -17,32 +17,32 @@ body, input, select, textarea, button {
 
 .pagination a,
 .pagination span {
-    background: #666 !important;
-    color: #fff !important;
+    background: #FF8A9B !important;
+    color: black !important;
     border: 1px solid #000 !important;
 }
 
 .pagination a:hover,
 .pagination span:hover {
-    background: #333 !important;
+    background: #B2E4FF !important;
 }
 
 .pagination .active a,
 .pagination .active span {
-    background: #333 !important;
+    background: #B2E4FF !important;
 }
 
 .pagination .disabled a,
 .pagination .disabled span {
-    background: #ccc !important;
+    background: #FFB2BD !important;
 }
 
 /* Flash Message -------------------------------------------------------------- */
 
 .info {
     position: fixed;
-    background: #666;
-    color: #fff;
+    background: #FFB2BD;
+    color: black;
     border: 1px solid #333;
     border-radius: 5px;
     padding: 10px 20px;

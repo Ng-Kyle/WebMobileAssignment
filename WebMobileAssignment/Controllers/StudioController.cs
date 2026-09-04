@@ -71,13 +71,6 @@ public class StudioController(DB db, Helper hp) : Controller
                 ModelState.AddModelError("StudioVM.StudioImage", e);
             }
         }
-        foreach (var state in ModelState)
-        {
-            foreach (var error in state.Value.Errors)
-            {
-                Console.WriteLine($"{state.Key}: {error.ErrorMessage}");
-            }
-        }
         if (ModelState.IsValid)
         {
 

@@ -41,6 +41,13 @@ public class AnimeVM
     public List<AnimeImage> AnimeImages { get; set; } = [];
 }
 
+public class GenreManagementVM
+{
+    [StringLength(50, MinimumLength = 1)]
+    public string Name { get; set; }
+    [ValidateNever]
+    public IPagedList<Genre> Genres { get; set; }
+}
 public class GenreVM
 {
     public int GenreID { get; set; }
