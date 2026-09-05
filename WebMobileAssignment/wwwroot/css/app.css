@@ -365,6 +365,20 @@ label > * {
     margin: 0 1rem;
 }
 
+.anime_table-deletemany{
+    color: inherit;
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #FFB2BD;
+    margin-left:0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+.anime_table-deletemany:hover {
+    cursor: pointer;
+    background-color: #FF8A9B
+}
 /*ManagementDetails.cshtml*/
 .animedetail_wrapper {
     padding-top: 1rem;

@@ -28,7 +28,7 @@ public class StudioController(DB db, Helper hp) : Controller
             return RedirectToAction(null, new { name, sort, direction, page = 1 });
         }
 
-        var a = sorted.ToPagedList(page, 10);
+        var a = sorted.ToPagedList(page, 5);
         if (page > a.PageCount && a.PageCount > 0)
         {
             return RedirectToAction(null, new { name, sort, direction, page = a.PageCount });
@@ -85,7 +85,7 @@ public class StudioController(DB db, Helper hp) : Controller
             return RedirectToAction("Management");
         }
        
-        StudioManagementVM.Studios = db.Studios.Include(a => a.Animes).ToList().ToPagedList(1, 10);
+        StudioManagementVM.Studios = db.Studios.Include(a => a.Animes).ToList().ToPagedList(1, 5);
         return View("Management", StudioManagementVM);
     }
     [HttpPost]

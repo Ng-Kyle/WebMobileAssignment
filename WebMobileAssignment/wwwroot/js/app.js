@@ -77,6 +77,7 @@ $('.upload input').on('change', e => {
     $(e.target).valid();
 });
 
+//Append Images to Add Image container
 $('.addanime_photo-label input').on('change', e => {
     const files = e.target.files;
     const container = $(e.target).closest('.addanime_input-container').find('.image-previews');
@@ -93,7 +94,10 @@ $('.addanime_photo-label input').on('change', e => {
     // Trigger input validation
     $(e.target).valid();
 });
-
-$(document).on('change', $('.filter_select') ,e => {
+//Update Table on filter selection
+$(document).on('change', '.filter_select' ,e => {
     $('.anime_table-form').submit();
 })
+$(document).on('change', '.anime_table-checkbox', function () {
+    console.log('CHANGE:', this.checked);
+});

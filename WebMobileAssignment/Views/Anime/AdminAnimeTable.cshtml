@@ -42,7 +42,7 @@
     {
         @foreach (var anime in Model)
         {
-            <tr>
+            <tr data-checkable>
                 <td>@anime.Name</td>
                 <td>@anime.Episodes</td>
                 @if(anime.ReleaseDate == null)
@@ -68,6 +68,7 @@
                 }
                 <td class="anime_table-buttons-td">
                     <div class="anime_table-buttons">
+                        <input type="checkbox" name="animeIds" form="deleteform" value="@anime.AnimeId"/>
                         <a class="anime_table-details" asp-controller="Anime" asp-action="ManagementDetails" asp-route-animeId="@anime.AnimeId">Details</a>
                         <a class="anime_table-delete" data-post="/Anime/Delete?animeId=@anime.AnimeId">Delete</a>
                     </div>
@@ -82,10 +83,11 @@
         </tr>
     }
 </table>
-
+<form method="post" id="deleteform" action="/Anime/DeleteMany"></form>
 <p>
     @Model.Count() of @Model.TotalItemCount record(s) |
-    Page @Model.PageNumber of @Model.PageCount
+    Page @Model.PageNumber of @Model.PageCount |
+    <button class="anime_table-deletemany" form="deleteform">Delete Selected</button>
 </p>
 
 @{

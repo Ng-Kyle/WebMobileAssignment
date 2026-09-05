@@ -53,7 +53,7 @@ public class AnimeController(DB db, Helper hp) : Controller
             return RedirectToAction(null, new { name, sort, direction, page = 1 });
         }
 
-        var a = sorted.ToPagedList(page, 10);
+        var a = sorted.ToPagedList(page, 5);
         if (page > a.PageCount && a.PageCount > 0)
         {
             return RedirectToAction(null, new { name, sort, direction, page = a.PageCount });
@@ -162,7 +162,7 @@ public class AnimeController(DB db, Helper hp) : Controller
         ViewBag.StatusList = new SelectList(status);
         ViewBag.StudioList = new SelectList(db.Studios, "StudioId", "Name");
         ViewBag.GenreList = new SelectList(db.Genres, "GenreId", "Name");
-        AdminManagementVM.Animes = db.Animes.Include(a => a.Studio).Include(a => a.AnimeImages).Include(a => a.Genres).ToList().ToPagedList(1, 10);
+        AdminManagementVM.Animes = db.Animes.Include(a => a.Studio).Include(a => a.AnimeImages).Include(a => a.Genres).ToList().ToPagedList(1, 5);
         return View("Management", AdminManagementVM);
     }
 
@@ -304,6 +304,19 @@ public class AnimeController(DB db, Helper hp) : Controller
             db.SaveChanges();
             TempData["Info"] = "Anime has been deleted.";
         }
+        return RedirectToAction("Management");
+    }
+    [HttpPost]
+    public IActionResult DeleteMany(int[] animeIds)
+    {
+        if(animeIds.Length == 0)
+        {
+            TempData["Info"] = "No animes were selected.";
+            return RedirectToAction("Management");
+        }
+        int n = db.Animes.Where(s => animeIds.Contains(s.AnimeId)).ExecuteDelete();
+
+        TempData["Info"] = $"{n} anime(s) deleted.";
         return RedirectToAction("Management");
     }
 }
