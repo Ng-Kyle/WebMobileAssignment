@@ -77,86 +77,97 @@ public class AnimeController(DB db, Helper hp) : Controller
     [HttpPost]
     public IActionResult Add(AnimeManagementVM AdminManagementVM)
     {
-        AnimeVM vm = AdminManagementVM.AnimeVMs[0];
         string[] status = ["Upcoming", "Airing", "Completed"];
-
-        if(ModelState.IsValid("AnimeVMs[0].StudioId") && !db.Studios.Any(s => s.StudioId == vm.StudioId))
+        for (int i = 0; i < AdminManagementVM.AnimeVMs.Count; i++)
         {
-            ModelState.AddModelError("AnimeVMs[0].StudioId", "Please select a valid studio.");
-        }
-        if (db.Animes.Any(anime => anime.Name.Equals(vm.Name)))
-        {
-            ModelState.AddModelError("AnimeVMs[0].Name", "This anime already exists.");
-        }
-        if (!status.Contains(vm.Status))
-        {
-            ModelState.AddModelError("AnimeVMs[0].Status", "Please select a valid status.");
-        }
-        if(!vm.Genres.Any(g => g.Selected))
-        {
-            ModelState.AddModelError("AnimeVMs[0].Genres", "Please select at least one genre");
-        }
-        foreach(var genre in vm.Genres.Where(g => g.Selected))
-        {
-            if(!db.Genres.Any(g => g.GenreId == genre.GenreID))
+            AnimeVM vm = AdminManagementVM.AnimeVMs[i];
+            if (ModelState.IsValid($"AnimeVMs[{i}].StudioId") && !db.Studios.Any(s => s.StudioId == vm.StudioId))
             {
-                ModelState.AddModelError("AnimeVMs[0].Genres","One or more selected genres are invalid.");
-                break;
+                ModelState.AddModelError($"AnimeVMs[{i}].StudioId", "Please select a valid studio.");
             }
-        }
-        if (vm.AnimeImageFiles != null && ModelState.IsValid("AnimeVMs[0].AnimeImageFiles"))
-        {
-            foreach (var photo in vm.AnimeImageFiles)
+            for (int j = 0; j < i; j++)
             {
-                var e = hp.ValidatePhoto(photo);
-                if (e != "")
+                AnimeVM pastVM = AdminManagementVM.AnimeVMs[j];
+                if (db.Animes.Any(anime => anime.Name.Equals(vm.Name)) || pastVM.Name.Equals(vm.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    ModelState.AddModelError("AnimeVMs[0].AnimeImageFiles", e);
+                    ModelState.AddModelError($"AnimeVMs[{i}].Name", "This anime already exists.");
                     break;
                 }
             }
-        }
-        if (vm.Status != status[0] && ModelState.IsValid("AnimeVMs[0].ReleaseDate"))
-        {
-            if(vm.ReleaseDate == null || vm.ReleaseDate > DateTime.Today.ToDateOnly())
+            if (!status.Contains(vm.Status))
             {
-                ModelState.AddModelError("AnimeVMs[0].ReleaseDate", "Airing and Completed anime must have a date today or in the past!");
+                ModelState.AddModelError($"AnimeVMs[{i}].Status", "Please select a valid status.");
             }
-        }
-        if (ModelState.IsValid)
-        {
-            Anime anime = new()
+            if (!vm.Genres.Any(g => g.Selected))
             {
-                Name = vm.Name,
-                Episodes = vm.Episodes,
-                Status = vm.Status,
-                Synopsis = vm.Synopsis,
-                TrailerLink = vm.TrailerLink,
-                ReleaseDate = vm.ReleaseDate,
-                Studio = db.Studios.First(s => s.StudioId == vm.StudioId),
-
-            };
+                ModelState.AddModelError($"AnimeVMs[{i}].Genres", "Please select at least one genre");
+            }
             foreach (var genre in vm.Genres.Where(g => g.Selected))
             {
-                anime.Genres.Add(db.Genres.First(g => g.GenreId == genre.GenreID));
-            }
-            if (vm.AnimeImageFiles != null)
-            {
-                int displayOrder = 1;
-                foreach (var photo in vm.AnimeImageFiles)
+                if (!db.Genres.Any(g => g.GenreId == genre.GenreID))
                 {
-                    var imageURL = hp.SavePhoto(photo, "images/anime");
-                    anime.AnimeImages.Add(new()
-                    {
-                        ImageLink = imageURL,
-                        IsThumbnail = displayOrder == 1,
-                        DisplayOrder = displayOrder++,
-                    });
+                    ModelState.AddModelError($"AnimeVMs[{i}].Genres", "One or more selected genres are invalid.");
+                    break;
                 }
             }
-            db.Animes.Add(anime);
+            if (vm.AnimeImageFiles != null && ModelState.IsValid($"AnimeVMs[{i}].AnimeImageFiles"))
+            {
+                foreach (var photo in vm.AnimeImageFiles)
+                {
+                    var e = hp.ValidatePhoto(photo);
+                    if (e != "")
+                    {
+                        ModelState.AddModelError($"AnimeVMs[{i}].AnimeImageFiles", e);
+                        break;
+                    }
+                }
+            }
+            if (vm.Status != status[0] && ModelState.IsValid($"AnimeVMs[{i}].ReleaseDate"))
+            {
+                if (vm.ReleaseDate == null || vm.ReleaseDate > DateTime.Today.ToDateOnly())
+                {
+                    ModelState.AddModelError($"AnimeVMs[{i}].ReleaseDate", "Airing and Completed anime must have a date today or in the past!");
+                }
+            }
+        }
+        
+        if (ModelState.IsValid)
+        {
+            foreach(var vm in AdminManagementVM.AnimeVMs)
+            {
+                Anime anime = new()
+                {
+                    Name = vm.Name,
+                    Episodes = vm.Episodes,
+                    Status = vm.Status,
+                    Synopsis = vm.Synopsis,
+                    TrailerLink = vm.TrailerLink,
+                    ReleaseDate = vm.ReleaseDate,
+                    Studio = db.Studios.First(s => s.StudioId == vm.StudioId),
+
+                };
+                foreach (var genre in vm.Genres.Where(g => g.Selected))
+                {
+                    anime.Genres.Add(db.Genres.First(g => g.GenreId == genre.GenreID));
+                }
+                if (vm.AnimeImageFiles != null)
+                {
+                    int displayOrder = 1;
+                    foreach (var photo in vm.AnimeImageFiles)
+                    {
+                        var imageURL = hp.SavePhoto(photo, "images/anime");
+                        anime.AnimeImages.Add(new()
+                        {
+                            ImageLink = imageURL,
+                            IsThumbnail = displayOrder == 1,
+                            DisplayOrder = displayOrder++,
+                        });
+                    }
+                }
+                db.Animes.Add(anime);
+            }
             db.SaveChanges();
-            TempData["Info"] = "Anime has been added.";
+            TempData["Info"] = $"{AdminManagementVM.AnimeVMs.Count} animes have been added.";
             return RedirectToAction("Management");
         }
         ViewBag.StatusList = new SelectList(status);

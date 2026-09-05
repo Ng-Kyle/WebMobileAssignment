@@ -17,24 +17,24 @@ body, input, select, textarea, button {
 
 .pagination a,
 .pagination span {
-    background: #FF8A9B !important;
+    background: #FFB2BD !important;
     color: black !important;
     border: 1px solid #000 !important;
 }
-
+    
 .pagination a:hover,
 .pagination span:hover {
-    background: #B2E4FF !important;
+    background: #FF8A9B !important;
 }
 
 .pagination .active a,
 .pagination .active span {
-    background: #B2E4FF !important;
+    background: #FF8A9B !important;
 }
 
 .pagination .disabled a,
 .pagination .disabled span {
-    background: #FFB2BD !important;
+    background: #FFCDB2 !important;
 }
 
 /* Flash Message -------------------------------------------------------------- */
@@ -280,6 +280,13 @@ label > * {
     cursor: pointer;
     background-color: #FF8A9B;
 }
+a.addanime_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: inherit;
+}
 /*AdminAnimeTable.cshtml*/
 .anime_table{
     border-collapse:collapse;
@@ -379,6 +386,7 @@ label > * {
     cursor: pointer;
     background-color: #FF8A9B
 }
+
 /*ManagementDetails.cshtml*/
 .animedetail_wrapper {
     padding-top: 1rem;
