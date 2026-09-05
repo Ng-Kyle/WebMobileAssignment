@@ -293,6 +293,12 @@ namespace WebMobileAssignment.Migrations
                 {
                     b.HasBaseType("WebMobileAssignment.Models.User");
 
+                    b.Property<string>("ImageLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("bit");
+
                     b.HasDiscriminator().HasValue("Member");
                 });
 

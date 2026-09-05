@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewBag.AdminMembers = "admin_sidenav-active";
+}
+<div class="admin_card">
+    <h1>Member List</h1>
+    <form data-ajax="true"
+          data-ajax-update="#target"
+          data-ajax-loading="#loader"
+          id="f" class="anime_table-form">
+
+        @Html.TextBox("name", "",
+                              new { @class = "admin_searchbar", type = "search", autofocus = "", data_trim = "", placeholder = "AgentBloon" })
+        <label class="admin_search">Search</label>
+    </form>
+    <div id="target">
+        <partial name="AdminMemberTable" />
+    </div>
+</div>

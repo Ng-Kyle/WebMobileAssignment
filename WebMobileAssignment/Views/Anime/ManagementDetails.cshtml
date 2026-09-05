@@ -14,13 +14,13 @@
                 }
                 else
                 {
-                    <img src="/anime/@Model.AnimeImages.FirstOrDefault(i => i.IsThumbnail)?.ImageLink" />
+                    <img src="/images/anime/@Model.AnimeImages.FirstOrDefault(i => i.IsThumbnail)?.ImageLink" />
                 }
             </div>
             <div class="animedetail_extraimg">
                 @foreach(var img in Model.AnimeImages.Where(i => !i.IsThumbnail))
                 {
-                    <img src="/anime/@img.ImageLink"/>
+                    <img src="/images/anime/@img.ImageLink" />
                 }
             </div>
         </div>

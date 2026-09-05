@@ -78,7 +78,7 @@ public class StudioController(DB db, Helper hp) : Controller
                 Name = vm.Name,
                 Description = vm.Description,
                 DateEstablished = vm.DateEstablished,
-                ImageLink = hp.SavePhoto(vm.StudioImage, "studio")
+                ImageLink = hp.SavePhoto(vm.StudioImage, "images/studio")
             });
             db.SaveChanges();
             TempData["Info"] = "Studio has been added.";
@@ -103,7 +103,7 @@ public class StudioController(DB db, Helper hp) : Controller
             return RedirectToAction("Management");
         }
         
-        hp.DeletePhoto(studio.ImageLink, "studio");
+        hp.DeletePhoto(studio.ImageLink, "images/studio");
         db.Studios.Remove(studio);
         db.SaveChanges();
 
@@ -163,8 +163,8 @@ public class StudioController(DB db, Helper hp) : Controller
             studio.Description = studioVM.Description;
             studio.DateEstablished = studioVM.DateEstablished;
             if (studioVM.StudioImage != null) {
-                hp.DeletePhoto(studio.ImageLink, "studio");
-                studio.ImageLink = hp.SavePhoto(studioVM.StudioImage, "studio");
+                hp.DeletePhoto(studio.ImageLink, "images/studio");
+                studio.ImageLink = hp.SavePhoto(studioVM.StudioImage, "images/studio");
             }
             db.SaveChanges();
             TempData["Info"] = "Studio has been updated.";

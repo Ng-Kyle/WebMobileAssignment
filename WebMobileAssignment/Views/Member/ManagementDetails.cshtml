@@ -1,0 +1,77 @@
+﻿@model Member
+@{
+    Layout = "_AdminLayout";
+    ViewBag.AdminMembers = "admin_sidenav-active";
+}
+<div class="admin_card">
+    <h1>Member Details</h1>
+    <div class="animedetail_wrapper">
+        <div class="animedetail_images">
+            <div class="animedetail_thumbnail">
+                @if(Model.ImageLink != null)
+                {
+                    <img src="/images/member/@Model.ImageLink" />
+                }
+                else
+                {
+                    <img src="/images/photo.jpg" />
+                }
+            </div>
+        </div>
+        <div class="animedetail_info">
+            <div class="addanime_form">
+                <div class="addanime_input-container">
+                    <label class="addanime_label">Name</label>
+                    <input class="addanime_input-text" readonly value="@Model.UserName" />
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label">Email</label>
+                    <input class="addanime_input-text" readonly value="@Model.Email" />
+                </div>
+                <div class="addanime_input-container">
+                    <label class="addanime_label">Account Status</label>
+                    <input class="addanime_input-text" readonly value="@((Model.IsBlocked) ? "Blocked" : "Active")" />
+                </div>
+                <div class="addanime_button-area">
+                    @if (Model.IsBlocked)
+                    {
+                        <button class="addanime_button" data-post="/Member/Unblock?userId=@Model.UserId">Unblock</button>
+                    }
+                    else
+                    {
+                        <button class="addanime_button" data-post="/Member/Block?userId=@Model.UserId">Block</button>
+                    }
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="admin_card">
+    <h1>Animes in Watchlist (@(Model.WatchList.AnimeWatchLists.Count > 0 ? Model.WatchList.AnimeWatchLists.Count : 0))</h1>
+    @if (Model.WatchList.AnimeWatchLists.Count == 0)
+    {
+        <p>This member has no animes in their watchlist.</p>
+    }
+    else
+    {
+        <div class="studio_anime-grid">
+            @foreach (var anime in Model.WatchList.AnimeWatchLists)
+            {
+                <div class="studio_anime-item">
+                    <a href="/Anime/ManagementDetails/?animeId=@anime.AnimeId">
+                        @if (anime.Anime.AnimeImages.Count > 0)
+                        {
+                            <img class="studio_anime-img" src="/images/anime/@anime.Anime.AnimeImages.FirstOrDefault(i => i.IsThumbnail).ImageLink" />
+                        }
+                        else
+                        {
+                            <img class="studio_anime-img" src="/images/photo.jpg" />
+                        }
+                    </a>
+                    <a href="/Anime/ManagementDetails/?animeId=@anime.AnimeId">@anime.Anime.Name</a>
+                </div>
+            }
+        </div>
+    }
+</div>

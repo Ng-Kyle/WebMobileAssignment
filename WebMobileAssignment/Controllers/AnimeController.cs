@@ -145,7 +145,7 @@ public class AnimeController(DB db, Helper hp) : Controller
                 int displayOrder = 1;
                 foreach (var photo in vm.AnimeImageFiles)
                 {
-                    var imageURL = hp.SavePhoto(photo, "anime");
+                    var imageURL = hp.SavePhoto(photo, "images/anime");
                     anime.AnimeImages.Add(new()
                     {
                         ImageLink = imageURL,
@@ -260,12 +260,12 @@ public class AnimeController(DB db, Helper hp) : Controller
                 int displayOrder = 1;
                 foreach (var image in anime.AnimeImages)
                 {
-                    hp.DeletePhoto(image.ImageLink, "anime");
+                    hp.DeletePhoto(image.ImageLink, "images/anime");
                 }
                 anime.AnimeImages.Clear();
                 foreach (var photo in animeVM.AnimeImageFiles)
                 {
-                    var imageURL = hp.SavePhoto(photo, "anime");
+                    var imageURL = hp.SavePhoto(photo, "images/anime");
                     anime.AnimeImages.Add(new()
                     {
                         ImageLink = imageURL,
@@ -298,7 +298,7 @@ public class AnimeController(DB db, Helper hp) : Controller
         {
             foreach (var image in anime.AnimeImages)
             {
-                hp.DeletePhoto(image.ImageLink, "anime");
+                hp.DeletePhoto(image.ImageLink, "images/anime");
             }
             db.Animes.Remove(anime);
             db.SaveChanges();

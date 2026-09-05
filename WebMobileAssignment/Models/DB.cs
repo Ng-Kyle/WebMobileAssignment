@@ -32,8 +32,10 @@ public class User
 
 public class Member : User
 {
+    public string? ImageLink { get; set; }
     public WatchList WatchList { get; set; }
     public List<Review> Reviews { get; set; } = [];
+    public bool IsBlocked { get; set; }
 }
 
 public class Admin : User
