@@ -109,7 +109,7 @@ $(document).on('click', '#addanotheranime', e => {
     const clone = original.clone();
 
     clone.attr('anime-index', index);
-    clone.find('h2').text(`Anime ${index + 1}`);
+    clone.find('h2').text(`${animeText} ${index + 1}`);
     clone.find('[name]').each((i, e) => {
         e.name = e.name.replace(
             /AnimeVMs\[\d+\]/g,

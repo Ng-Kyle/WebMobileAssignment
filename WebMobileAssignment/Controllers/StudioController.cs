@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using X.PagedList.Extensions;
 namespace WebMobileAssignment.Controllers;
 
-public class StudioController(DB db, Helper hp) : Controller
+public class StudioController(DB db, Helper hp, IStringLocalizer<SharedResource> localizer) : Controller
 {
     public IActionResult Management(string? name, string? sort, string? direction, int page = 1)
     {
@@ -53,15 +54,15 @@ public class StudioController(DB db, Helper hp) : Controller
        
         if (db.Studios.Any(studio => studio.Name.Equals(vm.Name)))
         {
-            ModelState.AddModelError("StudioVM.Name", "This studio already exists.");
+            ModelState.AddModelError("StudioVM.Name", localizer["This studio already exists."]);
         }
         if(vm.DateEstablished > DateTime.Today.ToDateOnly())
         {
-            ModelState.AddModelError("StudioVM.DateEstablished", "The date cannot be in the future.");
+            ModelState.AddModelError("StudioVM.DateEstablished", localizer["The date cannot be in the future."]);
         }
         if (vm.StudioImage == null)
         {
-            ModelState.AddModelError("StudioVM.StudioImage", "An image of the studio's logo is required.");
+            ModelState.AddModelError("StudioVM.StudioImage", localizer["An image of the studio's logo is required."]);
         }
         else
         {
@@ -81,7 +82,7 @@ public class StudioController(DB db, Helper hp) : Controller
                 ImageLink = hp.SavePhoto(vm.StudioImage, "images/studio")
             });
             db.SaveChanges();
-            TempData["Info"] = "Studio has been added.";
+            TempData["Info"] = localizer["Studio has been added."].Value;
             return RedirectToAction("Management");
         }
        
@@ -94,12 +95,12 @@ public class StudioController(DB db, Helper hp) : Controller
         var studio = db.Studios.Include(a => a.Animes).FirstOrDefault(s => s.StudioId == studioId);
         if(studio == null)
         {
-            TempData["Info"] = "No studio found!";
+            TempData["Info"] = localizer["No studio found!"].Value;
             return RedirectToAction("Management");
         }
         if(studio.Animes.Count > 0)
         {
-            TempData["Info"] = "Can't delete a studio that has released animes in the database!";
+            TempData["Info"] = localizer["Can't delete a studio that has released animes in the database!"].Value;
             return RedirectToAction("Management");
         }
         
@@ -107,7 +108,7 @@ public class StudioController(DB db, Helper hp) : Controller
         db.Studios.Remove(studio);
         db.SaveChanges();
 
-        TempData["Info"] = "Studio has been deleted.";
+        TempData["Info"] = localizer["Studio has been deleted."].Value;
 
         return RedirectToAction("Management");
     }
@@ -139,15 +140,15 @@ public class StudioController(DB db, Helper hp) : Controller
         }
         if (db.Studios.Any(studio => studio.Name.Equals(studioVM.Name) && studio.StudioId != studioVM.StudioID))
         {
-            ModelState.AddModelError("StudioVM.Name", "This studio already exists.");
+            ModelState.AddModelError("StudioVM.Name", localizer["This studio already exists."]);
         }
         if(studioVM.DateEstablished > DateTime.Today.ToDateOnly())
         {
-            ModelState.AddModelError("StudioVM.DateEstablished", "The date cannot be in the future.");
+            ModelState.AddModelError("StudioVM.DateEstablished", localizer["The date cannot be in the future."]);
         }
         if (studioVM.StudioImage == null)
         {
-            ModelState.AddModelError("StudioVM.StudioImage", "An image of the studio's logo is required.");
+            ModelState.AddModelError("StudioVM.StudioImage", localizer["An image of the studio's logo is required."]);
         }
         else
         {
@@ -167,7 +168,7 @@ public class StudioController(DB db, Helper hp) : Controller
                 studio.ImageLink = hp.SavePhoto(studioVM.StudioImage, "images/studio");
             }
             db.SaveChanges();
-            TempData["Info"] = "Studio has been updated.";
+            TempData["Info"] = localizer["Studio has been updated."].Value;
             return RedirectToAction("Management");
         }
         studioVM.ImageLink = studio.ImageLink; 

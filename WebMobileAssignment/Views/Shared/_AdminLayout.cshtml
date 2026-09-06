@@ -1,5 +1,6 @@
-﻿@inject DB db
-
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
+@inject DB db
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,19 +20,22 @@
             <div class="admin_topnav-home">
                 <a href="/Admin"><img class="admin_topnav-icon" src="/images/favicon.png"/>AnonAnimeList</a>
             </div>
-            <a>Logout</a>
+            <div class="admin_topnav-end">
+                <a asp-controller="Language" asp-action="Index" asp-route-culture="ja">日本語</a>
+                <a asp-controller="Language" asp-action="Index" asp-route-culture="en">English</a>
+                <a>@localizer["logout"]</a>
+            </div>
         </nav>
     </header>
     <div class="admin_wrapper">
         <aside class="admin_aside">
             <nav class="admin_sidenav">
-                <a class="@ViewBag.AdminHome" href="/Admin">Home</a>
-                <a class="@ViewBag.AdminAnimes" href="/Anime/Management">Animes</a>
-                <a class="@ViewBag.AdminStudios" href="/Studio/Management">Studios</a>
-                <a class="@ViewBag.AdminGenres" href="/Genre/Management">Genres</a>
-                <a class="@ViewBag.AdminMembers" href="/Member/Management">Members</a>
-                <a class="@ViewBag.AdminReviews">Reviews</a>
-                <a class="@ViewBag.AdminProfile">Profile</a>
+                <a class="@ViewBag.AdminAnimes" href="/Anime/Management">@localizer["anime_side"]</a>
+                <a class="@ViewBag.AdminStudios" href="/Studio/Management">@localizer["studio_side"]</a>
+                <a class="@ViewBag.AdminGenres" href="/Genre/Management">@localizer["genre_side"]</a>
+                <a class="@ViewBag.AdminMembers" href="/Member/Management">@localizer["member_side"]</a>
+                <a class="@ViewBag.AdminReviews">@localizer["review_side"]</a>
+                <a class="@ViewBag.AdminProfile">@localizer["profile_side"]</a>
             </nav>
         </aside>
         <main class="admin_main">
@@ -41,7 +45,7 @@
     </div>
     <footer class="admin_footer">
         <div class="copyright">
-            <p>All Rights Reserved &copy; 2026. AnonAnimeList</p>
+            <p>@localizer["copyright"] &copy; 2026. AnonAnimeList</p>
         </div>
     </footer>
 

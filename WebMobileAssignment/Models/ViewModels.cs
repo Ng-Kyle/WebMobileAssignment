@@ -23,20 +23,30 @@ public class AnimeVM
 {
     public List<GenreVM> Genres { get; set; } = [];
     public int AnimeID { get; set; }
-    [StringLength(100, MinimumLength = 1)]
+    [Required(ErrorMessage = "NameRequiredError")]
+    [StringLength(100, MinimumLength = 1,ErrorMessage = "NameLengthError")]
     public string Name { get; set; }
-    [Range(1,10000)]
+
+    [Required(ErrorMessage = "EpisodesRequiredError")]
+    [Range(1, 10000, ErrorMessage = "EpisodesRangeError")]
     public int Episodes { get; set; }
-    [StringLength(50)]
+
+    [StringLength(50, ErrorMessage = "StatusLengthError")]
+    [Required(ErrorMessage = "StatusRequiredError")]
     public string Status { get; set; }
-    [StringLength(2000)]
+
+    [StringLength(2000, ErrorMessage = "SynopsisLengthError")]
     public string? Synopsis { get; set; }
-    [Url]
+
+    [Url(ErrorMessage = "TrailerLinkInvalid")]
     public string? TrailerLink { get; set; }
+
     [DataType(DataType.Date)]
     public DateOnly? ReleaseDate { get; set; }
-    [Required(ErrorMessage = "A studio must be selected.")]
+
+    [Required(ErrorMessage = "StudioRequired")]
     public int StudioId { get; set; }
+
     public List<IFormFile>? AnimeImageFiles { get; set; } = [];
     public List<AnimeImage> AnimeImages { get; set; } = [];
 }
@@ -63,12 +73,15 @@ public class StudioManagementVM
 public class StudioVM
 {
     public int StudioID { get; set; }
-    [StringLength(100, MinimumLength = 1)]
+    [Required(ErrorMessage = "NameRequiredError")]
+    [StringLength(100, MinimumLength = 1, ErrorMessage = "NameLengthError")]
     public string Name { get; set; }
-    [StringLength(1000)]
+    [StringLength(1000, ErrorMessage = "DescriptionLengthError")]
     public string? Description { get; set; }
     [DataType(DataType.Date)]
+    [Required(ErrorMessage = "DateEstablishedRequiredError")]
     public DateOnly DateEstablished { get; set; }
+    [Required(ErrorMessage = "An image of the studio's logo is required.")]
     public IFormFile StudioImage { get; set; }
     public List<Anime> Animes { get; set; } = [];
     public string? ImageLink { get; set; }
