@@ -1,0 +1,87 @@
+﻿@model WebMobileAssignment.Models.Anime
+
+
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/anime-catalogue.css" asp-append-version="true" />
+}
+
+@{
+    string ResolveImagePath(string? link)
+    {
+        if (string.IsNullOrWhiteSpace(link))
+            return "/images/frieren.jpg";
+        if (link.StartsWith("http") || link.StartsWith("/"))
+            return link;
+        if (link.Contains("/"))
+            return "/" + link;
+        return "/images/anime/" + link;
+    }
+
+    var rawMain = Model.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink
+               ?? Model.AnimeImages?.FirstOrDefault()?.ImageLink;
+
+    var mainImage = ResolveImagePath(rawMain);
+
+    var avgScore = Model.Reviews != null && Model.Reviews.Any()
+        ? Model.Reviews.Average(r => r.Rating).ToString("0.0")
+        : "N/A";
+}
+
+<div class="productDetailsProductContent">
+    <div class="productDetailsProductImgContainer">
+        <div class="productDetailsImgView">
+            <img id="productDetailsDisplayIMG" src="@mainImage" alt="@Model.Name">
+        </div>
+
+    
+        @if (Model.AnimeImages != null && Model.AnimeImages.Count > 1)
+        {
+            <div class="productDetailsThumbnailBar">
+                <div class="productDetailsThumbnailInner">
+                    @foreach (var img in Model.AnimeImages)
+                    {
+                        <img class="productDetailsThumbIMG" src="@img.ImageLink" alt="Thumbnail" />
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="productDetailsProductDetails">
+        <div class="inner-box">
+            <h2>@Model.Name</h2>
+            <p class="productDetailsPrice">Score: ⭐ @avgScore</p>
+
+            <div class="productDetailsSizeStatus">
+                <p><strong>Studio:</strong> @(Model.Studio?.Name ?? "Unknown")</p>
+                <p><strong>Episodes:</strong> @Model.Episodes</p>
+                <p><strong>Status:</strong> @Model.Status</p>
+                <p><strong>Genres:</strong> @string.Join(", ", Model.Genres.Select(g => g.Name))</p>
+            </div>
+
+            <div class="productDetailsDescriptionBox">
+                <p><strong>Synopsis:</strong></p>
+                <p>@(Model.Synopsis ?? "No synopsis available.")</p>
+            </div>
+
+            <form method="post" class="productDetailsAddCartButton">
+                <div class="productDetailsQuantityInput">
+                    <label>Status:</label>
+                    <select name="status" class="form-control">
+                        <option value="Watching">Watching</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Plan to Watch">Plan to Watch</option>
+                        <option value="Dropped">Dropped</option>
+                    </select>
+                </div>
+                <div class="productDetailsQuantityInput">
+                    <label>Progress:</label>
+                    <input type="number" name="progress" min="0" max="@Model.Episodes" value="0" />
+                    <span>/ @Model.Episodes</span>
+                </div>
+                <button type="button" class="productDetailsBtn">Save to Watchlist</button>
+            </form>
+        </div>
+    </div>
+</div>

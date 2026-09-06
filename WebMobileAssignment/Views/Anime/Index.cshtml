@@ -1,0 +1,90 @@
+﻿@model IEnumerable<WebMobileAssignment.Models.Anime>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/anime-catalogue.css" asp-append-version="true" />
+}
+
+<div class="productListSearchBar">
+    <form method="get" asp-action="Index">
+        <input type="text" name="search" value="@Context.Request.Query["search"]" placeholder="Search anime titles..." />
+    </form>
+</div>
+
+<div class="search-container" style="display: flex;">
+    <aside class="productListSidebar">
+        <form class="productListFilter" method="get" asp-action="Index">
+            <input type="hidden" name="search" value="@Context.Request.Query["search"]" />
+
+            <div class="productListFilterContainer">
+                <h3>Filter by Studio</h3>
+                <div class="productListFilterGroup">
+                    @if (ViewBag.Studios != null)
+                    {
+                        @foreach (var s in (List<WebMobileAssignment.Models.Studio>)ViewBag.Studios)
+                        {
+                            <label>
+                                <input type="radio" name="studioId" value="@s.StudioId"
+                                @(Context.Request.Query["studioId"] == s.StudioId.ToString() ? "checked" : "") />
+                                @s.Name
+                            </label>
+                        }
+                    }
+                </div>
+
+                <h3>Filter by Episodes</h3>
+                <div class="productListFilterGroup">
+                    <input type="number" name="min" value="@Context.Request.Query["min"]" placeholder="Min" />
+                    <input type="number" name="max" value="@Context.Request.Query["max"]" placeholder="Max" />
+                </div>
+            </div>
+
+            <button type="submit">Apply Filters</button>
+            <a asp-action="Index">Clear All</a>
+        </form>
+    </aside>
+
+    <div class="productListContent">
+        <h1>All Anime</h1>
+        <div class="productListProductsSide">
+            @foreach (var item in Model)
+            {
+                var rawLink = item.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink
+                           ?? item.AnimeImages?.FirstOrDefault()?.ImageLink;
+
+                string resolvedPath;
+
+                if (string.IsNullOrWhiteSpace(rawLink))
+                {
+                    resolvedPath = "/images/frieren.jpg";
+                }
+                else if (rawLink.StartsWith("http") || rawLink.StartsWith("/"))
+                {
+                    resolvedPath = rawLink;
+                }
+                else if (rawLink.Contains("/"))
+                {
+                    resolvedPath = "/" + rawLink;
+                }
+                else
+                {
+                    resolvedPath = "/images/anime/" + rawLink;
+                }
+
+                var avgScore = item.Reviews != null && item.Reviews.Any()
+                    ? item.Reviews.Average(r => r.Rating).ToString("0.0")
+                    : "N/A";
+
+                <div class="productListProductsCard">
+                    <a asp-action="Details" asp-route-id="@item.AnimeId">
+                        <img src="@resolvedPath" alt="@item.Name" />
+                        <h3>@item.Name</h3>
+                        <p class="price">Score: ⭐ @avgScore</p>
+                    </a>
+                    <div class="buttonGroup">
+                        <button type="button" class="productListQuickAdd">+ Watchlist</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -7,10 +7,58 @@ namespace WebMobileAssignment.Controllers;
 
 public class AnimeController(DB db, Helper hp) : Controller
 {
-    public IActionResult Index()
+    //ANIME CATALOGUE
+    public async Task<IActionResult> Index(string? search, int? studioId, int? min, int? max)
     {
-        return View();
+        var query = db.Animes
+            .Include(a => a.Studio)
+            .Include(a => a.AnimeImages)
+            .Include(a => a.Reviews)
+            .Include(a => a.Genres)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(a => a.Name.Contains(search.Trim()));
+        }
+
+        if (studioId.HasValue)
+        {
+            query = query.Where(a => a.Studio != null && a.Studio.StudioId == studioId.Value);
+        }
+
+        if (min.HasValue)
+        {
+            query = query.Where(a => a.Episodes >= min.Value);
+        }
+        if (max.HasValue)
+        {
+            query = query.Where(a => a.Episodes <= max.Value);
+        }
+
+        ViewBag.Studios = await db.Studios.ToListAsync();
+
+        var animes = await query.ToListAsync();
+        return View(animes);
+
     }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var anime = await db.Animes
+            .Include(a => a.Studio)
+            .Include(a => a.Genres)
+            .Include(a => a.AnimeImages)
+            .Include(a => a.Reviews)
+            .FirstOrDefaultAsync(a => a.AnimeId == id);
+
+        if (anime == null)
+        {
+            return NotFound();
+        }
+        return View(anime);
+    }
+
     //ADMIN SECTION
     public IActionResult Management(string? name, int? StudioId, int? GenreId, string? Status, string? sort, string? direction, int page = 1)
     {
