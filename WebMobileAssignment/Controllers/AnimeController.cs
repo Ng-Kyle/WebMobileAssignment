@@ -8,11 +8,74 @@ namespace WebMobileAssignment.Controllers;
 
 public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> localizer) : Controller
 {
-    
-    public IActionResult Index()
+    //ANIME CATALOGUE
+    public async Task<IActionResult> Index(string? search, int? studioId, List<int>? genreIds, int? min, int? max)
     {
-        return View();
+        var query = db.Animes
+            .Include(a => a.Studio)
+            .Include(a => a.AnimeImages)
+            .Include(a => a.Reviews)
+            .Include(a => a.Genres)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var cleanSearch = search.Trim();
+            query = query.Where(a => a.Name.Contains(cleanSearch));
+            ViewBag.Search = cleanSearch;
+        }
+
+        if (studioId.HasValue && studioId.Value > 0)
+        {
+            query = query.Where(a => a.Studio != null && a.Studio.StudioId == studioId.Value);
+            ViewBag.SelectedStudioId = studioId.Value;
+        }
+
+        if (genreIds != null && genreIds.Count > 0)
+        {
+            query = query.Where(a => a.Genres.Any(g => genreIds.Contains(g.GenreId)));
+            ViewBag.SelectedGenreIds = genreIds;
+        }
+        else
+        {
+            ViewBag.SelectedGenreIds = new List<int>();
+        }
+
+        if (min.HasValue && min.Value > 0)
+        {
+            query = query.Where(a => a.Episodes >= min.Value);
+            ViewBag.Min = min.Value;
+        }
+        if (max.HasValue && max.Value > 0)
+        {
+            query = query.Where(a => a.Episodes <= max.Value);
+            ViewBag.Max = max.Value;
+        }
+
+        ViewBag.Studios = await db.Studios.OrderBy(s => s.Name).ToListAsync();
+        ViewBag.Genres = await db.Genres.OrderBy(g => g.Name).ToListAsync();
+
+        var animes = await query.ToListAsync();
+        return View(animes);
+
     }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var anime = await db.Animes
+            .Include(a => a.Studio)
+            .Include(a => a.Genres)
+            .Include(a => a.AnimeImages)
+            .Include(a => a.Reviews)
+            .FirstOrDefaultAsync(a => a.AnimeId == id);
+
+        if (anime == null)
+        {
+            return NotFound();
+        }
+        return View(anime);
+    }
+
     //ADMIN SECTION
     public IActionResult Management(string? name, int? StudioId, int? GenreId, string? Status, string? sort, string? direction, int page = 1)
     {
