@@ -823,7 +823,7 @@ body {
     gap: 2.5rem;
     padding: 2rem;
     background-color: #FFF4ED;
-    border: 2px solid #000000;
+    border: 2px solid #FF5E7E;
     border-radius: 16px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     max-width: 1100px;
@@ -843,7 +843,7 @@ body {
     width: 100%;
     max-width: 340px;
     height: auto;
-    border: 2px solid #000000;
+    border: 2px solid #FF5E7E;
     border-radius: 10px;
     background-color: white;
     display: flex;
@@ -883,15 +883,15 @@ body {
     transition: transform 0.2s, border-color 0.2s;
 }
 
-    .productDetailsThumbIMG:hover {
-        border-color: #FF8A9B;
-        transform: scale(1.05);
-    }
+.productDetailsThumbIMG:hover {
+    border-color: #FF8A9B;
+    transform: scale(1.05);
+}
 
 .productDetailsProductDetails {
     flex: 1;
     background-color: #FFCDB2;
-    border: 2px solid #000000;
+    border: 2px solid #FF5E7E;
     border-radius: 16px;
     padding: 1.8rem;
     display: flex;
