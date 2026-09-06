@@ -1,0 +1,77 @@
+﻿@model WebMobileAssignment.Models.Studio
+
+@{
+    Layout = "_Layout";
+
+    string ResolveAnimeImage(string? link)
+    {
+        if (string.IsNullOrWhiteSpace(link)) return "/images/frieren.jpg";
+        if (link.StartsWith("http") || link.StartsWith("/")) return link;
+        if (link.Contains("/")) return "/" + link;
+        return "/images/anime/" + link;
+    }
+
+    string ResolveLogo(string? link)
+    {
+        if (string.IsNullOrWhiteSpace(link)) return "/images/favicon.png";
+        if (link.StartsWith("http") || link.StartsWith("/")) return link;
+        if (link.Contains("/")) return "/" + link;
+        return "/images/studio/" + link;
+    }
+}
+
+
+<div class="studioDetailsHeader">
+    <div class="studioBannerLeft">
+        <img src="@ResolveLogo(Model.ImageLink)" alt="@Model.Name Logo" class="studioBannerLogo" />
+        <div>
+            <h1>@Model.Name</h1>
+            <p class="studioSubtext">
+                Established: <strong>@Model.DateEstablished.ToString("MMMM dd, yyyy")</strong> |
+                Total Titles: <strong>@(Model.Animes?.Count ?? 0)</strong>
+            </p>
+            <p class="studioLongDesc">@(Model.Description ?? "No description available.")</p>
+        </div>
+    </div>
+    <a asp-action="Index" class="productListQuickAdd">&larr; Back to Studios</a>
+</div>
+
+<div class="productListContent" style="margin-top: 2rem;">
+    <h2>Produced Anime by @Model.Name</h2>
+
+    @if (Model.Animes == null || !Model.Animes.Any())
+    {
+        <div style="padding: 2rem; font-weight: bold; color: #555;">
+            No anime listed for this studio yet.
+        </div>
+    }
+    else
+    {
+        <div class="productListProductsSide">
+            @foreach (var anime in Model.Animes)
+            {
+                var rawLink = anime.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink
+                           ?? anime.AnimeImages?.FirstOrDefault()?.ImageLink;
+
+                var resolvedPath = ResolveAnimeImage(rawLink);
+
+                var avgScore = anime.Reviews != null && anime.Reviews.Any()
+                    ? anime.Reviews.Average(r => r.Rating).ToString("0.0")
+                    : "N/A";
+
+                <div class="productListProductsCard">
+                    <a asp-controller="Anime" asp-action="Details" asp-route-id="@anime.AnimeId">
+                        <img src="@resolvedPath" asp-append-version="true" alt="@anime.Name" />
+                        <h3>@anime.Name</h3>
+                        <p class="price">Score: ⭐ @avgScore</p>
+                    </a>
+                    <div class="buttonGroup">
+                        <a asp-controller="Anime" asp-action="Details" asp-route-id="@anime.AnimeId" class="productListQuickAdd">
+                            Details
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

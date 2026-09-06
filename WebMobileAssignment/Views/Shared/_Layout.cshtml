@@ -13,14 +13,33 @@
     @RenderSection("head", false)
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
+<body class="member_body">
     <div class="info">@Html.Raw(TempData["Info"])</div>
-    <main>
+
+    <header>
+        <nav class="admin_topnav member_topnav">
+            <div class="admin_topnav-home">
+                <a asp-controller="Anime" asp-action="Index">
+                    <img class="admin_topnav-icon" src="/images/favicon.png" alt="Logo" />AnonAnimeList
+                </a>
+            </div>
+
+            <div class="member_nav-links">
+                <a asp-controller="Anime" asp-action="Index">Anime</a>
+                <a asp-controller="Studio" asp-action="Index">Studios</a>
+                <a asp-controller="Watchlist" asp-action="Index">My Watchlist</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="member_main">
         @RenderBody()
     </main>
 
-    <footer>
-
+    <footer class="admin_footer">
+        <div class="copyright">
+            <p>All Rights Reserved &copy; 2026. AnonAnimeList</p>
+        </div>
     </footer>
 
     <script src="/js/jquery.min.js"></script>
@@ -29,5 +48,6 @@
     <script src="/js/jquery.validate.unobtrusive.min.js"></script>
     <script src="/js/app.js" asp-append-version="true"></script>
     @RenderSection("foot", false)
+    @RenderSection("Scripts", false)
 </body>
 </html>

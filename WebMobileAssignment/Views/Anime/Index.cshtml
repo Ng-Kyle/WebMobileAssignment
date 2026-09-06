@@ -1,14 +1,11 @@
 ﻿@model IEnumerable<WebMobileAssignment.Models.Anime>
 
 @{
-    Layout = "_MemberLayout";
+    Layout = "_Layout";
     var genreIds = (List<int>)(ViewBag.SelectedGenreIds ?? new List<int>());
-    int? selectedStudioId = ViewBag.SelectedStudioId;
+    int? selectedStudioId = ViewBag.SelectedStudioId;   
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/anime-catalogue.css" asp-append-version="true" />
-}
 
 <div class="productListSearchBar">
     <form method="get" asp-controller="Anime" asp-action="Index">

@@ -1,7 +1,7 @@
 ﻿@model WebMobileAssignment.Models.Anime
 
 @{
-    Layout = "_MemberLayout";
+    Layout = "_Layout";
 
     string ResolveImagePath(string? link)
     {
@@ -24,9 +24,6 @@
         : "N/A";
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/anime-catalogue.css" asp-append-version="true" />
-}
 
 <div class="productDetailsProductContent">
     <div class="productDetailsProductImgContainer">

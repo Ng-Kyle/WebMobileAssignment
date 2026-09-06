@@ -1,0 +1,105 @@
+﻿@model IEnumerable<WebMobileAssignment.Models.Studio>
+
+@{
+    Layout = "_Layout";
+    string currentSort = ViewBag.Sort as string ?? "name_asc";
+
+    string ResolveLogo(string? link)
+    {
+        if (string.IsNullOrWhiteSpace(link)) return "/images/favicon.png";
+        if (link.StartsWith("http") || link.StartsWith("/")) return link;
+        if (link.Contains("/")) return "/" + link;
+        return "/images/studio/" + link;
+    }
+}
+
+<div class="productListSearchBar">
+    <form method="get" asp-controller="Studio" asp-action="Index">
+        <input type="hidden" name="sort" value="@currentSort" />
+        <input type="text"
+               name="search"
+               value="@ViewBag.Search"
+               placeholder="Search anime studios..." />
+    </form>
+</div>
+
+<div class="search-container">
+    <aside class="productListSidebar">
+        <form class="productListFilter" method="get" asp-controller="Studio" asp-action="Index">
+            <input type="hidden" name="search" value="@ViewBag.Search" />
+
+            <div class="productListFilterContainer">
+                <h3>Sort Studios</h3>
+                <div class="productListFilterGroup">
+                    <label>
+                        <input type="radio" name="sort" value="name_asc"
+                        @(currentSort == "name_asc" ? "checked" : "") /> Name (A - Z)
+                    </label>
+                    <label>
+                        <input type="radio" name="sort" value="name_desc"
+                        @(currentSort == "name_desc" ? "checked" : "") /> Name (Z - A)
+                    </label>
+                    <label>
+                        <input type="radio" name="sort" value="anime_count_desc"
+                        @(currentSort == "anime_count_desc" ? "checked" : "") /> Most Animes
+                    </label>
+                    <label>
+                        <input type="radio" name="sort" value="anime_count_asc"
+                        @(currentSort == "anime_count_asc" ? "checked" : "") /> Least Animes
+                    </label>
+                    <label>
+                        <input type="radio" name="sort" value="date_established"
+                        @(currentSort == "date_established" ? "checked" : "") /> Date Established
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit">Apply Sort</button>
+            <a asp-controller="Studio" asp-action="Index">Clear All</a>
+        </form>
+    </aside>
+
+    <div class="productListContent">
+        <h1>All Studios (@Model.Count())</h1>
+
+        @if (!Model.Any())
+        {
+            <div style="padding: 2rem; font-weight: bold; color: #555;">
+                No studios found matching your search.
+            </div>
+        }
+        else
+        {
+            <div class="studioListGrid">
+                @foreach (var studio in Model)
+                {
+                    var logoPath = ResolveLogo(studio.ImageLink);
+
+                    <div class="studioCard">
+                        <a asp-action="Details" asp-route-id="@studio.StudioId">
+                            <div class="studioHeader">
+                                <h3>@studio.Name</h3>
+                                <span class="badgeCount">@(studio.Animes?.Count ?? 0) Titles</span>
+                            </div>
+
+                            <div class="studioLogoWrapper">
+                                <img src="@logoPath" alt="@studio.Name Logo" class="studioCardLogo" />
+                            </div>
+
+                            <p class="studioDesc">
+                                @(string.IsNullOrWhiteSpace(studio.Description)
+                                    ? "No description available."
+                                    : (studio.Description.Length > 90 ? studio.Description.Substring(0, 90) + "..." : studio.Description))
+                            </p>
+                        </a>
+                        <div class="buttonGroup">
+                            <a asp-action="Details" asp-route-id="@studio.StudioId" class="productListQuickAdd">
+                                View Studio &rarr;
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

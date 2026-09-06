@@ -173,4 +173,52 @@ public class StudioController(DB db, Helper hp) : Controller
         studioVM.ImageLink = studio.ImageLink; 
         return View("ManagementDetails", studioVM);
     }
+
+    //Studio Catalogue
+    public IActionResult Index(string? search, string? sort)
+    {
+        var query = db.Studios
+            .Include(s => s.Animes)
+            .AsQueryable();
+
+        if ( !string.IsNullOrWhiteSpace(search))
+        {
+            var cleanSearch = search.Trim();
+            query = query.Where(s => s.Name.Contains(cleanSearch));
+            ViewBag.Search = cleanSearch;
+        }
+
+        ViewBag.Sort = sort;
+        query = sort switch
+        {
+            "name_desc" => query.OrderByDescending(s => s.Name),
+            "anime_count_desc" => query.OrderByDescending(s => s.Animes.Count),
+            "anime_count_asc" => query.OrderBy(s => s.Animes.Count),
+            "date_established" => query.OrderBy(s => s.DateEstablished),
+            _ => query.OrderBy(s => s.Name)
+        };
+
+        var studios = query.ToList();
+        return View(studios);
+
+    }
+
+    public IActionResult Details(int id)
+    {
+        var studio = db.Studios
+            .Include(s => s.Animes)
+                .ThenInclude(a => a.AnimeImages)
+            .Include(s => s.Animes)
+                .ThenInclude(a => a.Reviews)
+            .Include(s => s.Animes)
+                .ThenInclude(a => a.Genres)
+            .FirstOrDefault(s => s.StudioId == id);
+
+        if (studio == null)
+        {
+            return NotFound();
+        }
+
+        return View(studio);
+    }
 }
