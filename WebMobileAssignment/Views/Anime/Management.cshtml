@@ -1,11 +1,12 @@
-﻿@model AnimeManagementVM
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model AnimeManagementVM
+@inject IViewLocalizer localizer
 @{
     Layout = "_AdminLayout";
     ViewBag.AdminAnimes = "admin_sidenav-active";
 }
-
 <div class="admin_card">
-    <h1>Anime List</h1>
+    <h1>@localizer["anime_list"]</h1>
     <form data-ajax="true"
           data-ajax-update="#target"
           data-ajax-loading="#loader"
@@ -13,15 +14,15 @@
 
         @Html.TextBox("name", "",
                               new { @class = "admin_searchbar", type = "search", autofocus = "", data_trim = "", placeholder = "Berserk" })
-        <label class="admin_search">Search</label>
+        <label class="admin_search">@localizer["search"]</label>
         <select class="filter_select" name="StudioId" asp-items="ViewBag.StudioList">
-            <option value="">- All Studios -</option>
+            <option value="">- @localizer["all_studios"] -</option>
         </select>
         <select class="filter_select" name="Status" asp-items="ViewBag.StatusList">
-            <option value="">- Any Status -</option>
+            <option value="">- @localizer["any_status"] -</option>
         </select>
         <select class="filter_select" name="GenreId" asp-items="ViewBag.GenreList">
-            <option value="">- All Genres -</option>
+            <option value="">- @localizer["all_genres"] -</option>
         </select>
     </form>
     <div id="target">
@@ -29,55 +30,55 @@
     </div>
 </div>
 <div class="admin_card">
-    <h1>Add Anime</h1>
+    <h1>@localizer["add_anime"]</h1>
     <form class="addanime_form" method="post" asp-controller="Anime" asp-action="Add" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly"></div>
         <div id="addanime_container" >
             @for (int j = 0; j < Model.AnimeVMs.Count; j++)
                 {
                     <div class="addanime_batch" anime-index="@j">
-                        <h2>Anime @(j+1)</h2>
+                        <h2>@localizer["Anime"] @(j+1)</h2>
                         <div class="addanime_input-container">
-                            <label class="addanime_label" asp-for="AnimeVMs[j].Name">Name</label>
-                            <input class="addanime_input-text" asp-for="AnimeVMs[j].Name" placeholder="Your Lie in April"/>
+                        <label class="addanime_label" asp-for="AnimeVMs[j].Name">@localizer["name"]</label>
+                        <input class="addanime_input-text" asp-for="AnimeVMs[j].Name" placeholder="@localizer["placeholder_name"]" />
                             <span asp-validation-for="AnimeVMs[j].Name"></span>
                         </div>
                         <div class="addanime_input-container">
-                            <label class="addanime_label" asp-for="AnimeVMs[j].Episodes">Episode Count</label>
-                            <input class="addanime_input-number" asp-for="AnimeVMs[j].Episodes" value="1" min="1" max="10000"/>
+                        <label class="addanime_label" asp-for="AnimeVMs[j].Episodes">@localizer["episode_count"]</label>
+                            <input class="addanime_input-number" asp-for="AnimeVMs[j].Episodes" value="1"/>
                             <span asp-validation-for="AnimeVMs[j].Episodes"></span>
                         </div>
                         <div class="addanime_input-container">
-                            <label class="addanime_label" asp-for="AnimeVMs[j].Status">Status</label>
+                        <label class="addanime_label" asp-for="AnimeVMs[j].Status">@localizer["status"]</label>
                             <select class="addanime_select"asp-for="AnimeVMs[j].Status" asp-items="ViewBag.StatusList">
-                                <option value="">- Select One -</option>
+                            <option value="">- @localizer["select_one"] -</option>
                             </select>
                             <span asp-validation-for="AnimeVMs[j].Status"></span>
                         </div>
                         <div class="addanime_input-container">
-                            <label class="addanime_label" asp-for="AnimeVMs[j].Synopsis">Synopsis</label>
-                            <textarea asp-for="AnimeVMs[j].Synopsis" placeholder="Enter anime synopsis..." class="addanime_textarea"></textarea>
+                        <label class="addanime_label" asp-for="AnimeVMs[j].Synopsis">@localizer["synopsis"]</label>
+                        <textarea asp-for="AnimeVMs[j].Synopsis" placeholder="@localizer["placeholder_synopsis"]" class="addanime_textarea"></textarea>
                             <span asp-validation-for="AnimeVMs[j].Synopsis"></span>
                         </div>
                         <div class="addanime_input-container">
-                            <label class="addanime_label" asp-for="AnimeVMs[j].TrailerLink">Trailer Link</label>
+                        <label class="addanime_label" asp-for="AnimeVMs[j].TrailerLink">@localizer["trailer_link"]</label>
                             <input class="addanime_input-text" asp-for="AnimeVMs[j].TrailerLink" placeholder="https://youtube.com/" />
                             <span asp-validation-for="AnimeVMs[j].TrailerLink"></span>
                         </div>
                         <div class="addanime_input-container">
-                            <label class="addanime_label" asp-for="AnimeVMs[j].ReleaseDate">Release Date</label>
+                        <label class="addanime_label" asp-for="AnimeVMs[j].ReleaseDate">@localizer["release_date"]</label>
                             <input class="addanime_input-date" asp-for="AnimeVMs[j].ReleaseDate" />
                             <span asp-validation-for="AnimeVMs[j].ReleaseDate"></span>
                         </div>
                         <div class="addanime_input-container">
-                            <label class="addanime_label" asp-for="AnimeVMs[j].StudioId">Studio</label>
+                        <label class="addanime_label" asp-for="AnimeVMs[j].StudioId">@localizer["studio"]</label>
                             <select class="addanime_select" asp-for="AnimeVMs[j].StudioId" asp-items="ViewBag.StudioList">
-                                <option value="">- Select One -</option>
+                            <option value="">- @localizer["select_one"] -</option>
                             </select>
                             <span asp-validation-for="AnimeVMs[j].StudioId"></span>
                         </div>
                         <div class="addanime_input-container">
-                            <p class="addanime_label">Genres</p>
+                        <p class="addanime_label">@localizer["genres"]</p>
                             @for (var i = 0; i < Model.AnimeVMs[j].Genres.Count; i++)
                             {
                                 <input type="checkbox" asp-for="@Model.AnimeVMs[j].Genres[i].Selected" class="addanime_input-checkbox"/>
@@ -88,7 +89,7 @@
                             <span asp-validation-for="AnimeVMs[j].Genres"></span>
                         </div>
                         <div class="addanime_input-container">
-                            <label class="addanime_label" asp-for="AnimeVMs[j].AnimeImageFiles">Anime Images</label>
+                        <label class="addanime_label" asp-for="AnimeVMs[j].AnimeImageFiles">@localizer["anime_images"]</label>
                             <label class="addanime_photo-label">
                                 <input asp-for="AnimeVMs[j].AnimeImageFiles" accept="image/jpeg,image/png" hidden multiple/>
                                 <img src="/images/photo.jpg"/>
@@ -100,9 +101,12 @@
                 }
             </div>
         <div class="addanime_button-area">
-            <button type="button" class="addanime_button" id="addanotheranime">Add Another Anime</button>
-            <button class="addanime_button">Add All Anime</button>
-            <a class="addanime_button" asp-controller="Anime" asp-action="Management">Reset</a>
+            <button type="button" class="addanime_button" id="addanotheranime">@localizer["add_another_anime"]</button>
+            <button class="addanime_button">@localizer["add_all_anime"]</button>
+            <a class="addanime_button" asp-controller="Anime" asp-action="Management">@localizer["reset"]</a>
         </div>
     </form>
 </div>
+<script>
+    const animeText = '@localizer["Anime"]';
+</script>

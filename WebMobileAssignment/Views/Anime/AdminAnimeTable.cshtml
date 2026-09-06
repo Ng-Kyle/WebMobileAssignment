@@ -1,7 +1,8 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<Anime>
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @{
     string[] fields = ["Name", "Episodes", "Release Date"];
 }
@@ -28,12 +29,12 @@
                     <a data-ajax="true"
                        data-ajax-update="#target"
                        data-ajax-loading="#loader"
-                       href="?name=@ViewBag.Name&StudioId=@ViewBag.StudioId&GenreId=@ViewBag.GenreId&Status=@ViewBag.Status&sort=@f&direction=@d" class="@c">@f</a>
+                       href="?name=@ViewBag.Name&StudioId=@ViewBag.StudioId&GenreId=@ViewBag.GenreId&Status=@ViewBag.Status&sort=@f&direction=@d" class="@c">@localizer[f]</a>
                 </th>
             }
-            <th class="anime_table-notsort">Status</th>
-            <th class="anime_table-notsort">Studio</th>
-            <th class="anime_table-notsort">Genres</th>
+            <th class="anime_table-notsort">@localizer["Status"]</th>
+            <th class="anime_table-notsort">@localizer["Studio"]</th>
+            <th class="anime_table-notsort">@localizer["Genres"]</th>
             <th class="anime_blank"></th>
             <th class="anime_blank"></th>
         </tr>
@@ -47,7 +48,7 @@
                 <td>@anime.Episodes</td>
                 @if(anime.ReleaseDate == null)
                 {
-                    <td>Unannounced</td>
+                    <td>@localizer["Unannounced"]</td>
                 }
                 else
                 {
@@ -69,8 +70,8 @@
                 <td class="anime_table-buttons-td">
                     <div class="anime_table-buttons">
                         <input type="checkbox" name="animeIds" form="deleteform" value="@anime.AnimeId"/>
-                        <a class="anime_table-details" asp-controller="Anime" asp-action="ManagementDetails" asp-route-animeId="@anime.AnimeId">Details</a>
-                        <a class="anime_table-delete" data-post="/Anime/Delete?animeId=@anime.AnimeId">Delete</a>
+                        <a class="anime_table-details" asp-controller="Anime" asp-action="ManagementDetails" asp-route-animeId="@anime.AnimeId">@localizer["Details"]</a>
+                        <a class="anime_table-delete" data-post="/Anime/Delete?animeId=@anime.AnimeId">@localizer["Delete"]</a>
                     </div>
                 </td>
             </tr>
@@ -79,23 +80,23 @@
     else
     {
         <tr>
-            <td class="anime_empty" colspan="8">There were no animes found.</td>
+            <td class="anime_empty" colspan="8">@localizer["There were no animes found."]</td>
         </tr>
     }
 </table>
 <form method="post" id="deleteform" action="/Anime/DeleteMany"></form>
 <p>
-    @Model.Count() of @Model.TotalItemCount record(s) |
-    Page @Model.PageNumber of @Model.PageCount |
-    <button class="anime_table-deletemany" form="deleteform">Delete Selected</button>
+    @Model.Count() @localizer["of"] @Model.TotalItemCount @localizer["record(s)"] |
+    @localizer["Page"] @Model.PageNumber @localizer["of"] @Model.PageCount |
+    <button class="anime_table-deletemany" form="deleteform">@localizer["Delete Selected"]</button>
 </p>
 
 @{
     var options = PagedListRenderOptions.ClassicPlusFirstAndLast;
-    options.LinkToFirstPageFormat = "First";
-    options.LinkToLastPageFormat = "Last";
-    options.LinkToPreviousPageFormat = "Previous";
-    options.LinkToNextPageFormat = "Next";
+    options.LinkToFirstPageFormat = localizer["First"].Value;
+    options.LinkToLastPageFormat = localizer["Last"].Value;
+    options.LinkToPreviousPageFormat = localizer["Previous"].Value;
+    options.LinkToNextPageFormat = localizer["Next"].Value;
 
     var ajaxOptions = new AjaxOptions
     {

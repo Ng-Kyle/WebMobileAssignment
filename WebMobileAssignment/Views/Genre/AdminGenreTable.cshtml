@@ -1,4 +1,6 @@
-﻿@using X.PagedList
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
+@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<Genre>
 
@@ -28,7 +30,7 @@
                     <a data-ajax="true"
                        data-ajax-update="#target"
                        data-ajax-loading="#loader"
-                       href="?name=@ViewBag.Name&sort=@f&direction=@d" class="@c">@f</a>
+                       href="?name=@ViewBag.Name&sort=@f&direction=@d" class="@c">@localizer[f]</a>
                 </th>
             }
             <th class="anime_blank"></th>
@@ -42,7 +44,7 @@
                 <td>@genre.Name</td>
                 <td class="anime_table-buttons-td">
                     <div class="anime_table-buttons">
-                        <a class="anime_table-delete" data-post="/Genre/Delete?genreId=@genre.GenreId">Delete</a>
+                        <a class="anime_table-delete" data-post="/Genre/Delete?genreId=@genre.GenreId">@localizer["Delete"]</a>
                     </div>
                 </td>
             </tr>
@@ -51,22 +53,22 @@
     else
     {
         <tr>
-            <td class="anime_empty" colspan="2">There were no genres found.</td>
+            <td class="anime_empty" colspan="2">@localizer["There were no genres found."]</td>
         </tr>
     }
 </table>
 
 <p>
-    @Model.Count() of @Model.TotalItemCount record(s) |
-    Page @Model.PageNumber of @Model.PageCount
+    @Model.Count() @localizer["of"] @Model.TotalItemCount @localizer["record(s)"] |
+    @localizer["Page"] @Model.PageNumber @localizer["of"] @Model.PageCount |
 </p>
 
 @{
     var options = PagedListRenderOptions.ClassicPlusFirstAndLast;
-    options.LinkToFirstPageFormat = "First";
-    options.LinkToLastPageFormat = "Last";
-    options.LinkToPreviousPageFormat = "Previous";
-    options.LinkToNextPageFormat = "Next";
+    options.LinkToFirstPageFormat = localizer["First"].Value;
+    options.LinkToLastPageFormat = localizer["Last"].Value;
+    options.LinkToPreviousPageFormat = localizer["Previous"].Value;
+    options.LinkToNextPageFormat = localizer["Next"].Value;
 
     var ajaxOptions = new AjaxOptions
     {

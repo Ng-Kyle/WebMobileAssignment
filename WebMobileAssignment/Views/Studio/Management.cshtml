@@ -1,10 +1,12 @@
-﻿@model StudioManagementVM
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@model StudioManagementVM
+@inject IViewLocalizer localizer
 @{
     Layout = "_AdminLayout";
     ViewBag.AdminStudios = "admin_sidenav-active";
 }
 <div class="admin_card">
-    <h1>Studio List</h1>
+    <h1>@localizer["Studio List"]</h1>
     <form data-ajax="true"
           data-ajax-update="#target"
           data-ajax-loading="#loader"
@@ -12,33 +14,33 @@
 
         @Html.TextBox("name", "",
                               new { @class = "admin_searchbar", type = "search", autofocus = "", data_trim = "", placeholder = "MAPPA" })
-        <label class="admin_search">Search</label>
+        <label class="admin_search">@localizer["Search"]</label>
     </form>
     <div id="target">
         <partial name="AdminStudioTable" model="Model.Studios" />
     </div>
 </div>
 <div class="admin_card">
-    <h1>Add Studio</h1>
+    <h1>@localizer["Add Studio"]</h1>
     <form class="addanime_form" method="post" asp-controller="Studio" asp-action="Add" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly"></div>
         <div class="addanime_input-container">
-            <label class="addanime_label" asp-for="StudioVM.Name">Name</label>
+            <label class="addanime_label" asp-for="StudioVM.Name">@localizer["Name"]</label>
             <input class="addanime_input-text" asp-for="StudioVM.Name" placeholder="Kyoto Animation" />
             <span asp-validation-for="StudioVM.Name"></span>
         </div>
         <div class="addanime_input-container">
-            <label class="addanime_label" asp-for="StudioVM.Description">Description</label>
-            <textarea asp-for="StudioVM.Description" placeholder="Enter Studio Description..." class="addanime_textarea"></textarea>
+            <label class="addanime_label" asp-for="StudioVM.Description">@localizer["Description"]</label>
+            <textarea asp-for="StudioVM.Description" placeholder="@localizer["Enter Studio Description..."]" class="addanime_textarea"></textarea>
             <span asp-validation-for="StudioVM.Description"></span>
         </div>
         <div class="addanime_input-container">
-            <label class="addanime_label" asp-for="StudioVM.DateEstablished">Date Established</label>
+            <label class="addanime_label" asp-for="StudioVM.DateEstablished">@localizer["Date Established"]</label>
             <input class="addanime_input-date" asp-for="StudioVM.DateEstablished" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
             <span asp-validation-for="StudioVM.DateEstablished"></span>
         </div>
         <div class="addanime_input-container">
-            <label class="addanime_label" asp-for="StudioVM.StudioImage">Studio Image</label>
+            <label class="addanime_label" asp-for="StudioVM.StudioImage">@localizer["Studio Image"]</label>
             <label class="addanime_photo-label">
                 <input asp-for="StudioVM.StudioImage" accept="image/jpeg,image/png" hidden />
                 <img src="/images/photo.jpg" />
@@ -47,8 +49,8 @@
             <span asp-validation-for="StudioVM.StudioImage"></span>
         </div>
         <div class="addanime_button-area">
-            <button class="addanime_button">Add Studio</button>
-            <button class="addanime_button" asp-controller="Studio" asp-action="Management">Reset</button>
+            <button class="addanime_button">@localizer["Add Studio"]</button>
+            <button class="addanime_button" asp-controller="Studio" asp-action="Management">@localizer["Reset"]</button>
         </div>
     </form>
 </div>

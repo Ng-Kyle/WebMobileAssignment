@@ -1,10 +1,12 @@
-﻿@model Member
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
+@model Member
 @{
     Layout = "_AdminLayout";
     ViewBag.AdminMembers = "admin_sidenav-active";
 }
 <div class="admin_card">
-    <h1>Member Details</h1>
+    <h1>@localizer["Member Details"]</h1>
     <div class="animedetail_wrapper">
         <div class="animedetail_images">
             <div class="animedetail_thumbnail">
@@ -21,25 +23,25 @@
         <div class="animedetail_info">
             <div class="addanime_form">
                 <div class="addanime_input-container">
-                    <label class="addanime_label">Name</label>
+                    <label class="addanime_label">@localizer["UserName"]</label>
                     <input class="addanime_input-text" readonly value="@Model.UserName" />
                 </div>
                 <div class="addanime_input-container">
-                    <label class="addanime_label">Email</label>
+                    <label class="addanime_label">@localizer["Email"]</label>
                     <input class="addanime_input-text" readonly value="@Model.Email" />
                 </div>
                 <div class="addanime_input-container">
-                    <label class="addanime_label">Account Status</label>
-                    <input class="addanime_input-text" readonly value="@((Model.IsBlocked) ? "Blocked" : "Active")" />
+                    <label class="addanime_label">@localizer["Account Status"]</label>
+                    <input class="addanime_input-text" readonly value="@((Model.IsBlocked) ? @localizer["Blocked"] : @localizer["Active"])" />
                 </div>
                 <div class="addanime_button-area">
                     @if (Model.IsBlocked)
                     {
-                        <button class="addanime_button" data-post="/Member/Unblock?userId=@Model.UserId">Unblock</button>
+                        <button class="addanime_button" data-post="/Member/Unblock?userId=@Model.UserId">@localizer["Unblock"]</button>
                     }
                     else
                     {
-                        <button class="addanime_button" data-post="/Member/Block?userId=@Model.UserId">Block</button>
+                        <button class="addanime_button" data-post="/Member/Block?userId=@Model.UserId">@localizer["Block"]</button>
                     }
                     
                 </div>
@@ -48,10 +50,10 @@
     </div>
 </div>
 <div class="admin_card">
-    <h1>Animes in Watchlist (@(Model.WatchList.AnimeWatchLists.Count > 0 ? Model.WatchList.AnimeWatchLists.Count : 0))</h1>
+    <h1>@localizer["Animes in Watchlist"] (@(Model.WatchList.AnimeWatchLists.Count > 0 ? Model.WatchList.AnimeWatchLists.Count : 0))</h1>
     @if (Model.WatchList.AnimeWatchLists.Count == 0)
     {
-        <p>This member has no animes in their watchlist.</p>
+        <p>@localizer["This member has no animes in their watchlist."]</p>
     }
     else
     {

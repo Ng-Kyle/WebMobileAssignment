@@ -1,10 +1,12 @@
 ﻿@model StudioVM
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @{
     Layout = "_AdminLayout";
     ViewBag.AdminStudios = "admin_sidenav-active";
 }
 <div class="admin_card">
-    <h1>Studio Details</h1>
+    <h1>@localizer["Studio Details"]</h1>
     <div class="animedetail_wrapper">
         <div class="animedetail_images">
             <div class="animedetail_thumbnail">
@@ -16,22 +18,22 @@
                 <div asp-validation-summary="ModelOnly"></div>
                 <input type="hidden" asp-for="StudioID" />
                 <div class="addanime_input-container">
-                    <label class="addanime_label" asp-for="Name">Name</label>
+                    <label class="addanime_label" asp-for="Name">@localizer["Name"]</label>
                     <input class="addanime_input-text" asp-for="Name" placeholder="Kyoto Animation" />
                     <span asp-validation-for="Name"></span>
                 </div>
                 <div class="addanime_input-container">
-                    <label class="addanime_label" asp-for="Description">Description</label>
-                    <textarea asp-for="Description" placeholder="Enter Studio Description..." class="addanime_textarea"></textarea>
+                    <label class="addanime_label" asp-for="Description">@localizer["Description"]</label>
+                    <textarea asp-for="Description" placeholder="@localizer["Enter Studio Description..."]" class="addanime_textarea"></textarea>
                     <span asp-validation-for="Description"></span>
                 </div>
                 <div class="addanime_input-container">
-                    <label class="addanime_label" asp-for="DateEstablished">Date Established</label>
+                    <label class="addanime_label" asp-for="DateEstablished">@localizer["Date Established"]</label>
                     <input class="addanime_input-date" asp-for="DateEstablished" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="DateEstablished"></span>
                 </div>
                 <div class="addanime_input-container">
-                    <label class="addanime_label" asp-for="StudioImage">Studio Image</label>
+                    <label class="addanime_label" asp-for="StudioImage">@localizer["Studio Image"]</label>
                     <label class="addanime_photo-label">
                         <input asp-for="StudioImage" accept="image/jpeg,image/png" hidden />
                         <img src="/images/photo.jpg" />
@@ -40,18 +42,18 @@
                     <span asp-validation-for="StudioImage"></span>
                 </div>
                 <div class="addanime_button-area">
-                    <button class="addanime_button">Edit Studio</button>
-                    <button class="addanime_button" asp-controller="Studio" asp-action="ManagementDetails" asp-route-studioId="@Model.StudioID">Reset</button>
+                    <button class="addanime_button">@localizer["Edit Studio"]</button>
+                    <button class="addanime_button" asp-controller="Studio" asp-action="ManagementDetails" asp-route-studioId="@Model.StudioID">@localizer["Reset"]</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 <div class="admin_card">
-    <h1>Animes Released (@(Model.Animes.Count > 0 ? Model.Animes.Count : 0))</h1>
+    <h1>@localizer["Animes Released"] (@(Model.Animes.Count > 0 ? Model.Animes.Count : 0))</h1>
     @if (Model.Animes.Count == 0)
     {
-        <p>There are no animes created by this studio in the database!</p>
+        <p>@localizer["There are no animes created by this studio in the database!"]</p>
     }
     else
     {

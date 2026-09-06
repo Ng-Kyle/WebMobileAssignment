@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using System.Net;
@@ -12,7 +13,7 @@ namespace WebMobileAssignment
 {
     public class Helper(IWebHostEnvironment en,
                         IHttpContextAccessor ct,
-                        IConfiguration cf)
+                        IConfiguration cf, IStringLocalizer<SharedResource> localizer)
     {
         // ------------------------------------------------------------------------
         // Photo Upload Helper Functions
@@ -25,11 +26,11 @@ namespace WebMobileAssignment
 
             if (!reType.IsMatch(f.ContentType) || !reName.IsMatch(f.FileName))
             {
-                return "Only JPG and PNG photo is allowed.";
+                return localizer["OnlyJpgPngAllowed"].Value;
             }
             else if (f.Length > 1 * 1024 * 1024)
             {
-                return "Photo size cannot more than 1MB.";
+                return localizer["PhotoSizeTooLarge"].Value;
             }
 
             return "";

@@ -120,6 +120,16 @@ label > * {
     font-size:1.5rem;
 }
 
+.admin_topnav-end{
+    display:flex;
+    gap:2rem;
+}
+.admin_topnav-end a {
+    color: inherit;
+    line-height: 1;
+    text-decoration:none;
+}
+
 .admin_topnav-home a{
     display:flex;
     align-items: center;
@@ -140,7 +150,6 @@ label > * {
 .admin_aside {
     width: 30vh;
     background-color: #FFCDB2;
-    border: 2px: solid black;
 }
 
 .admin_sidenav {

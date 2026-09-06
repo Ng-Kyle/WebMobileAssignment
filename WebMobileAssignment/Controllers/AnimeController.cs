@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList.Extensions;
-
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
 namespace WebMobileAssignment.Controllers;
 
-public class AnimeController(DB db, Helper hp) : Controller
+public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> localizer) : Controller
 {
     //ANIME CATALOGUE
     public async Task<IActionResult> Index(string? search, int? studioId, List<int>? genreIds, int? min, int? max)
@@ -141,36 +142,41 @@ public class AnimeController(DB db, Helper hp) : Controller
     [HttpPost]
     public IActionResult Add(AnimeManagementVM AdminManagementVM)
     {
+
         string[] status = ["Upcoming", "Airing", "Completed"];
         for (int i = 0; i < AdminManagementVM.AnimeVMs.Count; i++)
         {
             AnimeVM vm = AdminManagementVM.AnimeVMs[i];
             if (ModelState.IsValid($"AnimeVMs[{i}].StudioId") && !db.Studios.Any(s => s.StudioId == vm.StudioId))
             {
-                ModelState.AddModelError($"AnimeVMs[{i}].StudioId", "Please select a valid studio.");
+                ModelState.AddModelError($"AnimeVMs[{i}].StudioId", localizer["Please select a valid studio."]);
+            }
+            if (db.Animes.Any(anime => anime.Name.Equals(vm.Name)))
+            {
+                ModelState.AddModelError($"AnimeVMs[{i}].Name", localizer["This anime already exists."]);
             }
             for (int j = 0; j < i; j++)
             {
                 AnimeVM pastVM = AdminManagementVM.AnimeVMs[j];
-                if (db.Animes.Any(anime => anime.Name.Equals(vm.Name)) || pastVM.Name.Equals(vm.Name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(pastVM.Name, vm.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    ModelState.AddModelError($"AnimeVMs[{i}].Name", "This anime already exists.");
+                    ModelState.AddModelError($"AnimeVMs[{i}].Name", localizer["This anime already exists."]);
                     break;
                 }
             }
             if (!status.Contains(vm.Status))
             {
-                ModelState.AddModelError($"AnimeVMs[{i}].Status", "Please select a valid status.");
+                ModelState.AddModelError($"AnimeVMs[{i}].Status", localizer["Please select a valid status."]);
             }
             if (!vm.Genres.Any(g => g.Selected))
             {
-                ModelState.AddModelError($"AnimeVMs[{i}].Genres", "Please select at least one genre");
+                ModelState.AddModelError($"AnimeVMs[{i}].Genres", localizer["Please select at least one genre."]);
             }
             foreach (var genre in vm.Genres.Where(g => g.Selected))
             {
                 if (!db.Genres.Any(g => g.GenreId == genre.GenreID))
                 {
-                    ModelState.AddModelError($"AnimeVMs[{i}].Genres", "One or more selected genres are invalid.");
+                    ModelState.AddModelError($"AnimeVMs[{i}].Genres", localizer["One or more selected genres are invalid."]);
                     break;
                 }
             }
@@ -190,7 +196,7 @@ public class AnimeController(DB db, Helper hp) : Controller
             {
                 if (vm.ReleaseDate == null || vm.ReleaseDate > DateTime.Today.ToDateOnly())
                 {
-                    ModelState.AddModelError($"AnimeVMs[{i}].ReleaseDate", "Airing and Completed anime must have a date today or in the past!");
+                    ModelState.AddModelError($"AnimeVMs[{i}].ReleaseDate", localizer["Airing and Completed anime must have a date today or in the past!"]);
                 }
             }
         }
@@ -231,7 +237,7 @@ public class AnimeController(DB db, Helper hp) : Controller
                 db.Animes.Add(anime);
             }
             db.SaveChanges();
-            TempData["Info"] = $"{AdminManagementVM.AnimeVMs.Count} animes have been added.";
+            TempData["Info"] = localizer["AnimesAddedCount", AdminManagementVM.AnimeVMs.Count].Value;
             return RedirectToAction("Management");
         }
         ViewBag.StatusList = new SelectList(status);
@@ -282,25 +288,25 @@ public class AnimeController(DB db, Helper hp) : Controller
         string[] status = ["Upcoming", "Airing", "Completed"];
         if (ModelState.IsValid("StudioId") && !db.Studios.Any(s => s.StudioId == animeVM.StudioId))
         {
-            ModelState.AddModelError("StudioId", "Please select a valid studio.");
+            ModelState.AddModelError("StudioId", localizer["Please select a valid studio."]);
         }
         if (db.Animes.Any(a => a.Name.Equals(animeVM.Name) && a.AnimeId != animeVM.AnimeID))
         {
-            ModelState.AddModelError("Name", "This anime already exists.");
+            ModelState.AddModelError("Name", localizer["This anime already exists."]);
         }
         if (!status.Contains(animeVM.Status))
         {
-            ModelState.AddModelError("Status", "Please select a valid status.");
+            ModelState.AddModelError("Status", localizer["Please select a valid status."]);
         }
         if (!animeVM.Genres.Any(g => g.Selected))
         {
-            ModelState.AddModelError("Genres", "Please select at least one genre");
+            ModelState.AddModelError("Genres", localizer["Please select at least one genre."]);
         }
         foreach (var genre in animeVM.Genres.Where(g => g.Selected))
         {
             if (!db.Genres.Any(g => g.GenreId == genre.GenreID))
             {
-                ModelState.AddModelError("Genres", "One or more selected genres are invalid.");
+                ModelState.AddModelError("Genres", localizer["One or more selected genres are invalid."]);
                 break;
             }
         }
@@ -351,7 +357,7 @@ public class AnimeController(DB db, Helper hp) : Controller
             }
 
             db.SaveChanges();
-            TempData["Info"] = "Anime has been updated.";
+            TempData["Info"] = localizer["Anime has been updated."].Value;
             return RedirectToAction("Management");
         }
         animeVM.Genres = db.Genres.ToList().Select(g => new GenreVM
@@ -377,7 +383,7 @@ public class AnimeController(DB db, Helper hp) : Controller
             }
             db.Animes.Remove(anime);
             db.SaveChanges();
-            TempData["Info"] = "Anime has been deleted.";
+            TempData["Info"] = localizer["Anime has been deleted."].Value;
         }
         return RedirectToAction("Management");
     }
@@ -386,12 +392,12 @@ public class AnimeController(DB db, Helper hp) : Controller
     {
         if(animeIds.Length == 0)
         {
-            TempData["Info"] = "No animes were selected.";
+            TempData["Info"] = localizer["No animes were selected."].Value;
             return RedirectToAction("Management");
         }
         int n = db.Animes.Where(s => animeIds.Contains(s.AnimeId)).ExecuteDelete();
 
-        TempData["Info"] = $"{n} anime(s) deleted.";
+        TempData["Info"] = localizer["AnimeDeletedCount", n].Value;
         return RedirectToAction("Management");
     }
 }

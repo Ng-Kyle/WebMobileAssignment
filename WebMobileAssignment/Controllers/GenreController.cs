@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using X.PagedList.Extensions;
 
 namespace WebMobileAssignment.Controllers;
 
-public class GenreController (DB db, Helper hp): Controller
+public class GenreController (DB db, Helper hp, IStringLocalizer<SharedResource> localizer): Controller
 {
     public IActionResult Management(string? name, string? sort, string? direction, int page = 1)
     {
@@ -46,7 +47,7 @@ public class GenreController (DB db, Helper hp): Controller
     {
         if (db.Genres.Any(genre => genre.Name.Equals(GenreManagementmentVM.Name)))
         {
-            ModelState.AddModelError("Name", "This studio already exists.");
+            ModelState.AddModelError("Name", localizer["This genre already exists."]);
         }
         
         if (ModelState.IsValid)
@@ -56,7 +57,7 @@ public class GenreController (DB db, Helper hp): Controller
                 Name = GenreManagementmentVM.Name,
             });
             db.SaveChanges();
-            TempData["Info"] = "Genre has been added.";
+            TempData["Info"] = localizer["Genre has been added."].Value;
             return RedirectToAction("Management");
         }
 
@@ -69,18 +70,18 @@ public class GenreController (DB db, Helper hp): Controller
         var genre = db.Genres.Include(a => a.Animes).FirstOrDefault(g => g.GenreId == genreId);
         if (genre == null)
         {
-            TempData["Info"] = "No genre found!";
+            TempData["Info"] = localizer["No genre found!"].Value;
             return RedirectToAction("Management");
         }
         if (genre.Animes.Count > 0)
         {
-            TempData["Info"] = "Can't delete a genre that has released animes in the database!";
+            TempData["Info"] = localizer["Can't delete a genre that has released animes in the database!"].Value;
             return RedirectToAction("Management");
         }
         db.Genres.Remove(genre);
         db.SaveChanges();
 
-        TempData["Info"] = "Genre has been deleted.";
+        TempData["Info"] = localizer["Genre has been deleted."].Value;
         return RedirectToAction("Management");
     }
 }
