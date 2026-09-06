@@ -213,4 +213,28 @@
   <data name="TrailerLinkInvalid" xml:space="preserve">
     <value>Please enter a valid URL.</value>
   </data>
+  <data name="Can't delete a genre that has released animes in the database!" xml:space="preserve">
+    <value>Can't delete a genre that has released animes in the database!</value>
+  </data>
+  <data name="Genre has been deleted." xml:space="preserve">
+    <value>Genre has been deleted.</value>
+  </data>
+  <data name="No genre found!" xml:space="preserve">
+    <value>ジャンルが見つかりません！</value>
+  </data>
+  <data name="Genre has been added." xml:space="preserve">
+    <value>ジャンルが追加されました。</value>
+  </data>
+  <data name="This genre already exists." xml:space="preserve">
+    <value>This genre already exists.</value>
+  </data>
+  <data name="No member found!" xml:space="preserve">
+    <value>No member found!</value>
+  </data>
+  <data name="MemberBlocked" xml:space="preserve">
+    <value>{0} has been blocked.</value>
+  </data>
+  <data name="MemberUnblocked" xml:space="preserve">
+    <value>{0} has been unblocked.</value>
+  </data>
 </root>

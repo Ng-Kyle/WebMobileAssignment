@@ -19,8 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Resources\Views\Admin\" />
-    <Folder Include="Resources\Views\Genre\" />
-    <Folder Include="Resources\Views\Member\" />
     <Folder Include="wwwroot\images\anime\" />
     <Folder Include="wwwroot\images\member\" />
     <Folder Include="wwwroot\images\studio\" />

@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using X.PagedList.Extensions;
 
 namespace WebMobileAssignment.Controllers;
 
-public class MemberController (DB db, Helper hp): Controller
+public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource> localizer): Controller
 {
     public IActionResult Management(string? name, string? sort, string? direction, int page = 1)
     {
@@ -47,12 +48,12 @@ public class MemberController (DB db, Helper hp): Controller
         var user = db.Members.Find(userId);
         if(user == null)
         {
-            TempData["Info"] = "No member found!";
+            TempData["Info"] = localizer["No member found!"].Value;
             return RedirectToAction("Management");
         }
         user.IsBlocked = true;
         db.SaveChanges();
-        TempData["Info"] = user.UserName + " has been blocked.";
+        TempData["Info"] = localizer["MemberBlocked", user.UserName].Value;
         return RedirectToAction("Management");
     }
     [HttpPost]
@@ -61,12 +62,12 @@ public class MemberController (DB db, Helper hp): Controller
         var user = db.Members.Find(userId);
         if (user == null)
         {
-            TempData["Info"] = "No member found!";
+            TempData["Info"] = localizer["No member found!"].Value;
             return RedirectToAction("Management");
         }
         user.IsBlocked = false;
         db.SaveChanges();
-        TempData["Info"] = user.UserName + " has been unblocked.";
+        TempData["Info"] = localizer["MemberUnblocked",user.UserName].Value;
         return RedirectToAction("Management");
     }
     public IActionResult ManagementDetails(int userId)
