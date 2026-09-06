@@ -1,12 +1,8 @@
 ﻿@model WebMobileAssignment.Models.Anime
 
-
-
-@section Styles {
-    <link rel="stylesheet" href="~/css/anime-catalogue.css" asp-append-version="true" />
-}
-
 @{
+    Layout = "_MemberLayout";
+
     string ResolveImagePath(string? link)
     {
         if (string.IsNullOrWhiteSpace(link))
@@ -28,20 +24,28 @@
         : "N/A";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/anime-catalogue.css" asp-append-version="true" />
+}
+
 <div class="productDetailsProductContent">
     <div class="productDetailsProductImgContainer">
         <div class="productDetailsImgView">
-            <img id="productDetailsDisplayIMG" src="@mainImage" alt="@Model.Name">
+            <img id="productDetailsDisplayIMG" src="@mainImage" asp-append-version="true" alt="@Model.Name">
         </div>
 
-    
         @if (Model.AnimeImages != null && Model.AnimeImages.Count > 1)
         {
             <div class="productDetailsThumbnailBar">
                 <div class="productDetailsThumbnailInner">
                     @foreach (var img in Model.AnimeImages)
                     {
-                        <img class="productDetailsThumbIMG" src="@img.ImageLink" alt="Thumbnail" />
+                        var thumbPath = ResolveImagePath(img.ImageLink);
+                        <img class="productDetailsThumbIMG"
+                             src="@thumbPath"
+                             asp-append-version="true"
+                             alt="Thumbnail"
+                             onclick="swapImage('@thumbPath', this)" />
                     }
                 </div>
             </div>
@@ -49,39 +53,95 @@
     </div>
 
     <div class="productDetailsProductDetails">
-        <div class="inner-box">
+        <div class="animeHeader">
             <h2>@Model.Name</h2>
-            <p class="productDetailsPrice">Score: ⭐ @avgScore</p>
+            <div class="productDetailsPrice">⭐ @avgScore <span class="scoreLabel">/ 10</span></div>
+        </div>
 
-            <div class="productDetailsSizeStatus">
-                <p><strong>Studio:</strong> @(Model.Studio?.Name ?? "Unknown")</p>
-                <p><strong>Episodes:</strong> @Model.Episodes</p>
-                <p><strong>Status:</strong> @Model.Status</p>
-                <p><strong>Genres:</strong> @string.Join(", ", Model.Genres.Select(g => g.Name))</p>
+        <div class="animeGenreBadges">
+            @if (Model.Genres != null && Model.Genres.Any())
+            {
+                @foreach (var genre in Model.Genres)
+                {
+                    <span class="genreBadge">@genre.Name</span>
+                }
+            }
+            else
+            {
+                <span class="genreBadge">General</span>
+            }
+        </div>
+
+        <div class="animeMetaGrid">
+            <div class="metaItem">
+                <span class="metaKey">Studio:</span>
+                <span class="metaVal">@(Model.Studio?.Name ?? "Unknown")</span>
             </div>
-
-            <div class="productDetailsDescriptionBox">
-                <p><strong>Synopsis:</strong></p>
-                <p>@(Model.Synopsis ?? "No synopsis available.")</p>
+            <div class="metaItem">
+                <span class="metaKey">Episodes:</span>
+                <span class="metaVal">@Model.Episodes</span>
             </div>
+            <div class="metaItem">
+                <span class="metaKey">Status:</span>
+                <span class="metaVal">@Model.Status</span>
+            </div>
+            <div class="metaItem">
+                <span class="metaKey">Release Date:</span>
+                <span class="metaVal">@(Model.ReleaseDate?.ToString("MMM dd, yyyy") ?? "TBA")</span>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.TrailerLink))
+            {
+                <div class="metaItem metaItemFull">
+                    <span class="metaKey">Trailer:</span>
+                    <span class="metaVal">
+                        <a href="@Model.TrailerLink" target="_blank" class="trailerLink">Watch on YouTube ↗</a>
+                    </span>
+                </div>
+            }
+        </div>
 
+        <div class="productDetailsDescriptionBox">
+            <h3>Synopsis</h3>
+            <p>@(string.IsNullOrWhiteSpace(Model.Synopsis) ? "No synopsis has been provided for this title yet." : Model.Synopsis)</p>
+        </div>
+
+        <div class="watchlistActionBox">
+            <h4>Update Watchlist</h4>
             <form method="post" class="productDetailsAddCartButton">
-                <div class="productDetailsQuantityInput">
-                    <label>Status:</label>
-                    <select name="status" class="form-control">
-                        <option value="Watching">Watching</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Plan to Watch">Plan to Watch</option>
-                        <option value="Dropped">Dropped</option>
-                    </select>
+                <input type="hidden" name="AnimeId" value="@Model.AnimeId" />
+
+                <div class="formRowGroup">
+                    <div class="productDetailsQuantityInput">
+                        <label>Status:</label>
+                        <select name="status">
+                            <option value="Watching">Watching</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Plan to Watch">Plan to Watch</option>
+                            <option value="On-Hold">On-Hold</option>
+                            <option value="Dropped">Dropped</option>
+                        </select>
+                    </div>
+
+                    <div class="productDetailsQuantityInput">
+                        <label>Progress:</label>
+                        <input type="number" name="progress" min="0" max="@Model.Episodes" value="0" />
+                        <span>/ @Model.Episodes eps</span>
+                    </div>
                 </div>
-                <div class="productDetailsQuantityInput">
-                    <label>Progress:</label>
-                    <input type="number" name="progress" min="0" max="@Model.Episodes" value="0" />
-                    <span>/ @Model.Episodes</span>
-                </div>
-                <button type="button" class="productDetailsBtn">Save to Watchlist</button>
+
+                <button type="button" class="productDetailsBtn">+ Save to Watchlist</button>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function swapImage(imgSrc, element) {
+            const mainImg = document.getElementById('productDetailsDisplayIMG');
+            if (mainImg) {
+                mainImg.src = imgSrc;
+            }
+        }
+    </script>
+}

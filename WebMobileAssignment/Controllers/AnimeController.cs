@@ -8,7 +8,7 @@ namespace WebMobileAssignment.Controllers;
 public class AnimeController(DB db, Helper hp) : Controller
 {
     //ANIME CATALOGUE
-    public async Task<IActionResult> Index(string? search, int? studioId, int? min, int? max)
+    public async Task<IActionResult> Index(string? search, int? studioId, List<int>? genreIds, int? min, int? max)
     {
         var query = db.Animes
             .Include(a => a.Studio)
@@ -19,24 +19,40 @@ public class AnimeController(DB db, Helper hp) : Controller
 
         if (!string.IsNullOrWhiteSpace(search))
         {
-            query = query.Where(a => a.Name.Contains(search.Trim()));
+            var cleanSearch = search.Trim();
+            query = query.Where(a => a.Name.Contains(cleanSearch));
+            ViewBag.Search = cleanSearch;
         }
 
-        if (studioId.HasValue)
+        if (studioId.HasValue && studioId.Value > 0)
         {
             query = query.Where(a => a.Studio != null && a.Studio.StudioId == studioId.Value);
+            ViewBag.SelectedStudioId = studioId.Value;
         }
 
-        if (min.HasValue)
+        if (genreIds != null && genreIds.Count > 0)
+        {
+            query = query.Where(a => a.Genres.Any(g => genreIds.Contains(g.GenreId)));
+            ViewBag.SelectedGenreIds = genreIds;
+        }
+        else
+        {
+            ViewBag.SelectedGenreIds = new List<int>();
+        }
+
+        if (min.HasValue && min.Value > 0)
         {
             query = query.Where(a => a.Episodes >= min.Value);
+            ViewBag.Min = min.Value;
         }
-        if (max.HasValue)
+        if (max.HasValue && max.Value > 0)
         {
             query = query.Where(a => a.Episodes <= max.Value);
+            ViewBag.Max = max.Value;
         }
 
-        ViewBag.Studios = await db.Studios.ToListAsync();
+        ViewBag.Studios = await db.Studios.OrderBy(s => s.Name).ToListAsync();
+        ViewBag.Genres = await db.Genres.OrderBy(g => g.Name).ToListAsync();
 
         var animes = await query.ToListAsync();
         return View(animes);

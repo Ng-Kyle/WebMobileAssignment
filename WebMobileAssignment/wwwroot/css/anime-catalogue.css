@@ -8,22 +8,35 @@
 }
 
 .productListSearchBar input {
-    width: 50%;
+    width: 60%;
+    max-width: 600px;
     padding: 10px;
     border-radius: 20px;
     border: 3px solid #FF5E7E;
+    font-size: 1rem;
 }
 
 .productListSearchBar input:focus {
     border-color: #ff1f4b;
     outline: none;
-    box-shadow: 0 0 8px rgba(255, 94, 126, 0.3);
+    box-shadow: 0 0 8px rgba(255, 94, 126, 0.6);
+}
+
+.search-container {
+    display: flex;
+    gap: 2rem;
+    align-items: stretch;
+    margin-top: 1rem;
 }
 
 .productListSidebar {
     width: 250px;
     flex-shrink: 0; /*this is to prevent shrinking for the sidebar*/
     border-right: 3px solid #FF5E7E;
+    background-color: #FFCDB2;
+    border-radius: 5px;
+    padding: 1.2rem;
+    background: transparent;
 }
 
 .productListContent {
@@ -42,14 +55,21 @@
     background: #ffdbdb;
     border-radius: 10px;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
     text-align: center;
+    justify-content: space-between;
     transition: transform 0.2s;
 }
 
 .productListProductsCard img {
     width: 100%;
     height: 200px;
+    object-fit: cover;
     object-fit: contain;
+    border-radius: 6px;
+    aspect-ratio: 2 / 3;
+    max-width: 180px
 }
 
 .productListProductsCard:hover {
@@ -92,9 +112,9 @@
 }
 
 .productListFilterContainer {
-    background-color: #fff;
-    border-radius: 15px;
-    padding: 10px;
+    background-color: transparent;
+    border-radius: 0px;
+    padding: 0px;
 }
 
 .productListFilterContainer h3 {
@@ -149,27 +169,42 @@
     color: #FF5E7E;
 }
 
+.productListFilterGroup input[type="radio"],
 .productListFilterGroup input[type="checkbox"] {
-    accent-color: #FF5E7E;
+    accent-color: #FF8A9B;
     width: 16px;
     height: 16px;
 }
 
+.productListFilterGroup input[type="number"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1.5px solid #000000;
+    border-radius: 6px;
+    background: #ffffff;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.productListFilterGroup input[type="number"]:focus {
+    border-color: #FF8A9B;
+}
+
 .productListFilter button[type="submit"] {
-    width: 97%;
-    background-color: rgb(255, 255, 255);
-    color: black;
-    border-radius: 5px;
-    border: 3px solid #FF5E7E;
-    font-size: 1.1em;
-    font-weight: bold;
+    width: 100%;
+    background-color: #FFB2BD;
+    color: #000000;
+    border: 2px solid #000000;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: 0.3s;
+    padding: 0.6rem;
+    transition: background-color 0.2s;
 }
 
 .productListFilter button[type="submit"]:hover {
-    background-color: #ff93a5;
-    border-color: #ff93a5
+    background-color: #FF8A9B;
 }
 
 .productListFilter a {
@@ -191,136 +226,295 @@
 /* productDetails.php */
 .productDetailsProductContent {
     display: flex;
-    gap: 40px;
-    padding: 40px;
-    align-items: flex-start;
-    max-width: 1200px;
-    margin: 0 auto;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    gap: 2.5rem;
+    padding: 2rem;
+    background-color: #FFF4ED;
+    border: 2px solid #000000;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    max-width: 1100px;
+    margin: 1.5rem auto;
 }
 
 .productDetailsProductImgContainer {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 15px;
-    width: 45%;
-}
-
-.productDetailsThumbnailBar {
-    width: 100%;
-    overflow-x: auto;
-    padding-bottom: 10px;
-    white-space: nowrap;
-}
-
-.productDetailsThumbnailInner {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    width: max-content;
-}
-
-.productDetailsThumbIMG {
-    width: 100px;
-    height: 70px;
+    width: 38%;
     flex-shrink: 0;
-    object-fit: cover;
-    border: 2px solid #FFA1AF;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: border-color 0.2s, transform 0.2s;
-}
-
-.productDetailsThumbIMG:hover {
-    border-color: #FF5E7E;
 }
 
 .productDetailsImgView {
-    flex: 1;
-    height: 450px;
-    border: 1px solid #FFA1AF;
-    border-radius: 12px;
-    background-color: #fff;
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
 #productDetailsDisplayIMG {
-    max-width: 100%;
-    height: 100%;
-    object-fit: contain;
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+}
+
+.productDetailsThumbnailBar {
+    width: 100%;
+    max-width: 340px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+
+.productDetailsThumbnailInner {
+    display: flex;
+    gap: 8px;
+}
+
+.productDetailsThumbIMG {
+    width: 75px;
+    height: 55px;
+    object-fit: cover;
+    border: 2px solid #000000;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.productDetailsThumbIMG:hover {
+    border-color: #FF8A9B;
+    transform: scale(1.05);
 }
 
 .productDetailsProductDetails {
     flex: 1;
-    background-color: #ffa9ba26;
-    border: 1px solid #ffa9ba5c;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    background-color: #FFCDB2;
+    border: 2px solid #000000;
+    border-radius: 16px;
+    padding: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.animeHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 0.8rem;
 }
 
 .productDetailsProductDetails h2 {
-    color: #FF5E7E;
-    margin-top: 0;
-    font-size: 2.2em;
+    color: #000000;
+    font-size: 1.8rem;
+    font-weight: 700;
     line-height: 1.2;
-    letter-spacing: -0.5px;
+    margin: 0;
 }
 
 .productDetailsPrice {
-    font-size: 2em;
-    font-weight: bold;
-    color: #FF5E7E;
-    margin: 15px 0;
-    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000000;
+    white-space: nowrap;
+    background: #FFB2BD;
+    border: 1.5px solid #000000;
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
 }
 
-.productDetailsSizeStatus, .productDetailsDescriptionBox {
-    font-weight: normal;
-    color: #444;
-    margin-bottom: 10px;
+.scoreLabel {
+    font-size: 0.85rem;
+    color: #333;
 }
 
-.productDetailsAddCartButton {
-    margin-top: 25px;
+.animeGenreBadges {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.genreBadge {
+    background-color: #FFB2BD;
+    border: 1.5px solid #000000;
+    color: #000000;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+}
+
+.animeMetaGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem 1.2rem;
+    background: rgba(255, 255, 255, 0.45);
+    border: 1.5px solid #000000;
+    border-radius: 10px;
+    padding: 0.9rem 1.2rem;
+}
+
+.metaItem {
+    display: flex;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+}
+
+.metaItemFull {
+    grid-column: 1 / -1;
+}
+
+.metaKey {
+    font-weight: 700;
+    color: #000000;
+}
+
+.metaVal {
+    color: #222222;
+}
+
+.trailerLink {
+    color: #b01a35;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.productDetailsDescriptionBox h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: #000000;
+}
+
+.productDetailsDescriptionBox p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #222222;
+    margin: 0;
+}
+
+.watchlistActionBox {
+    margin-top: auto;
+    background: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+}
+
+.watchlistActionBox h4 {
+    margin: 0 0 0.8rem 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #000000;
+    border-bottom: 1.5px solid #FF8A9B;
+    padding-bottom: 0.3rem;
+}
+
+.formRowGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-bottom: 1rem;
 }
 
 .productDetailsQuantityInput {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 0.9em;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.productDetailsQuantityInput select,
+.productDetailsQuantityInput input {
+    padding: 0.4rem 0.6rem;
+    border: 1.5px solid #000000;
+    border-radius: 6px;
+    background: #FFF4ED;
+    font-weight: 600;
+    outline: none;
 }
 
 .productDetailsQuantityInput input {
     width: 60px;
-    padding: 8px;
-    border: 1px solid #FFA1AF;
-    border-radius: 6px;
-    outline: none;
     text-align: center;
 }
 
 .productDetailsBtn {
-    background-color: rgb(255, 255, 255);
-    color: black;
-    border-radius: 5px;
-    border: 3px solid #FF5E7E;
-    font-size: 1.1em;
-    font-weight: bold;
+    background-color: #FFB2BD;
+    color: #000000;
+    border: 2px solid #000000;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: 0.3s;
-    width: fit-content;
+    padding: 0.6rem 1.2rem;
+    transition: background-color 0.2s, transform 0.1s;
+    width: 100%;
 }
 
 .productDetailsBtn:hover {
-    background-color: #ff93a5;
-    border-color: #ff93a5
+    background-color: #FF8A9B;
+}
+
+.productDetailsBtn:active {
+    transform: scale(0.98);
+}
+
+/*Member layout*/
+.member_body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    font: 16px Roboto, sans-serif;
+}
+
+.member_topnav {
+    background-color: #FFB2BD;
+    height: 10vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    font-weight: bold;
+    font-size: 1.5rem;
+    border-bottom: 2px solid black;
+}
+
+.member_nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.member_nav-links a,
+.member_nav-auth a {
+    text-decoration: none;
+    color: black;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.member_nav-links a:hover,
+.member_nav-auth a:hover {
+    background-color: #FF8A9B;
+}
+
+.member_main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 2rem;
+    box-sizing: border-box;
 }
 
