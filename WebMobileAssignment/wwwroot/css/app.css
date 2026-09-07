@@ -859,6 +859,7 @@ body {
     height: auto;
     aspect-ratio: 2 / 3;
     object-fit: cover;
+    transition: opacity 0.15s ease-in-out;
 }
 
 .productDetailsThumbnailBar {
@@ -880,12 +881,18 @@ body {
     border: 2px solid #000000;
     border-radius: 5px;
     cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 
 .productDetailsThumbIMG:hover {
     border-color: #FF8A9B;
     transform: scale(1.05);
+}
+
+.productDetailsThumbIMG.active-thumb {
+    border: 2.5px solid #FF8A9B !important;
+    box-shadow: 0 0 8px rgba(255, 138, 155, 0.9);
+    transform: scale(1.08);
 }
 
 .productDetailsProductDetails {
@@ -1112,3 +1119,17 @@ body {
     box-sizing: border-box;
 }
 
+/*ajax*/
+.ajax-loading {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.ajax-spinner {
+    display: none;
+    text-align: center;
+    padding: 1rem;
+    font-weight: bold;
+    color: #FF8A9B;
+}

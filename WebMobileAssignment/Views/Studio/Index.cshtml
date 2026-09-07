@@ -5,14 +5,6 @@
 @{
     Layout = "_Layout";
     string currentSort = ViewBag.Sort as string ?? "name_asc";
-
-    string ResolveLogo(string? link)
-    {
-        if (string.IsNullOrWhiteSpace(link)) return "/images/favicon.png";
-        if (link.StartsWith("http") || link.StartsWith("/")) return link;
-        if (link.Contains("/")) return "/" + link;
-        return "/images/studio/" + link;
-    }
 }
 
 <div class="productListSearchBar">
@@ -75,8 +67,6 @@
             <div class="studioListGrid">
                 @foreach (var studio in Model)
                 {
-                    var logoPath = ResolveLogo(studio.ImageLink);
-
                     <div class="studioCard">
                         <a asp-action="Details" asp-route-id="@studio.StudioId">
                             <div class="studioHeader">
@@ -85,7 +75,7 @@
                             </div>
 
                             <div class="studioLogoWrapper">
-                                <img src="@logoPath" alt="@studio.Name Logo" class="studioCardLogo" />
+                                <img src="/images/studio/@(studio.ImageLink ?? "photo.jpg") alt="@studio.Name Logo" class="studioCardLogo" />
                             </div>
 
                             <p class="studioDesc">

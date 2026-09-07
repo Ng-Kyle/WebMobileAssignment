@@ -9,24 +9,20 @@
 
 
 <div class="productListSearchBar">
-    <form method="get" asp-controller="Anime" asp-action="Index">
-        <input type="text"
-               name="search"
-               value="@ViewBag.Search"
-               placeholder="@localizer["Search anime titles..."]" />
+    <form data-ajax="true" data-ajax-update="#target" data-ajax-loading="loader" id="f" method="get" asp-controller="Anime" asp-action="Index">
+        @Html.TextBox("search", (string)ViewBag.Search, new { @class = "admin_searchbar", type = "search", autofocus = "", data_trim = "", placeholder = localizer["Search anime titles..."].Value })
+        <img src="/images/loader.gif" id="loader" style="display: none; vertical-align: middle; height: 30px;" />
     </form>
 </div>
 
 <div class="search-container">
-    <aside class="productListSidebar">
-        <form class="productListFilter" method="get" asp-controller="Anime" asp-action="Index">
-            <input type="hidden" name="search" value="@ViewBag.Search" />
-
+    <aside class="productListSidebar productListFilter">
             <div class="productListFilterContainer">
                 <h3>@localizer["Filter by Studio"]</h3>
                 <div class="productListFilterGroup">
                     <label>
                         <input type="radio"
+                               form="f"
                                name="studioId"
                                value=""
                         @(selectedStudioId == null ? "checked" : "") />
@@ -38,9 +34,10 @@
                         {
                             <label>
                                 <input type="radio"
+                                       form="f" 
                                        name="studioId"
                                        value="@s.StudioId"
-                                @(selectedStudioId == s.StudioId ? "checked" : "") />
+                                        @(selectedStudioId == s.StudioId ? "checked" : "") onchange="$('#f').submit()" />
                                 @s.Name
                             </label>
                         }
@@ -55,9 +52,10 @@
                         {
                             <label>
                                 <input type="checkbox"
+                                       form="f"
                                        name="genreIds"
                                        value="@g.GenreId"
-                                @(genreIds.Contains(g.GenreId) ? "checked" : "") />
+                                       @(genreIds.Contains(g.GenreId) ? "checked" : "") onchange="$('#f').submit()" />
                                 @g.Name
                             </label>
                         }
@@ -67,11 +65,13 @@
                 <h3>@localizer["Filter by Episodes"]</h3>
                 <div class="productListFilterGroup">
                     <input type="number"
+                           form="f"
                            name="min"
                            value="@ViewBag.Min"
                            placeholder="@localizer["Min"]"
                            min="1" />
                     <input type="number"
+                           form="f" 
                            name="max"
                            value="@ViewBag.Max"
                            placeholder="@localizer["Max"]"
@@ -79,63 +79,23 @@
                 </div>
             </div>
 
-            <button type="submit">@localizer["Apply Filters"]</button>
+            
             <a asp-controller="Anime" asp-action="Index">@localizer["Clear All"]</a>
-        </form>
     </aside>
 
-    <div class="productListContent">
-        <h1>@localizer["All Anime"] (@Model.Count())</h1>
-
-        @if (!Model.Any())
-        {
-            <div style="padding: 2rem; font-weight: bold; color: #555;">
-                @localizer["No anime matched your search/filter criteria."]
-            </div>
-        }
-        else
-        {
-            <div class="productListProductsSide">
-                @foreach (var item in Model)
-                {
-                    var rawLink = item.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink
-               ?? item.AnimeImages?.FirstOrDefault()?.ImageLink;
-
-                    string resolvedPath;
-
-                    if (string.IsNullOrWhiteSpace(rawLink))
-                    {
-                        resolvedPath = "/images/photo.jpg";
-                    }
-                    else if (rawLink.StartsWith("http") || rawLink.StartsWith("/"))
-                    {
-                        resolvedPath = rawLink;
-                    }
-                    else if (rawLink.Contains("/"))
-                    {
-                        resolvedPath = "/" + rawLink;
-                    }
-                    else
-                    {
-                        resolvedPath = "/images/anime/" + rawLink;
-                    }
-
-                    var avgScore = item.Reviews != null && item.Reviews.Any()
-                        ? item.Reviews.Average(r => r.Rating).ToString("0.0")
-                        : "N/A";
-
-                    <div class="productListProductsCard">
-                        <a asp-action="Details" asp-route-id="@item.AnimeId">
-                            <img src="@resolvedPath" asp-append-version="true" alt="@item.Name" />
-                            <h3>@item.Name</h3>
-                            <p class="price">@localizer["Score"]: ⭐ @avgScore</p>
-                        </a>
-                        <div class="buttonGroup">
-                            <button type="button" class="productListQuickAdd">+ @localizer["Watchlist"]</button>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
+    <div class="productListContent" id="target">
+           <partial name="_AnimeGrid" model="Model" />        
     </div>
 </div>
+
+
+@section foot {
+    <script>
+        let timer = null;
+
+        $('#search, #minEpisodes, #maxEpisodes').on('input', () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => $('#f').submit(), 500);
+        });
+    </script>
+}
