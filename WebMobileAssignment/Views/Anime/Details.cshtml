@@ -102,6 +102,12 @@
             <p>@(string.IsNullOrWhiteSpace(Model.Synopsis) ? "No synopsis has been provided for this title yet." : Model.Synopsis)</p>
         </div>
 
+            @{
+                bool isUnreleased = Model.Status?.Equals("Not Yet Aired", StringComparison.OrdinalIgnoreCase) == true
+                || Model.Status?.Equals("Unreleased", StringComparison.OrdinalIgnoreCase) == true
+                || (Model.ReleaseDate.HasValue && Model.ReleaseDate.Value > DateOnly.FromDateTime(DateTime.Today));
+            }
+
         <div class="watchlistActionBox">
             <h4>Update Watchlist</h4>
             <form method="post" class="productDetailsAddCartButton">
@@ -110,18 +116,26 @@
                 <div class="formRowGroup">
                     <div class="productDetailsQuantityInput">
                         <label>Status:</label>
-                        <select name="status">
-                            <option value="Watching">Watching</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Plan to Watch">Plan to Watch</option>
-                            <option value="On-Hold">On-Hold</option>
-                            <option value="Dropped">Dropped</option>
+                        <select name="status" id="watchlistStatus" onchange="handleStatusChange()">
+                            @if (isUnreleased)
+                            {
+                                <!-- Only 'Plan to Watch' is available for unreleased titles -->
+                                <option value="Plan to Watch" selected>Plan to Watch</option>
+                            }
+                            else
+                            {
+                                <option value="Watching">Watching</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Plan to Watch">Plan to Watch</option>
+                                <option value="On-Hold">On-Hold</option>
+                                <option value="Dropped">Dropped</option>
+                            }
                         </select>
                     </div>
 
                     <div class="productDetailsQuantityInput">
                         <label>Progress:</label>
-                        <input type="number" name="progress" min="0" max="@Model.Episodes" value="0" />
+                        <input type="number" name="progress" id="watchlistProgress" min="0" max="@Model.Episodes" value="0" />
                         <span>/ @Model.Episodes eps</span>
                     </div>
                 </div>
@@ -140,5 +154,27 @@
                 mainImg.src = imgSrc;
             }
         }
+
+        function handleStatusChange() {
+            const statusSelect = document.getElementById('watchlistStatus');
+            const progressInput = document.getElementById('watchlistProgress');
+
+            if (!statusSelect || !progressInput) return;
+
+            if (statusSelect.value === "Plan to Watch") {
+                progressInput.value = 0;
+                progressInput.disabled = true;
+                progressInput.style.backgroundColor = "#e0e0e0";
+                progressInput.style.cursor = "not-allowed";
+            } else {
+                progressInput.disabled = false;
+                progressInput.style.backgroundColor = "#FFF4ED";
+                progressInput.style.cursor = "auto";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            handleStatusChange();
+        });
     </script>
 }
