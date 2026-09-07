@@ -1,11 +1,12 @@
 ﻿@inject DB db
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
+    <title>AnonAnimeList</title>
     <link rel="shortcut icon" href="/images/favicon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <link rel="stylesheet" href="/css/pager.css">
@@ -25,9 +26,14 @@
             </div>
 
             <div class="member_nav-links">
-                <a asp-controller="Anime" asp-action="Index">Anime</a>
-                <a asp-controller="Studio" asp-action="Index">Studios</a>
-                <a asp-controller="Watchlist" asp-action="Index">My Watchlist</a>
+                <a asp-controller="Anime" asp-action="Index">@localizer["anime_side"]</a>
+                <a asp-controller="Studio" asp-action="Index">@localizer["studio_side"]</a>
+                <a asp-controller="Watchlist" asp-action="Index">@localizer["My Watchlist"]</a>
+            </div>
+            <div class="admin_topnav-end">
+                <a asp-controller="Language" asp-action="Index" asp-route-culture="ja">日本語</a>
+                <a asp-controller="Language" asp-action="Index" asp-route-culture="en">English</a>
+                <a>@localizer["logout"]</a>
             </div>
         </nav>
     </header>
@@ -38,7 +44,7 @@
 
     <footer class="admin_footer">
         <div class="copyright">
-            <p>All Rights Reserved &copy; 2026. AnonAnimeList</p>
+            <p>@localizer["copyright"] &copy; 2026. AnonAnimeList</p>
         </div>
     </footer>
 

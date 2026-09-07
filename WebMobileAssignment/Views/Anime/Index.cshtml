@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<WebMobileAssignment.Models.Anime>
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @{
     Layout = "_Layout";
     var genreIds = (List<int>)(ViewBag.SelectedGenreIds ?? new List<int>());
@@ -12,7 +13,7 @@
         <input type="text"
                name="search"
                value="@ViewBag.Search"
-               placeholder="Search anime titles..." />
+               placeholder="@localizer["Search anime titles..."]" />
     </form>
 </div>
 
@@ -22,14 +23,14 @@
             <input type="hidden" name="search" value="@ViewBag.Search" />
 
             <div class="productListFilterContainer">
-                <h3>Filter by Studio</h3>
+                <h3>@localizer["Filter by Studio"]</h3>
                 <div class="productListFilterGroup">
                     <label>
                         <input type="radio"
                                name="studioId"
                                value=""
                         @(selectedStudioId == null ? "checked" : "") />
-                        All Studios
+                        @localizer["All Studios"]
                     </label>
                     @if (ViewBag.Studios != null)
                     {
@@ -46,7 +47,7 @@
                     }
                 </div>
 
-                <h3>Filter by Genre</h3>
+                <h3>@localizer["Filter by Genre"]</h3>
                 <div class="productListFilterGroup">
                     @if (ViewBag.Genres != null)
                     {
@@ -63,33 +64,33 @@
                     }
                 </div>
 
-                <h3>Filter by Episodes</h3>
+                <h3>@localizer["Filter by Episodes"]</h3>
                 <div class="productListFilterGroup">
                     <input type="number"
                            name="min"
                            value="@ViewBag.Min"
-                           placeholder="Min"
+                           placeholder="@localizer["Min"]"
                            min="1" />
                     <input type="number"
                            name="max"
                            value="@ViewBag.Max"
-                           placeholder="Max"
+                           placeholder="@localizer["Max"]"
                            min="1" />
                 </div>
             </div>
 
-            <button type="submit">Apply Filters</button>
-            <a asp-controller="Anime" asp-action="Index">Clear All</a>
+            <button type="submit">@localizer["Apply Filters"]</button>
+            <a asp-controller="Anime" asp-action="Index">@localizer["Clear All"]</a>
         </form>
     </aside>
 
     <div class="productListContent">
-        <h1>All Anime (@Model.Count())</h1>
+        <h1>@localizer["All Anime"] (@Model.Count())</h1>
 
         @if (!Model.Any())
         {
             <div style="padding: 2rem; font-weight: bold; color: #555;">
-                No anime matched your search/filter criteria.
+                @localizer["No anime matched your search/filter criteria."]
             </div>
         }
         else
@@ -104,7 +105,7 @@
 
                     if (string.IsNullOrWhiteSpace(rawLink))
                     {
-                        resolvedPath = "/images/frieren.jpg";
+                        resolvedPath = "/images/photo.jpg";
                     }
                     else if (rawLink.StartsWith("http") || rawLink.StartsWith("/"))
                     {
@@ -127,10 +128,10 @@
                         <a asp-action="Details" asp-route-id="@item.AnimeId">
                             <img src="@resolvedPath" asp-append-version="true" alt="@item.Name" />
                             <h3>@item.Name</h3>
-                            <p class="price">Score: ⭐ @avgScore</p>
+                            <p class="price">@localizer["Score"]: ⭐ @avgScore</p>
                         </a>
                         <div class="buttonGroup">
-                            <button type="button" class="productListQuickAdd">+ Watchlist</button>
+                            <button type="button" class="productListQuickAdd">+ @localizer["Watchlist"]</button>
                         </div>
                     </div>
                 }

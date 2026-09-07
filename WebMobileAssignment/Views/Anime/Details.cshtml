@@ -1,12 +1,13 @@
 ﻿@model WebMobileAssignment.Models.Anime
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @{
     Layout = "_Layout";
 
     string ResolveImagePath(string? link)
     {
         if (string.IsNullOrWhiteSpace(link))
-            return "/images/frieren.jpg";
+            return "/images/photo.jpg";
         if (link.StartsWith("http") || link.StartsWith("/"))
             return link;
         if (link.Contains("/"))
@@ -65,68 +66,68 @@
             }
             else
             {
-                <span class="genreBadge">General</span>
+                <span class="genreBadge">@localizer["General"]</span>
             }
         </div>
 
         <div class="animeMetaGrid">
             <div class="metaItem">
-                <span class="metaKey">Studio:</span>
+                <span class="metaKey">@localizer["Studio"]:</span>
                 <span class="metaVal">@(Model.Studio?.Name ?? "Unknown")</span>
             </div>
             <div class="metaItem">
-                <span class="metaKey">Episodes:</span>
+                <span class="metaKey">@localizer["Episodes"]:</span>
                 <span class="metaVal">@Model.Episodes</span>
             </div>
             <div class="metaItem">
-                <span class="metaKey">Status:</span>
+                <span class="metaKey">@localizer["Status"]:</span>
                 <span class="metaVal">@Model.Status</span>
             </div>
             <div class="metaItem">
-                <span class="metaKey">Release Date:</span>
-                <span class="metaVal">@(Model.ReleaseDate?.ToString("MMM dd, yyyy") ?? "TBA")</span>
+                <span class="metaKey">@localizer["Release Date"]:</span>
+                <span class="metaVal">@(Model.ReleaseDate?.ToString("MMM dd, yyyy") ?? localizer["TBA"].Value)</span>
             </div>
             @if (!string.IsNullOrWhiteSpace(Model.TrailerLink))
             {
                 <div class="metaItem metaItemFull">
-                    <span class="metaKey">Trailer:</span>
+                    <span class="metaKey">@localizer["Trailer"]:</span>
                     <span class="metaVal">
-                        <a href="@Model.TrailerLink" target="_blank" class="trailerLink">Watch on YouTube ↗</a>
+                        <a href="@Model.TrailerLink" target="_blank" class="trailerLink">@localizer["Watch on YouTube"] ↗</a>
                     </span>
                 </div>
             }
         </div>
 
         <div class="productDetailsDescriptionBox">
-            <h3>Synopsis</h3>
-            <p>@(string.IsNullOrWhiteSpace(Model.Synopsis) ? "No synopsis has been provided for this title yet." : Model.Synopsis)</p>
+            <h3>@localizer["Synopsis"]</h3>
+            <p>@(string.IsNullOrWhiteSpace(Model.Synopsis) ? localizer["No synopsis has been provided for this title yet."] : Model.Synopsis)</p>
         </div>
 
         <div class="watchlistActionBox">
-            <h4>Update Watchlist</h4>
+            <h4>@localizer["Update Watchlist"]</h4>
             <form method="post" class="productDetailsAddCartButton">
                 <input type="hidden" name="AnimeId" value="@Model.AnimeId" />
 
                 <div class="formRowGroup">
                     <div class="productDetailsQuantityInput">
-                        <label>Status:</label>
+                        <label>@localizer["Status"]:</label>
                         <select name="status">
-                            <option value="Watching">Watching</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Plan to Watch">Plan to Watch</option>
-                            <option value="On-Hold">On-Hold</option>
-                            <option value="Dropped">Dropped</option>
+                            <option value="Watching">@localizer["Watching"]</option>
+                            <option value="Completed">@localizer["Completed"]</option>
+                            <option value="Plan to Watch">@localizer["Plan to Watch"]</option>
+                            <option value="On-Hold">@localizer["On-Hold"]</option>
+                            <option value="Dropped">@localizer["Dropped"]</option>
                         </select>
                     </div>
 
                     <div class="productDetailsQuantityInput">
-                        <label>Progress:</label>
+                        <label>@localizer["Progress"]:</label>
                         <input type="number" name="progress" min="0" max="@Model.Episodes" value="0" />
-                        <span>/ @Model.Episodes eps</span>
+                        <span>/ @Model.Episodes @localizer["eps"]</span>
                     </div>
                 </div>
 
-                <button type="button" class="productDetailsBtn">+ Save to Watchlist</button>
+                <button type="button" class="productDetailsBtn">+ @localizer["Save to Watchlist"]</button>
             </form>
         </div>
     </div>
