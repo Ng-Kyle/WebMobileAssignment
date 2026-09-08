@@ -9,7 +9,7 @@
     <h1>@localizer["Studio Details"]</h1>
     <div class="animedetail_wrapper">
         <div class="animedetail_images">
-            <div class="animedetail_thumbnail">
+            <div class="studiodetail_thumbnail">
                 <img src="/images/studio/@Model.ImageLink" />
             </div>
         </div>
@@ -35,8 +35,8 @@
                 <div class="addanime_input-container">
                     <label class="addanime_label" asp-for="StudioImage">@localizer["Studio Image"]</label>
                     <label class="addanime_photo-label">
-                        <input asp-for="StudioImage" accept="image/jpeg,image/png" hidden />
-                        <img src="/images/photo.jpg" />
+                        <input class="addanime_photo-input studio_image" asp-for="StudioImage" accept="image/jpeg,image/png" hidden />
+                        @localizer["Drag and drop images here."]
                     </label>
                     <div class="image-previews studio-previews"></div>
                     <span asp-validation-for="StudioImage"></span>

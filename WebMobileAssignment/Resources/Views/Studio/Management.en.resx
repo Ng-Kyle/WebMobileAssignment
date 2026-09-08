@@ -126,6 +126,9 @@
   <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="Drag and drop images here." xml:space="preserve">
+    <value>Drag and drop images here.</value>
+  </data>
   <data name="Enter Studio Description..." xml:space="preserve">
     <value>Enter Studio Description...</value>
   </data>

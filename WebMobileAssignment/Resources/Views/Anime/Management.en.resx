@@ -150,6 +150,9 @@
   <data name="Completed" xml:space="preserve">
     <value>Completed</value>
   </data>
+  <data name="Drag and drop images here." xml:space="preserve">
+    <value>Drag and drop images here.</value>
+  </data>
   <data name="episode_count" xml:space="preserve">
     <value>Episode Count</value>
   </data>
