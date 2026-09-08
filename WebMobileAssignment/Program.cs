@@ -9,10 +9,10 @@ builder.Services.AddControllersWithViews().AddViewLocalization()
         options.DataAnnotationLocalizerProvider = (type, factory) => factory.Create(typeof(SharedResource));
     });
 
-// Updated: Fetch connection string from appsettings.json
-builder.Services.AddSqlServer<DB>(
-    builder.Configuration.GetConnectionString("DefaultConnection")
-);
+builder.Services.AddSqlServer<DB>($@"
+    Data Source=(LocalDB)\MSSQLLocalDB;
+    AttachDbFilename={builder.Environment.ContentRootPath}\DB.mdf;
+");
 
 builder.Services.AddScoped<Helper>();
 builder.Services.AddAuthentication().AddCookie();
