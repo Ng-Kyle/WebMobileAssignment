@@ -7,91 +7,58 @@
     string currentSort = ViewBag.Sort as string ?? "name_asc";
 }
 
-<div class="productListSearchBar">
-    <form method="get" asp-controller="Studio" asp-action="Index">
-        <input type="hidden" name="sort" value="@currentSort" />
-        <input type="text"
-               name="search"
-               value="@ViewBag.Search"
-               placeholder="@localizer["Search anime studios..."]" />
-    </form>
-</div>
-
-<div class="search-container">
-    <aside class="productListSidebar">
-        <form class="productListFilter" method="get" asp-controller="Studio" asp-action="Index">
-            <input type="hidden" name="search" value="@ViewBag.Search" />
-
-            <div class="productListFilterContainer">
-                <h3>@localizer["Sort Studios"]</h3>
-                <div class="productListFilterGroup">
-                    <label>
-                        <input type="radio" name="sort" value="name_asc"
-                        @(currentSort == "name_asc" ? "checked" : "") /> @localizer["Name (A - Z)"]
-                    </label>
-                    <label>
-                        <input type="radio" name="sort" value="name_desc"
-                        @(currentSort == "name_desc" ? "checked" : "") /> @localizer["Name (Z - A)"]
-                    </label>
-                    <label>
-                        <input type="radio" name="sort" value="anime_count_desc"
-                        @(currentSort == "anime_count_desc" ? "checked" : "") /> @localizer["Most Animes"]
-                    </label>
-                    <label>
-                        <input type="radio" name="sort" value="anime_count_asc"
-                        @(currentSort == "anime_count_asc" ? "checked" : "") /> @localizer["Least Animes"]
-                    </label>
-                    <label>
-                        <input type="radio" name="sort" value="date_established"
-                        @(currentSort == "date_established" ? "checked" : "") /> @localizer["Date Established"]
-                    </label>
-                </div>
-            </div>
-
-            <button type="submit">@localizer["Apply Sort"]</button>
-            <a asp-controller="Studio" asp-action="Index">@localizer["Clear All"]</a>
-        </form>
-    </aside>
-
-    <div class="productListContent">
-        <h1>All Studios (@Model.Count())</h1>
-
-        @if (!Model.Any())
-        {
-            <div style="padding: 2rem; font-weight: bold; color: #555;">
-                @localizer["No studios found matching your search."]
-            </div>
-        }
-        else
-        {
-            <div class="studioListGrid">
-                @foreach (var studio in Model)
-                {
-                    <div class="studioCard">
-                        <a asp-action="Details" asp-route-id="@studio.StudioId">
-                            <div class="studioHeader">
-                                <h3>@studio.Name</h3>
-                                <span class="badgeCount">@(studio.Animes?.Count ?? 0) @localizer["Titles"]</span>
-                            </div>
-
-                            <div class="studioLogoWrapper">
-                                <img src="/images/studio/@(studio.ImageLink ?? "photo.jpg") alt="@studio.Name Logo" class="studioCardLogo" />
-                            </div>
-
-                            <p class="studioDesc">
-                                @(string.IsNullOrWhiteSpace(studio.Description)
-                                    ? localizer["No description available."]
-                                    : (studio.Description.Length > 90 ? studio.Description.Substring(0, 90) + "..." : studio.Description))
-                            </p>
-                        </a>
-                        <div class="buttonGroup">
-                            <a asp-action="Details" asp-route-id="@studio.StudioId" class="productListQuickAdd">
-                               @localizer["View Studio"] &rarr;
-                            </a>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
+<form data-ajax="true" data-ajax-update="#target" data-ajax-loading="#loader" id="f" method="get" asp-controller="Studio" asp-action="Index">
+    <div class="productListSearchBar">
+        @Html.TextBox("search", (string)ViewBag.Search, new
+            {
+                @class = "admin_searchbar", type = "search", autofocus = "", data_trim = "", placeholder = localizer["Search anime studios..."].Value}) 
+                <img src = "/images/loader.gif" id = "loader" style = "display: none; vertical-align: middle; height: 30px;" />
     </div>
-</div>
+
+    <div class="search-container">
+        <aside class="productListSidebar productListFilter">
+                <div class="productListFilterContainer">
+                    <h3>@localizer["Sort Studios"]</h3>
+                    <div class="productListFilterGroup">
+                        <label>
+                            <input type="radio" name="sort" value="name_asc"
+                            @(currentSort == "name_asc" ? "checked" : "") onchange="$('#f').submit()" /> @localizer["Name (A - Z)"]
+                        </label>
+                        <label>
+                            <input type="radio" name="sort" value="name_desc"
+                            @(currentSort == "name_desc" ? "checked" : "") onchange="$('#f').submit()" /> @localizer["Name (Z - A)"]
+                        </label>
+                        <label>
+                            <input type="radio" name="sort" value="anime_count_desc"
+                            @(currentSort == "anime_count_desc" ? "checked" : "") onchange="$('#f').submit()" /> @localizer["Most Animes"]
+                        </label>
+                        <label>
+                            <input type="radio" name="sort" value="anime_count_asc"
+                            @(currentSort == "anime_count_asc" ? "checked" : "") onchange="$('#f').submit()" /> @localizer["Least Animes"]
+                        </label>
+                        <label>
+                            <input type="radio" name="sort" value="date_established"
+                            @(currentSort == "date_established" ? "checked" : "") onchange="$('#f').submit()" /> @localizer["Date Established"]
+                        </label>
+                    </div>
+                </div>
+
+                <a asp-controller="Studio" asp-action="Index">@localizer["Clear All"]</a>
+        </aside>
+
+        <div class="productListContent" id="target">
+            <partial name="_StudioGrid" model="Model" />
+        </div>
+    </div>
+</form>
+
+@section foot {
+
+ <script>
+    let timer = null;
+        $('#search').on('input', () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => $('#f').submit(), 500);
+        });
+</script>
+}

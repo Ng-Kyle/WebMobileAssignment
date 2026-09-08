@@ -1,0 +1,42 @@
+﻿@model IEnumerable<WebMobileAssignment.Models.Studio>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
+
+<h1>@localizer["All Studios"] (@Model.Count())</h1>
+@if (!Model.Any())
+{
+    <div style="padding: 2rem; font-weight: bold; color: #555;">
+        @localizer["No studios found matching your search."]
+    </div>
+}
+else
+{
+    <div class="studioListGrid">
+        @foreach (var studio in Model)
+        {
+            <div class="studioCard">
+                <a asp-action="Details" asp-route-id="@studio.StudioId">
+                    <div class="studioHeader">
+                        <h3>@studio.Name</h3>
+                        <span class="badgeCount">@(studio.Animes?.Count ?? 0) @localizer["Titles"]</span>
+                    </div>
+
+                    <div class="studioLogoWrapper">
+                        <img src="/images/studio/@(studio.ImageLink ?? "photo.jpg")" alt="@studio.Name Logo" class="studioCardLogo" />
+                    </div>
+
+                    <p class="studioDesc">
+                        @(string.IsNullOrWhiteSpace(studio.Description)
+                            ? localizer["No description available."]
+                            : (studio.Description.Length > 90 ? studio.Description.Substring(0, 90) + "..." : studio.Description))
+                    </p>
+                </a>
+                <div class="buttonGroup">
+                    <a asp-action="Details" asp-route-id="@studio.StudioId" class="productListQuickAdd">
+                        @localizer["View Studio"] &rarr;
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+}
