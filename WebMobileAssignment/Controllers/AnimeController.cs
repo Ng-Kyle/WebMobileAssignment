@@ -63,21 +63,7 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         return View(m);
     }
 
-    public IActionResult Details(int id)
-    {
-        var anime = db.Animes
-            .Include(a => a.Studio)
-            .Include(a => a.Genres)
-            .Include(a => a.AnimeImages)
-            .Include(a => a.Reviews)
-            .FirstOrDefault(a => a.AnimeId == id);
-
-        if (anime == null)
-        {
-            return NotFound();
-        }
-        return View(anime);
-    }
+   
 
     //ADMIN SECTION
     public IActionResult Management(string? name, int? StudioId, int? GenreId, string? Status, string? sort, string? direction, int page = 1)

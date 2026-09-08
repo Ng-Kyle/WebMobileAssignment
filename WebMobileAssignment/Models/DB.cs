@@ -46,6 +46,7 @@ public class Admin : User
 public class WatchList
 {
     public int WatchListId { get; set; }
+    public int UserId { get; set; }
     [ForeignKey("UserId")]
     public Member Member { get; set; }
     public List<AnimeWatchList> AnimeWatchLists { get; set; } = [];

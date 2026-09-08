@@ -1,1 +1,40 @@
-﻿
+﻿@model IEnumerable<WebMobileAssignment.Models.AnimeWatchList>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
+
+@{
+    Layout = "_Layout";
+    string currentStatus = ViewBag.SelectedStatus as string ?? "All";
+}
+
+<form data-ajax="true"
+      data-ajax-update="#target"
+      data-ajax-loading="#loader"
+      id="f"
+      method="get"
+      asp-controller="Watchlist"
+      asp-action="Index">
+
+    <input type="hidden" id="statusFilterInput" name="status" value="@currentStatus" />
+
+    <div class="productListSearchBar">
+        @Html.TextBox("search", (string)ViewBag.Search,
+                 new { id = "search", @class = "admin_searchbar", type = "search", autofocus = "", data_trim = "", placeholder = localizer["Search your watchlist..."].Value })
+        <img src="/images/loader.gif" id="loader" style="display: none; vertical-align: middle; height: 30px;" />
+    </div>
+</form>
+
+<div id="target" style="margin-top: 1.5rem;">
+    <partial name="_WatchlistTable" model="Model" />
+</div>
+
+@section foot {
+    <script>
+        let timer = null;
+
+        $('#search').on('input', () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => $('#f').submit(), 500);
+        });
+    </script>
+}

@@ -15,7 +15,7 @@
     @RenderSection("head", false)
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="member_body">
+<body class="admin_body">
     <div class="info">@Html.Raw(TempData["Info"])</div>
 
     <header>
@@ -59,10 +59,11 @@
             </div>
         </nav>
     </header>
-
-    <main class="member_main">
-        @RenderBody()
-    </main>
+    <div class="admin_wrapper">
+        <main class="admin_main">
+            @RenderBody()
+        </main>
+    </div>
 
     <footer class="admin_footer">
         <div class="copyright">

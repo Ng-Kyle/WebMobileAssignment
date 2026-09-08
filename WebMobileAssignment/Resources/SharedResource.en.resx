@@ -223,7 +223,7 @@
     <value>ジャンルが見つかりません！</value>
   </data>
   <data name="Genre has been added." xml:space="preserve">
-    <value>ジャンルが追加されました。</value>
+    <value>Genre has been added.</value>
   </data>
   <data name="This genre already exists." xml:space="preserve">
     <value>This genre already exists.</value>

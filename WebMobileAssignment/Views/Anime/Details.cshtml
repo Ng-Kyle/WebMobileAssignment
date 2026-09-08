@@ -223,13 +223,13 @@
                         <select name="status" id="watchlistStatus" onchange="handleStatusChange()">
                             @if (isUnreleased)
                             {
-                                <option value="Plan to Watch" selected>Plan to Watch</option>
+                                <option value="Plan to Watch" selected>@localizer["Plan to Watch"]</option>
                             }
                             else
                             {
+                                <option value="Plan to Watch" selected>@localizer["Plan to Watch"]</option>
                                 <option value="Watching">@localizer["Watching"]</option>
                                 <option value="Completed">@localizer["Completed"]</option>
-                                <option value="Plan to Watch">@localizer["Plan to Watch"]</option>
                                 <option value="On-Hold">@localizer["On-Hold"]</option>
                                 <option value="Dropped">@localizer["Dropped"]</option>
                             }
@@ -356,12 +356,12 @@
 
             if (statusSelect.value === "Plan to Watch") {
                 progressInput.value = 0;
-                progressInput.disabled = true;
+                progressInput.readOnly = true;
                 progressInput.style.backgroundColor = "#e0e0e0";
                 progressInput.style.cursor = "not-allowed";
                 progressInput.style.pointerEvents = "none";
             } else {
-                progressInput.disabled = false;
+                progressInput.readOnly = false;
                 progressInput.style.backgroundColor = "#FFF4ED";
                 progressInput.style.cursor = "auto";
                 progressInput.style.pointerEvents = "auto";
