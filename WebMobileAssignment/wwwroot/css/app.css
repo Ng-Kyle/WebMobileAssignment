@@ -1123,6 +1123,210 @@ body {
     box-sizing: border-box;
 }
 
+/*watchlist*/
+.watchlistTabContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.2rem 0;
+    justify-content: center;
+}
+
+.watchlistTab {
+    padding: 0.5rem 1rem;
+    border: 2px solid #FF5E7E;
+    border-radius: 20px;
+    background-color: #ffffff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    user-select: none;
+}
+
+.watchlistTab:hover {
+    background-color: #ffe5d9;
+    transform: translateY(-2px);
+}
+
+.watchlistTab.active-tab {
+    background-color: #FFB2BD;
+    box-shadow: 2px 2px 0px #FF5E7E;
+}
+
+.watchlistSummaryBar {
+    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.watchlistGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.2rem;
+}
+
+.watchlistCard {
+    display: flex;
+    position: relative;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    background-color: #FFCDB2;
+    padding: 0.8rem;
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.85);
+    transition: transform 0.15s ease;
+}
+
+.watchlistCard:hover {
+    transform: translateY(-2px);
+}
+
+.watchlistThumb {
+    width: 90px;
+    height: 125px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1.5px solid #000000;
+    flex-shrink: 0;
+}
+
+.watchlistDetails {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 1rem;
+    flex-grow: 1;
+    padding-right: 1.5rem;
+}
+
+.watchlistTitle {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #000000;
+    text-decoration: none;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.watchlistTitle:hover {
+    text-decoration: underline;
+}
+
+.watchlistStudio {
+    font-size: 0.8rem;
+    color: #555;
+    margin-top: 0.2rem;
+}
+
+.watchlistStatusForm {
+    margin-top: 0.5rem;
+}
+
+.watchlistSelect {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+    border: 1.5px solid #000000;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: pointer;
+    outline: none;
+}
+
+.watchlistProgressControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+}
+
+.progressBtn {
+    width: 26px;
+    height: 26px;
+    border: 1.5px solid #000000;
+    border-radius: 4px;
+    background-color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s;
+}
+
+.progressBtn:hover:not(:disabled) {
+    background-color: #FFB2BD;
+}
+
+.progressBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.watchlistRemoveForm {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.watchlistRemoveBtn {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: #555;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color 0.15s, transform 0.15s;
+}
+
+.watchlistRemoveBtn:hover {
+    color: #d90429;
+    transform: scale(1.2);
+}
+
+.progressInputForm {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+.progressNumberBox {
+    width: 52px;
+    height: 26px;
+    text-align: center;
+    border: 1.5px solid #000000;
+    border-radius: 4px;
+    background-color: #ffffff;
+    font-weight: bold;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.progressNumberBox:focus {
+    background-color: #FFF4ED;
+    border-color: #000000;
+}
+
+.progressNumberBox::-webkit-outer-spin-button,
+.progressNumberBox::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.progressNumberBox[type=number] {
+    -moz-appearance: textfield;
+}
+
+.progressTotal {
+    font-size: 0.85rem;
+    color: #333;
+}
+
+
 /*ajax*/
 .ajax-loading {
     opacity: 0.5;

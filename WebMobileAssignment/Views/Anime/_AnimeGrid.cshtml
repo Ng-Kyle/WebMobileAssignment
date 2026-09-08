@@ -30,10 +30,8 @@ else
                     <p class="price">@localizer["Score"]: ⭐ @avgScore</p>
                 </a>
                 <div class="buttonGroup">
-                    <form asp-controller="Watchlist" asp-action="QuickAdd" method="post">
-                        <input type="hidden" name="animeId" value="@item.AnimeId" />
-                        <button type="submit" class="productListQuickAdd">+ @localizer["Watchlist"]</button>
-                    </form>
+                   <a data-ajax="true" data-ajax-method="POST" data-ajax-url="@Url.Action("QuickAdd", "Watchlist", new { animeId = item.AnimeId })" 
+                      data-ajax-success="alert('@localizer["Added to Watchlist!"]') " class="productListQuickAdd"> + @localizer["Watchlist"]</a>
                 </div>
             </div>
         }
