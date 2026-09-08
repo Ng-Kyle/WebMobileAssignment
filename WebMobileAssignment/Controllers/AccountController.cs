@@ -44,9 +44,13 @@ public class AccountController(DB db, Helper hp) : Controller
                 return Redirect(returnURL);
             }
 
-            return u.Role == "Admin"
-                ? RedirectToAction("Index", "Admin")
-                : RedirectToAction("Index", "Home");
+            // Redirect Admin to the Admin portal, Member to the Anime catalog
+            if (u.Role == "Admin")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
+            return RedirectToAction("Index", "Anime");
         }
 
         ViewBag.ReturnURL = returnURL;

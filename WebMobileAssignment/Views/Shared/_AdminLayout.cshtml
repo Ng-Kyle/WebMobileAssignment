@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer localizer
 @inject DB db
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +24,8 @@
             <div class="admin_topnav-end">
                 <a asp-controller="Language" asp-action="Index" asp-route-culture="ja">日本語</a>
                 <a asp-controller="Language" asp-action="Index" asp-route-culture="en">English</a>
-                <a>@localizer["logout"]</a>
+
+                <a asp-controller="Account" asp-action="Logout">@localizer["logout"]</a>
             </div>
         </nav>
     </header>
@@ -34,8 +36,8 @@
                 <a class="@ViewBag.AdminStudios" href="/Studio/Management">@localizer["studio_side"]</a>
                 <a class="@ViewBag.AdminGenres" href="/Genre/Management">@localizer["genre_side"]</a>
                 <a class="@ViewBag.AdminMembers" href="/Member/Management">@localizer["member_side"]</a>
-                <a class="@ViewBag.AdminReviews">@localizer["review_side"]</a>
-                <a class="@ViewBag.AdminProfile">@localizer["profile_side"]</a>
+                <a class="@ViewBag.AdminReviews" href="/Admin/Reviews">@localizer["review_side"]</a>
+                <a class="@ViewBag.AdminProfile" href="/Account/Profile">@localizer["profile_side"]</a>
             </nav>
         </aside>
         <main class="admin_main">

@@ -11,6 +11,11 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
     //ANIME CATALOGUE
     public IActionResult Index(string? search, int? studioId, List<int> genreIds, int? min, int? max)
     {
+        // Redirect Admin directly to the admin dashboard
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Admin");
+        }
         search = search?.Trim() ?? "";
 
         var query = db.Animes

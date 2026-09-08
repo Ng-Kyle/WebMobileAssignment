@@ -10,6 +10,11 @@ public class HomeController(DB db) : Controller
 {
    public IActionResult Index()
     {
-        return View();
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Management", "Anime");
+        }
+
+        return RedirectToAction("Index", "Anime");
     }
 }
