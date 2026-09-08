@@ -1,23 +1,12 @@
 ﻿@model WebMobileAssignment.Models.Anime
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @{
     Layout = "_Layout";
 
-    string ResolveImagePath(string? link)
-    {
-        if (string.IsNullOrWhiteSpace(link))
-            return "/images/frieren.jpg";
-        if (link.StartsWith("http") || link.StartsWith("/"))
-            return link;
-        if (link.Contains("/"))
-            return "/" + link;
-        return "/images/anime/" + link;
-    }
-
-    var rawMain = Model.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink
-               ?? Model.AnimeImages?.FirstOrDefault()?.ImageLink;
-
-    var mainImage = ResolveImagePath(rawMain);
+    var thumb = Model.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink
+             ?? Model.AnimeImages?.FirstOrDefault()?.ImageLink
+             ?? "photo.jpg";
 
     var avgScore = Model.Reviews != null && Model.Reviews.Any()
         ? Model.Reviews.Average(r => r.Rating).ToString("0.0")
@@ -28,21 +17,17 @@
 <div class="productDetailsProductContent">
     <div class="productDetailsProductImgContainer">
         <div class="productDetailsImgView">
-            <img id="productDetailsDisplayIMG" src="@mainImage" asp-append-version="true" alt="@Model.Name">
+            <img id="productDetailsDisplayIMG" src="/images/anime/@thumb" asp-append-version="true" alt="@Model.Name">
         </div>
 
         @if (Model.AnimeImages != null && Model.AnimeImages.Count > 1)
         {
             <div class="productDetailsThumbnailBar">
                 <div class="productDetailsThumbnailInner">
-                    @foreach (var img in Model.AnimeImages)
+                    @foreach (var img in Model.AnimeImages.OrderBy(i => i.DisplayOrder))
                     {
-                        var thumbPath = ResolveImagePath(img.ImageLink);
-                        <img class="productDetailsThumbIMG"
-                             src="@thumbPath"
-                             asp-append-version="true"
-                             alt="Thumbnail"
-                             onclick="swapImage('@thumbPath', this)" />
+                        var thumbPath = img.ImageLink ?? "photo.jpg";
+                        <img class="productDetailsThumbIMG @(thumbPath == thumb ? "active-thumb" : "")" src="/images/anime/@thumbPath" asp-append-version="true" alt="Thumbnail" onclick="swapImage('/images/anime/@thumbPath', this)" />
                     }
                 </div>
             </div>
@@ -65,80 +50,128 @@
             }
             else
             {
-                <span class="genreBadge">General</span>
+                <span class="genreBadge">@localizer["General"]</span>
             }
         </div>
 
         <div class="animeMetaGrid">
             <div class="metaItem">
-                <span class="metaKey">Studio:</span>
+                <span class="metaKey">@localizer["Studio"]:</span>
                 <span class="metaVal">@(Model.Studio?.Name ?? "Unknown")</span>
             </div>
             <div class="metaItem">
-                <span class="metaKey">Episodes:</span>
+                <span class="metaKey">@localizer["Episodes"]:</span>
                 <span class="metaVal">@Model.Episodes</span>
             </div>
             <div class="metaItem">
-                <span class="metaKey">Status:</span>
+                <span class="metaKey">@localizer["Status"]:</span>
                 <span class="metaVal">@Model.Status</span>
             </div>
             <div class="metaItem">
-                <span class="metaKey">Release Date:</span>
-                <span class="metaVal">@(Model.ReleaseDate?.ToString("MMM dd, yyyy") ?? "TBA")</span>
+                <span class="metaKey">@localizer["Release Date"]:</span>
+                <span class="metaVal">@(Model.ReleaseDate?.ToString("MMM dd, yyyy") ?? localizer["TBA"].Value)</span>
             </div>
             @if (!string.IsNullOrWhiteSpace(Model.TrailerLink))
             {
                 <div class="metaItem metaItemFull">
-                    <span class="metaKey">Trailer:</span>
+                    <span class="metaKey">@localizer["Trailer"]:</span>
                     <span class="metaVal">
-                        <a href="@Model.TrailerLink" target="_blank" class="trailerLink">Watch on YouTube ↗</a>
+                        <a href="@Model.TrailerLink" target="_blank" class="trailerLink">@localizer["Watch on YouTube"] ↗</a>
                     </span>
                 </div>
             }
         </div>
 
         <div class="productDetailsDescriptionBox">
-            <h3>Synopsis</h3>
-            <p>@(string.IsNullOrWhiteSpace(Model.Synopsis) ? "No synopsis has been provided for this title yet." : Model.Synopsis)</p>
+            <h3>@localizer["Synopsis"]</h3>
+            <p>@(string.IsNullOrWhiteSpace(Model.Synopsis) ? localizer["No synopsis has been provided for this title yet."] : Model.Synopsis)</p>
         </div>
 
+            @{
+                bool isUnreleased = Model.Status?.Equals("Not Yet Aired", StringComparison.OrdinalIgnoreCase) == true
+                || Model.Status?.Equals("Unreleased", StringComparison.OrdinalIgnoreCase) == true
+                || (Model.ReleaseDate.HasValue && Model.ReleaseDate.Value > DateOnly.FromDateTime(DateTime.Today));
+            }
+
         <div class="watchlistActionBox">
-            <h4>Update Watchlist</h4>
-            <form method="post" class="productDetailsAddCartButton">
-                <input type="hidden" name="AnimeId" value="@Model.AnimeId" />
+            <h4>@localizer["Update Watchlist"]</h4>
+            <form asp-controller="Watchlist" asp-action="SaveOrUpdate" method="post" class="productDetailsAddCartButton">
+                <input type="hidden" name="animeId" value="@Model.AnimeId" />
 
                 <div class="formRowGroup">
                     <div class="productDetailsQuantityInput">
-                        <label>Status:</label>
-                        <select name="status">
-                            <option value="Watching">Watching</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Plan to Watch">Plan to Watch</option>
-                            <option value="On-Hold">On-Hold</option>
-                            <option value="Dropped">Dropped</option>
+                        <label>@localizer["Status"]:</label>
+                        <select name="status" id="watchlistStatus" onchange="handleStatusChange()">
+                            @if (isUnreleased)
+                            {
+                                <option value="Plan to Watch" selected>Plan to Watch</option>
+                            }
+                            else
+                            {
+                             <option value="Watching">@localizer["Watching"]</option>
+                             <option value="Completed">@localizer["Completed"]</option>
+                             <option value="Plan to Watch">@localizer["Plan to Watch"]</option>
+                             <option value="On-Hold">@localizer["On-Hold"]</option>
+                             <option value="Dropped">@localizer["Dropped"]</option>
+                            }
                         </select>
                     </div>
 
                     <div class="productDetailsQuantityInput">
-                        <label>Progress:</label>
-                        <input type="number" name="progress" min="0" max="@Model.Episodes" value="0" />
-                        <span>/ @Model.Episodes eps</span>
+                        <label>@localizer["Progress"]:</label>
+                        <input type="number" name="progress" id="watchlistProgress" min="0" max="@Model.Episodes" value="0" />
+                        <span>/ @Model.Episodes @localizer["eps"]</span>
                     </div>
                 </div>
 
-                <button type="button" class="productDetailsBtn">+ Save to Watchlist</button>
+                <button type="submit" class="productDetailsBtn">+ @localizer["Save to Watchlist"]</button>
             </form>
         </div>
     </div>
 </div>
 
-@section Scripts {
+@section foot {
     <script>
         function swapImage(imgSrc, element) {
             const mainImg = document.getElementById('productDetailsDisplayIMG');
             if (mainImg) {
-                mainImg.src = imgSrc;
+                mainImg.style.opacity = '0.4';
+                setTimeout(() => {
+                    mainImg.src = imgSrc;
+                    mainImg.style.opacity = '1';
+                }, 120);
             }
+            
+            document.querySelectorAll('.productDetailsThumbIMG').forEach(el => el.classList.remove('active-thumb'));
+            if (element) {
+                element.classList.add('active-thumb');
+            }  
+        }
+
+        function handleStatusChange() {
+            const statusSelect = document.getElementById('watchlistStatus');
+            const progressInput = document.getElementById('watchlistProgress');
+
+            if (!statusSelect || !progressInput) return;
+
+            if (statusSelect.value === "Plan to Watch") {
+                progressInput.value = 0;
+                progressInput.disabled = true;
+                progressInput.style.backgroundColor = "#e0e0e0";
+                progressInput.style.cursor = "not-allowed";
+                progressInput.style.pointerEvents = "none";
+            } else {
+                progressInput.disabled = false;
+                progressInput.style.backgroundColor = "#FFF4ED";
+                progressInput.style.cursor = "auto";
+                progressInput.style.pointerEvents = "auto";
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener("DOMContentLoaded", handleStatusChange);
+        } else {
+            handleStatusChange();
         }
     </script>
 }

@@ -1,0 +1,41 @@
+﻿@model IEnumerable<WebMobileAssignment.Models.Anime>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
+
+<h1>@localizer["All Anime"] (@Model.Count())</h1>
+
+@if (!Model.Any())
+{
+    <div style="padding: 2rem; font-weight: bold; color: #555;">
+        @localizer["No anime matched your search/filter criteria."]
+    </div>
+}
+else
+{
+    <div class="productListProductsSide">
+        @foreach (var item in Model)
+        {
+            var thumb = item.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink
+                     ?? item.AnimeImages?.FirstOrDefault()?.ImageLink
+                     ?? "photo.jpg";
+
+            var avgScore = item.Reviews != null && item.Reviews.Any()
+                ? item.Reviews.Average(r => r.Rating).ToString("0.0")
+                : "N/A";
+
+            <div class="productListProductsCard">
+                <a asp-action="Details" asp-route-id="@item.AnimeId">
+                    <img src="/images/anime/@thumb" asp-append-version="true" alt="@item.Name" />
+                    <h3>@item.Name</h3>
+                    <p class="price">@localizer["Score"]: ⭐ @avgScore</p>
+                </a>
+                <div class="buttonGroup">
+                    <form asp-controller="Watchlist" asp-action="QuickAdd" method="post">
+                        <input type="hidden" name="animeId" value="@item.AnimeId" />
+                        <button type="submit" class="productListQuickAdd">+ @localizer["Watchlist"]</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}
