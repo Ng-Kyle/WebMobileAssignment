@@ -171,3 +171,65 @@ public class MemberReviewVM
     [StringLength(1000, ErrorMessage = "Review cannot exceed 1000 characters.")]
     public string Text { get; set; } = string.Empty;
 }
+public class LoginVM
+{
+    [Required, StringLength(100), EmailAddress]
+    public string Email { get; set; }
+
+    [Required, StringLength(100, MinimumLength = 5), DataType(DataType.Password)]
+    public string Password { get; set; }
+
+    public bool RememberMe { get; set; }
+}
+
+public class RegisterVM
+{
+    [Required, StringLength(30)]
+    public string UserName { get; set; }
+
+    [Required, StringLength(100), EmailAddress]
+    [Remote("CheckEmail", "Account", ErrorMessage = "Email already in use.")]
+    public string Email { get; set; }
+
+    [Required, StringLength(100, MinimumLength = 5), DataType(DataType.Password)]
+    public string Password { get; set; }
+
+    [Required, Compare("Password"), DataType(DataType.Password)]
+    [DisplayName("Confirm Password")]
+    public string Confirm { get; set; }
+
+    public IFormFile? Photo { get; set; }
+}
+
+public class ResetPasswordVM
+{
+    [Required, StringLength(100), EmailAddress]
+    public string Email { get; set; }
+}
+
+public class UpdateProfileVM
+{
+    public string? Email { get; set; }
+
+    [Required, StringLength(30)]
+    public string UserName { get; set; }
+
+    public string? ImageLink { get; set; }
+
+    public IFormFile? Photo { get; set; }
+}
+
+public class UpdatePasswordVM
+{
+    [Required, DataType(DataType.Password)]
+    [DisplayName("Current Password")]
+    public string Current { get; set; }
+
+    [Required, StringLength(100, MinimumLength = 5), DataType(DataType.Password)]
+    [DisplayName("New Password")]
+    public string New { get; set; }
+
+    [Required, Compare("New"), DataType(DataType.Password)]
+    [DisplayName("Confirm Password")]
+    public string Confirm { get; set; }
+}

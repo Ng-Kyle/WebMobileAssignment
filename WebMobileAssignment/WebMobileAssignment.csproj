@@ -19,11 +19,6 @@
   <ItemGroup>
     <Folder Include="Resources\Views\Admin\" />
     <Folder Include="wwwroot\images\anime\" />
-	  
-	  
-	  
-	  
-	  
     <Folder Include="wwwroot\images\member\" />
     <Folder Include="wwwroot\images\studio\" />
   </ItemGroup>

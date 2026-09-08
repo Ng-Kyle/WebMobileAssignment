@@ -1,0 +1,48 @@
+﻿@model WebMobileAssignment.Models.RegisterVM
+
+@{
+    ViewBag.Title = "Account | Register";
+}
+
+<form method="post" enctype="multipart/form-data" class="form">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <label asp-for="UserName"></label>
+    <input asp-for="UserName" autofocus />
+    <span asp-validation-for="UserName"></span>
+
+    <label asp-for="Email"></label>
+    <input asp-for="Email" />
+    <span asp-validation-for="Email"></span>
+
+    <label asp-for="Password"></label>
+    <input asp-for="Password" />
+    <span asp-validation-for="Password"></span>
+
+    <label asp-for="Confirm"></label>
+    <input asp-for="Confirm" />
+    <span asp-validation-for="Confirm"></span>
+
+    <label asp-for="Photo"></label>
+    <label class="upload">
+        <input asp-for="Photo" accept="image/jpeg,image/png" hidden />
+        <img src="/images/photo.jpg" />
+    </label>
+    <span asp-validation-for="Photo"></span>
+
+    <section>
+        <button>Register</button>
+        <button type="reset">Reset</button>
+    </section>
+</form>
+
+<p>
+    Already have an account? <a href="/Account/Login">Login here</a>
+</p>
+
+@section foot {
+    <script>
+        // Enables client-side validation for hidden file inputs
+        $.validator.setDefaults({ ignore: '' });
+    </script>
+}
