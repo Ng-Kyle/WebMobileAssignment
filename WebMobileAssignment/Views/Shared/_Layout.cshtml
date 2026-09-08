@@ -1,6 +1,7 @@
 ﻿@inject DB db
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer localizer
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,16 +27,17 @@
             </div>
 
             <div class="member_nav_links">
-    <a asp-controller="Anime" asp-action="Index">@Localizer["anime_side"]</a>
-    <a asp-controller="Studio" asp-action="Index">@Localizer["studio_side"]</a>
-    <a asp-controller="Watchlist" asp-action="Index">@Localizer["My Watchlist"]</a>
-    <a asp-controller="Member" asp-action="ProgressStats">@Localizer["Progress Stats"]</a>
-</div>
-<div class="admin_topnav-end">
-    <a asp-controller="Language" asp-action="Index" asp-route-culture="ja">日本語</a>
-    <a asp-controller="Language" asp-action="Index" asp-route-culture="en">English</a>
-    <a>@Localizer["logout"]</a>
-</div>
+                <a asp-controller="Anime" asp-action="Index">@localizer["anime_side"]</a>
+                <a asp-controller="Studio" asp-action="Index">@localizer["studio_side"]</a>
+                <a asp-controller="Watchlist" asp-action="Index">@localizer["My Watchlist"]</a>
+                <a asp-controller="Member" asp-action="ProgressStats">@localizer["Progress Stats"]</a>
+            </div>
+
+            <div class="admin_topnav-end">
+                <a asp-controller="Language" asp-action="Index" asp-route-culture="ja">日本語</a>
+                <a asp-controller="Language" asp-action="Index" asp-route-culture="en">English</a>
+                <a asp-controller="Account" asp-action="Logout">@localizer["logout"]</a>
+            </div>
         </nav>
     </header>
 

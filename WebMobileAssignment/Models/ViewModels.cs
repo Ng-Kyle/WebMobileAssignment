@@ -16,15 +16,16 @@ public class AnimeManagementVM
     public List<AnimeVM> AnimeVMs { get; set; } = [];
 
     [ValidateNever]
-    public IPagedList<Anime> Animes{  get; set; }
+    public IPagedList<Anime> Animes { get; set; }
 }
 
 public class AnimeVM
 {
     public List<GenreVM> Genres { get; set; } = [];
     public int AnimeID { get; set; }
+
     [Required(ErrorMessage = "NameRequiredError")]
-    [StringLength(100, MinimumLength = 1,ErrorMessage = "NameLengthError")]
+    [StringLength(100, MinimumLength = 1, ErrorMessage = "NameLengthError")]
     public string Name { get; set; }
 
     [Required(ErrorMessage = "EpisodesRequiredError")]
@@ -56,34 +57,44 @@ public class GenreManagementVM
     [StringLength(50, MinimumLength = 1, ErrorMessage = "NameLengthError")]
     [Required(ErrorMessage = "NameRequiredError")]
     public string Name { get; set; }
+
     [ValidateNever]
     public IPagedList<Genre> Genres { get; set; }
 }
+
 public class GenreVM
 {
     public int GenreID { get; set; }
     public string Name { get; set; }
     public bool Selected { get; set; }
 }
+
 public class StudioManagementVM
 {
-    public StudioVM StudioVM{  get; set; }
+    public StudioVM StudioVM { get; set; }
+
     [ValidateNever]
-    public IPagedList<Studio> Studios { get; set; } 
+    public IPagedList<Studio> Studios { get; set; }
 }
+
 public class StudioVM
 {
     public int StudioID { get; set; }
+
     [Required(ErrorMessage = "NameRequiredError")]
     [StringLength(100, MinimumLength = 1, ErrorMessage = "NameLengthError")]
     public string Name { get; set; }
+
     [StringLength(1000, ErrorMessage = "DescriptionLengthError")]
     public string? Description { get; set; }
+
     [DataType(DataType.Date)]
     [Required(ErrorMessage = "DateEstablishedRequiredError")]
     public DateOnly DateEstablished { get; set; }
+
     [Required(ErrorMessage = "An image of the studio's logo is required.")]
     public IFormFile StudioImage { get; set; }
+
     public List<Anime> Animes { get; set; } = [];
     public string? ImageLink { get; set; }
 }
@@ -146,12 +157,17 @@ public class AdminReviewIndexVM
 public class MemberReviewVM
 {
     public int ReviewId { get; set; }
-    public int AnimeId { get; set; }
-    public string AnimeName { get; set; }
 
+    [Required]
+    public int AnimeId { get; set; }
+
+    public string? AnimeName { get; set; }
+
+    [Required]
     [Range(1, 10, ErrorMessage = "Rating must be between 1 and 10.")]
     public int Rating { get; set; }
 
-    [Required, StringLength(1000, ErrorMessage = "Review cannot exceed 1000 characters.")]
-    public string Text { get; set; }
+    [Required(ErrorMessage = "Review text is required.")]
+    [StringLength(1000, ErrorMessage = "Review cannot exceed 1000 characters.")]
+    public string Text { get; set; } = string.Empty;
 }

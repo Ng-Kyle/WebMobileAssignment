@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using WebMobileAssignment.Models;
 using X.PagedList.Extensions;
 
 namespace WebMobileAssignment.Controllers;
 
-public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource> localizer): Controller
+public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource> localizer) : Controller
 {
     public IActionResult Management(string? name, string? sort, string? direction, int page = 1)
     {
         ViewBag.Name = name = name?.Trim() ?? "";
-        var searched = db.Members.Include(a => a.Reviews).Include(a=>a.WatchList).ThenInclude(w => w.AnimeWatchLists).Where(a => a.UserName.Contains(name) || a.Email.Contains(name));
+        var searched = db.Members.Include(a => a.Reviews).Include(a => a.WatchList).ThenInclude(w => w.AnimeWatchLists).Where(a => a.UserName.Contains(name) || a.Email.Contains(name));
 
         ViewBag.Sort = sort;
         ViewBag.Direction = direction;
@@ -42,11 +43,12 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
         }
         return View(a);
     }
+
     [HttpPost]
     public IActionResult Block(int userId)
     {
         var user = db.Members.Find(userId);
-        if(user == null)
+        if (user == null)
         {
             TempData["Info"] = localizer["No member found!"].Value;
             return RedirectToAction("Management");
@@ -56,6 +58,7 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
         TempData["Info"] = localizer["MemberBlocked", user.UserName].Value;
         return RedirectToAction("Management");
     }
+
     [HttpPost]
     public IActionResult Unblock(int userId)
     {
@@ -67,12 +70,13 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
         }
         user.IsBlocked = false;
         db.SaveChanges();
-        TempData["Info"] = localizer["MemberUnblocked",user.UserName].Value;
+        TempData["Info"] = localizer["MemberUnblocked", user.UserName].Value;
         return RedirectToAction("Management");
     }
+
     public IActionResult ManagementDetails(int userId)
     {
-        var user = db.Members.Include(m => m.Reviews).Include(m => m.WatchList).ThenInclude(m => m.AnimeWatchLists).ThenInclude(m=> m.Anime).ThenInclude(m => m.AnimeImages).FirstOrDefault(m => m.UserId == userId);
+        var user = db.Members.Include(m => m.Reviews).Include(m => m.WatchList).ThenInclude(m => m.AnimeWatchLists).ThenInclude(m => m.Anime).ThenInclude(m => m.AnimeImages).FirstOrDefault(m => m.UserId == userId);
         if (user == null)
         {
             return RedirectToAction("Management");
@@ -82,7 +86,6 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
 
     public async Task<IActionResult> ProgressStats(int userId)
     {
-        // Fetch user's watchlist items with attached Anime details
         var userWatchlist = await db.AnimeWatchLists
             .Include(aw => aw.Anime)
             .Where(aw => aw.WatchList.Member.UserId == userId)
@@ -117,7 +120,6 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
 
     public async Task<IActionResult> RatingStats(int userId)
     {
-        // Fetch member's reviews with associated Anime data
         var memberReviews = await db.Reviews
             .Include(r => r.Anime)
             .Where(r => r.Member.UserId == userId)
@@ -139,7 +141,6 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
                 .ToList()
         };
 
-        // Populate score breakdown from 1 to 10
         for (int score = 1; score <= 10; score++)
         {
             vm.RatingDistribution[score] = memberReviews.Count(r => r.Rating == score);
@@ -150,7 +151,6 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
 
     public async Task<IActionResult> PreferencesStats(int userId)
     {
-        // Load watchlist items along with related WatchList.Member, Anime, Genres, Studios, and Reviews
         var watchlistItems = await db.AnimeWatchLists
             .Include(w => w.WatchList)
                 .ThenInclude(wl => wl.Member)
@@ -164,7 +164,6 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
             .Where(w => w.WatchList.Member.UserId == userId)
             .ToListAsync();
 
-        // Group and rank by Genre
         var genreStats = watchlistItems
             .SelectMany(w => w.Anime.Genres.Select(g => new { Genre = g.Name, Anime = w.Anime }))
             .GroupBy(x => x.Genre)
@@ -181,7 +180,6 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
             .Take(5)
             .ToList();
 
-        // Group and rank by Studio
         var studioStats = watchlistItems
             .Where(w => w.Anime.Studio != null)
             .GroupBy(w => w.Anime.Studio!.Name)
@@ -207,24 +205,28 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
         return View(vm);
     }
 
-    // POST: Create or Update Member Review + Rating
+    // POST: Member/SaveReview
     [HttpPost]
     public async Task<IActionResult> SaveReview(MemberReviewVM vm)
     {
-        int userId = HttpContext.Session.GetInt32("UserId") ?? 1; // Adapt to your Auth system
+        int? userId = HttpContext.Session.GetInt32("UserId");
+        if (!userId.HasValue)
+        {
+            TempData["Error"] = "You must be logged in to leave a review.";
+            return RedirectToAction("Details", "Anime", new { id = vm.AnimeId });
+        }
 
         if (!ModelState.IsValid)
         {
-            TempData["Error"] = "Invalid review payload.";
+            TempData["Error"] = "Please provide a valid rating (1-10) and review text.";
             return RedirectToAction("Details", "Anime", new { id = vm.AnimeId });
         }
 
         var existingReview = await db.Reviews
-            .FirstOrDefaultAsync(r => r.Anime.AnimeId == vm.AnimeId && r.Member.UserId == userId);
+            .FirstOrDefaultAsync(r => r.Anime.AnimeId == vm.AnimeId && r.Member.UserId == userId.Value);
 
         if (existingReview != null)
         {
-            // Update Review
             existingReview.Rating = vm.Rating;
             existingReview.Text = vm.Text;
             existingReview.UpdatedAt = DateTime.Now;
@@ -233,8 +235,7 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
         }
         else
         {
-            // Create Review
-            var member = await db.Members.FirstAsync(m => m.UserId == userId);
+            var member = await db.Members.FirstAsync(m => m.UserId == userId.Value);
             var anime = await db.Animes.FirstAsync(a => a.AnimeId == vm.AnimeId);
 
             var newReview = new Review
@@ -247,28 +248,33 @@ public class MemberController (DB db, Helper hp, IStringLocalizer<SharedResource
                 Anime = anime
             };
             db.Reviews.Add(newReview);
-            TempData["Info"] = "Your review has been published!";
+            TempData["Info"] = "Thank you! Your review has been posted.";
         }
 
         await db.SaveChangesAsync();
         return RedirectToAction("Details", "Anime", new { id = vm.AnimeId });
     }
 
-    // POST: Member Delete Review
+    // POST: Member/DeleteMyReview
     [HttpPost]
-    public async Task<IActionResult> DeleteMyReview(int reviewId)
+    public async Task<IActionResult> DeleteMyReview(int reviewId, int animeId)
     {
-        int userId = HttpContext.Session.GetInt32("UserId") ?? 1;
-        var review = await db.Reviews.FirstOrDefaultAsync(r => r.ReviewId == reviewId && r.Member.UserId == userId);
+        int? userId = HttpContext.Session.GetInt32("UserId");
+        if (!userId.HasValue)
+        {
+            return RedirectToAction("Details", "Anime", new { id = animeId });
+        }
+
+        var review = await db.Reviews
+            .FirstOrDefaultAsync(r => r.ReviewId == reviewId && r.Member.UserId == userId.Value);
 
         if (review != null)
         {
             db.Reviews.Remove(review);
             await db.SaveChangesAsync();
-            TempData["Info"] = "Review deleted successfully.";
+            TempData["Info"] = "Your review was deleted successfully.";
         }
-        return RedirectToAction("Management", "Member");
+
+        return RedirectToAction("Details", "Anime", new { id = animeId });
     }
 }
-
-

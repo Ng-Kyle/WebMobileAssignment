@@ -403,4 +403,50 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         TempData["Info"] = localizer["AnimeDeletedCount", n].Value;
         return RedirectToAction("Management");
     }
+
+    // GET: Anime/Details/5
+    public async Task<IActionResult> Details(int? id, string sort = "newest")
+    {
+        if (!id.HasValue)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        // 1. Fetch Anime along with Images, Genres, Studio, and Reviews (with Member)
+        var anime = await db.Animes
+            .Include(a => a.AnimeImages)
+            .Include(a => a.Genres)
+            .Include(a => a.Studio)
+            .Include(a => a.Reviews)
+                .ThenInclude(r => r.Member)
+            .FirstOrDefaultAsync(a => a.AnimeId == id.Value);
+
+        if (anime == null)
+        {
+            return NotFound();
+        }
+
+        // 2. Sort Reviews
+        if (anime.Reviews != null)
+        {
+            anime.Reviews = sort switch
+            {
+                "highest" => anime.Reviews.OrderByDescending(r => r.Rating).ToList(),
+                "lowest" => anime.Reviews.OrderBy(r => r.Rating).ToList(),
+                _ => anime.Reviews.OrderByDescending(r => r.CreatedAt).ToList() // Default: newest
+            };
+        }
+
+        // 3. Identify Logged-in Member & Existing Review
+        int? currentUserId = HttpContext.Session.GetInt32("UserId"); // Adjust session key if different
+        ViewBag.CurrentUserId = currentUserId;
+
+        if (currentUserId.HasValue && anime.Reviews != null)
+        {
+            ViewBag.MyReview = anime.Reviews.FirstOrDefault(r => r.Member?.UserId == currentUserId.Value);
+        }
+
+        return View(anime);
+    }
 }
+
