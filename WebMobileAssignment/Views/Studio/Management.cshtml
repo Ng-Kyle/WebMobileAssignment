@@ -42,8 +42,8 @@
         <div class="addanime_input-container">
             <label class="addanime_label" asp-for="StudioVM.StudioImage">@localizer["Studio Image"]</label>
             <label class="addanime_photo-label">
-                <input asp-for="StudioVM.StudioImage" accept="image/jpeg,image/png" hidden />
-                <img src="/images/photo.jpg" />
+                <input class="addanime_photo-input studio_image" asp-for="StudioVM.StudioImage" accept="image/jpeg,image/png" hidden />
+                @localizer["Drag and drop images here."]
             </label>
             <div class="image-previews studio-previews"></div>
             <span asp-validation-for="StudioVM.StudioImage"></span>

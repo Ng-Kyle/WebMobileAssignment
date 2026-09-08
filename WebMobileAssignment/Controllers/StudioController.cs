@@ -200,6 +200,12 @@ public class StudioController(DB db, Helper hp, IStringLocalizer<SharedResource>
         };
 
         var studios = query.ToList();
+
+        if (Request.IsAjax())
+        {
+            return PartialView("_StudioGrid", studios);
+        }
+
         return View(studios);
 
     }

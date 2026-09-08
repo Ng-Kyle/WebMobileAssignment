@@ -83,8 +83,8 @@
                 <div class="addanime_input-container">
                     <label class="addanime_label" asp-for="AnimeImageFiles">@localizer["Replace Anime Images"]</label>
                     <label class="addanime_photo-label">
-                        <input asp-for="AnimeImageFiles" accept="image/jpeg,image/png" hidden multiple/>
-                        <img src="/images/photo.jpg"/>
+                        <input class="addanime_photo-input" asp-for="AnimeImageFiles" accept="image/jpeg,image/png" hidden multiple/>
+                        @localizer["Drag and drop images here."]
                     </label>
                     <div class="image-previews"></div>
                     <span asp-validation-for="AnimeImageFiles"></span>

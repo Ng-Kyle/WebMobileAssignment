@@ -78,7 +78,7 @@ $('.upload input').on('change', e => {
 });
 
 //Append Images to Add Image container
-$('.addanime_photo-label input').on('change', e => {
+$(document).on('change','.addanime_photo-label input', e => {
     const files = e.target.files;
     const container = $(e.target).closest('.addanime_input-container').find('.image-previews');
     container.empty();
@@ -169,3 +169,32 @@ $(document).on('change', '.addanime_batch select[name$=".Status"]', e => {
         date.removeAttr('max');
     }
 });
+
+$(document).on('dragover dragenter', '.addanime_photo-label', e => {
+    e.stopPropagation();
+    e.preventDefault();
+    $(e.currentTarget).addClass('dragover')
+})
+
+$(document).on('dragleave drop', '.addanime_photo-label', e => {
+    e.stopPropagation();
+    e.preventDefault();
+    $(e.currentTarget).removeClass('dragover')
+})
+
+$(document).on('drop', '.addanime_photo-label', e => {
+    e.stopPropagation();
+    e.preventDefault();
+    const input = $(e.currentTarget).find('.addanime_photo-input')[0];
+    const files = e.originalEvent.dataTransfer.files;
+    const dataTransfer = new DataTransfer();
+    if ($(input).hasClass('studio_image')) {
+        dataTransfer.items.add(files[0])
+    } else {
+        for (const file of files) {
+            dataTransfer.items.add(file);
+        }
+    }
+    input.files = dataTransfer.files;
+    $(input).trigger('change');
+})

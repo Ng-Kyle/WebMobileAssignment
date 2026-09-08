@@ -147,13 +147,16 @@
   <data name="Studio List" xml:space="preserve">
     <value>スタジオ一覧</value>
   </data>
-  <data name="Animes Released" xml:space="preserve">
-    <value>アニメの作品数</value>
-  </data>
   <data name="Studio Details" xml:space="preserve">
     <value>スタジオ詳細</value>
   </data>
   <data name="There are no animes created by this studio in the database!" xml:space="preserve">
     <value>このスタジオが制作したアニメはデータベースにありません！</value>
+  </data>
+  <data name="Animes Released" xml:space="preserve">
+    <value>アニメの作品数</value>
+  </data>
+  <data name="Drag and drop images here." xml:space="preserve">
+    <value>ここに画像をドラッグ＆ドロップしてください。</value>
   </data>
 </root>
