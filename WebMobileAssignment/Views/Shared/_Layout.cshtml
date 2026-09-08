@@ -1,6 +1,7 @@
 ﻿@inject DB db
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer localizer
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +15,7 @@
     @RenderSection("head", false)
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="member_body">
+<body class="admin_body">
     <div class="info">@Html.Raw(TempData["Info"])</div>
 
     <header>
@@ -29,18 +30,21 @@
                 <a asp-controller="Anime" asp-action="Index">@localizer["anime_side"]</a>
                 <a asp-controller="Studio" asp-action="Index">@localizer["studio_side"]</a>
                 <a asp-controller="Watchlist" asp-action="Index">@localizer["My Watchlist"]</a>
+                <a asp-controller="Member" asp-action="ProgressStats">@localizer["Progress Stats"]</a>
             </div>
+
             <div class="admin_topnav-end">
                 <a asp-controller="Language" asp-action="Index" asp-route-culture="ja">日本語</a>
                 <a asp-controller="Language" asp-action="Index" asp-route-culture="en">English</a>
-                <a>@localizer["logout"]</a>
+                <a asp-controller="Account" asp-action="Logout">@localizer["logout"]</a>
             </div>
         </nav>
     </header>
-
-    <main class="member_main">
-        @RenderBody()
-    </main>
+    <div class="admin_wrapper">
+        <main class="admin_main">
+            @RenderBody()
+        </main>
+    </div>
 
     <footer class="admin_footer">
         <div class="copyright">

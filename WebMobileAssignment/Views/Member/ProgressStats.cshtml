@@ -1,0 +1,273 @@
+﻿@model WebMobileAssignment.Models.ProgressStatsVM
+
+@{
+    ViewData["Title"] = "Progress Statistics";
+}
+
+<style>
+    /* ==========================================================================
+           Module 1: Progress & Completion Statistics CSS
+           ========================================================================== */
+
+    /* Page Layout & Container */
+    .stats-container {
+        max-width: 1100px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .stats-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: #333333;
+    }
+
+    /* Overview Summary Cards */
+    .stats-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .stats-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border-left: 5px solid #ccc;
+        text-align: center;
+    }
+
+    .stats-card-primary {
+        border-left-color: #0d6efd;
+    }
+
+    .stats-card-success {
+        border-left-color: #198754;
+    }
+
+    .stats-card-info {
+        border-left-color: #0dcaf0;
+    }
+
+    .stats-card-label {
+        display: block;
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-card-value {
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1;
+        margin: 0;
+    }
+
+    .text-primary {
+        color: #0d6efd;
+    }
+
+    .text-success {
+        color: #198754;
+    }
+
+    .text-info {
+        color: #0dcaf0;
+    }
+
+    /* Status Breakdown Section */
+    .stats-section-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+
+    .stats-section-header {
+        background-color: #212529;
+        color: #ffffff;
+        padding: 0.85rem 1.25rem;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .stats-section-body {
+        padding: 1.5rem;
+    }
+
+    /* Custom Multi-Color Progress Bar */
+    .progress-bar-container {
+        display: flex;
+        height: 24px;
+        width: 100%;
+        background-color: #e9ecef;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 1.25rem;
+    }
+
+    .progress-segment {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 0.75rem;
+        font-weight: 700;
+        transition: width 0.4s ease;
+    }
+
+    .bg-watching {
+        background-color: #0d6efd;
+    }
+
+    .bg-completed {
+        background-color: #198754;
+    }
+
+    .bg-plantowatch {
+        background-color: #6c757d;
+    }
+
+    .bg-onhold {
+        background-color: #ffc107;
+        color: #000000;
+    }
+
+    .bg-dropped {
+        background-color: #dc3545;
+    }
+
+    /* Status Badges */
+    .status-badges-group {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .status-badge {
+        padding: 0.5rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    /* Recently Completed Table / List */
+    .recent-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .recent-list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.85rem 1.25rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+        .recent-list-item:last-child {
+            border-bottom: none;
+        }
+
+    .recent-anime-title {
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .recent-anime-date {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+</style>
+
+<div class="stats-container">
+    <h2 class="stats-title">Progress & Completion Statistics</h2>
+
+    <!-- Summary Cards -->
+    <div class="stats-summary-grid">
+        <div class="stats-card stats-card-primary">
+            <span class="stats-card-label">Total Anime Tracked</span>
+            <p class="stats-card-value text-primary">@Model.TotalAnimesInList</p>
+        </div>
+        <div class="stats-card stats-card-success">
+            <span class="stats-card-label">Episodes Watched</span>
+            <p class="stats-card-value text-success">@Model.TotalEpisodesWatched</p>
+        </div>
+        <div class="stats-card stats-card-info">
+            <span class="stats-card-label">Completion Rate</span>
+            <p class="stats-card-value text-info">@Model.CompletionRatePercentage%</p>
+        </div>
+    </div>
+
+    <!-- Status Breakdown Bar -->
+    <div class="stats-section-card">
+        <div class="stats-section-header">Watchlist Breakdown</div>
+        <div class="stats-section-body">
+            <div class="progress-bar-container">
+                @if (Model.TotalAnimesInList > 0)
+                {
+                    <div class="progress-segment bg-watching"
+                         style="width: @((double)Model.WatchingCount / Model.TotalAnimesInList * 100)%"
+                         title="Watching">
+                        @Model.WatchingCount
+                    </div>
+                    <div class="progress-segment bg-completed"
+                         style="width: @((double)Model.CompletedCount / Model.TotalAnimesInList * 100)%"
+                         title="Completed">
+                        @Model.CompletedCount
+                    </div>
+                    <div class="progress-segment bg-plantowatch"
+                         style="width: @((double)Model.PlanToWatchCount / Model.TotalAnimesInList * 100)%"
+                         title="Plan to Watch">
+                        @Model.PlanToWatchCount
+                    </div>
+                    <div class="progress-segment bg-onhold"
+                         style="width: @((double)Model.OnHoldCount / Model.TotalAnimesInList * 100)%"
+                         title="On Hold">
+                        @Model.OnHoldCount
+                    </div>
+                    <div class="progress-segment bg-dropped"
+                         style="width: @((double)Model.DroppedCount / Model.TotalAnimesInList * 100)%"
+                         title="Dropped">
+                        @Model.DroppedCount
+                    </div>
+                }
+            </div>
+
+            <div class="status-badges-group">
+                <span class="status-badge bg-watching">Watching: @Model.WatchingCount</span>
+                <span class="status-badge bg-completed">Completed: @Model.CompletedCount</span>
+                <span class="status-badge bg-plantowatch">Plan to Watch: @Model.PlanToWatchCount</span>
+                <span class="status-badge bg-onhold">On Hold: @Model.OnHoldCount</span>
+                <span class="status-badge bg-dropped">Dropped: @Model.DroppedCount</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recently Completed Items -->
+    @if (Model.RecentlyCompleted.Any())
+    {
+        <div class="stats-section-card">
+            <div class="stats-section-header">Recently Completed Anime</div>
+            <ul class="recent-list">
+                @foreach (var item in Model.RecentlyCompleted)
+                {
+                    <li class="recent-list-item">
+                        <span class="recent-anime-title">@item.Anime.Name</span>
+                        <span class="recent-anime-date">Completed: @item.EndDate?.ToString("MMM dd, yyyy")</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>

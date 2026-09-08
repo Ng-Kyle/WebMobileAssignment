@@ -201,4 +201,7 @@
   <data name="Replace Anime Images" xml:space="preserve">
     <value>アニメ画像を置き換える</value>
   </data>
+  <data name="Drag and drop images here." xml:space="preserve">
+    <value>ここに画像をドラッグ＆ドロップしてください。</value>
+  </data>
 </root>

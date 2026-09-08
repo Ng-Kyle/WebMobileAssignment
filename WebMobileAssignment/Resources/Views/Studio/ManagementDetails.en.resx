@@ -147,13 +147,16 @@
   <data name="Studio List" xml:space="preserve">
     <value>Studio List</value>
   </data>
-  <data name="Animes Released" xml:space="preserve">
-    <value>Animes Released</value>
-  </data>
   <data name="Studio Details" xml:space="preserve">
     <value>Studio Details</value>
   </data>
   <data name="There are no animes created by this studio in the database!" xml:space="preserve">
     <value>There are no animes created by this studio in the database!</value>
+  </data>
+  <data name="Animes Released" xml:space="preserve">
+    <value>Animes Released</value>
+  </data>
+  <data name="Drag and drop images here." xml:space="preserve">
+    <value>Drag and drop images here.</value>
   </data>
 </root>

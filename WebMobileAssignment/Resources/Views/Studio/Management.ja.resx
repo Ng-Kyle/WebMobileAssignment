@@ -126,6 +126,9 @@
   <data name="Description" xml:space="preserve">
     <value>説明</value>
   </data>
+  <data name="Drag and drop images here." xml:space="preserve">
+    <value>ここに画像をドラッグ＆ドロップしてください。</value>
+  </data>
   <data name="Enter Studio Description..." xml:space="preserve">
     <value>スタジオの説明を入力…</value>
   </data>

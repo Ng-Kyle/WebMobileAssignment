@@ -150,6 +150,9 @@
   <data name="Completed" xml:space="preserve">
     <value>完了</value>
   </data>
+  <data name="Drag and drop images here." xml:space="preserve">
+    <value>ここに画像をドラッグ＆ドロップしてください。</value>
+  </data>
   <data name="episode_count" xml:space="preserve">
     <value>話数</value>
   </data>
