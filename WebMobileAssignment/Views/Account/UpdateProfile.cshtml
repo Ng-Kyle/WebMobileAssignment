@@ -1,24 +1,25 @@
 ﻿@model WebMobileAssignment.Models.UpdateProfileVM
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @{
     ViewBag.Title = "Account | Update Profile";
 }
 
 <div class="account-box">
-    <h2>Update Profile</h2>
+    <h2>@localizer["Update Profile"]</h2>
 
     <form method="post" enctype="multipart/form-data" class="form">
         <div asp-validation-summary="ModelOnly"></div>
 
-        <label asp-for="Email"></label>
+        <label asp-for="Email">@localizer["Email"]</label>
         <b>@Model?.Email</b>
         <br />
 
-        <label asp-for="UserName"></label>
+        <label asp-for="UserName">@localizer["UserName"]</label>
         <input asp-for="UserName" autofocus />
         <span asp-validation-for="UserName"></span>
 
-        <label asp-for="Photo"></label>
+        <label asp-for="Photo">@localizer["Photo"]</label>
         <label class="upload">
             <input asp-for="Photo" accept="image/jpeg,image/png" hidden />
             <img src="/images/member/@(Model?.ImageLink ?? "photo.jpg")" />
@@ -26,13 +27,13 @@
         <span asp-validation-for="Photo"></span>
 
         <section>
-            <button>Update</button>
-            <button type="reset">Reset</button>
+            <button>@localizer["Update"]</button>
+            <button type="reset">@localizer["Reset"]</button>
         </section>
     </form>
 
     <p>
-        <a href="/Account/Profile">Back to Profile</a>
+        <a href="/Account/Profile">@localizer["Back to Profile"]</a>
     </p>
 
 </div>

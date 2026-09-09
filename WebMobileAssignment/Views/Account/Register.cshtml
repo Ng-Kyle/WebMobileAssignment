@@ -1,5 +1,6 @@
 ﻿@model WebMobileAssignment.Models.RegisterVM
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @{
     ViewBag.Title = "Account | Register";
 }
@@ -7,34 +8,34 @@
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <div class="account-box">
-    <h2>Register Account</h2>
+    <h2>@localizer["Register Account"]</h2>
 
     <form method="post" enctype="multipart/form-data" class="form">
         <div asp-validation-summary="ModelOnly"></div>
 
-        <label asp-for="UserName"></label>
+        <label asp-for="UserName">@localizer["UserName"]</label>
         <div>
             <input asp-for="UserName" autofocus autocomplete="off" />
             <span id="username-status" style="font-weight: bold; font-size: 0.85rem; margin-left: 8px;"></span>
         </div>
         <span></span>
 
-        <label asp-for="Email"></label>
+        <label asp-for="Email">@localizer["Email"]</label>
         <div>
             <input asp-for="Email" autocomplete="off" />
             <span id="email-status" style="font-weight: bold; font-size: 0.85rem; margin-left: 8px;"></span>
         </div>
         <span></span>
 
-        <label asp-for="Password"></label>
+        <label asp-for="Password">@localizer["Password"]</label>
         <input asp-for="Password" />
         <span asp-validation-for="Password"></span>
 
-        <label asp-for="Confirm"></label>
+        <label asp-for="Confirm">@localizer["Confirm"]</label>
         <input asp-for="Confirm" />
         <span asp-validation-for="Confirm"></span>
 
-        <label asp-for="Photo"></label>
+        <label asp-for="Photo">@localizer["Photo"]</label>
         <label class="upload">
             <input asp-for="Photo" accept="image/jpeg,image/png" hidden />
             <img src="/images/photo.jpg" />
@@ -46,13 +47,13 @@
         </div>
 
         <section>
-            <button>Register</button>
-            <button type="reset">Reset</button>
+            <button>@localizer["Register"]</button>
+            <button type="reset">@localizer["Reset"]</button>
         </section>
     </form>
 
     <p>
-        Already have an account? <a href="/Account/Login">Login here</a>
+        @localizer["Already have an account?"] <a href="/Account/Login">@localizer["Login here"]</a>
     </p>
 </div>
 @section foot {

@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Localization;
 using System.Net.Mail;
 using static WebMobileAssignment.Models.MemberReviewVM;
 
 namespace WebMobileAssignment.Controllers;
 
-public class AccountController(DB db, Helper hp) : Controller
+public class AccountController(DB db, Helper hp, IStringLocalizer<SharedResource> localizer) : Controller
 {
 
     public bool CheckEmail(string email)
@@ -31,18 +33,18 @@ public class AccountController(DB db, Helper hp) : Controller
 
         if (u == null)
         {
-            ModelState.AddModelError("", "Login credentials do not match.");
+            ModelState.AddModelError("", localizer["Login credentials do not match."]);
         }
 
         else if (u.LockoutExpiry != null && u.LockoutExpiry > DateTime.Now)
         {
             var remainingMinutes = Math.Ceiling((u.LockoutExpiry.Value - DateTime.Now).TotalMinutes);
-            ModelState.AddModelError("", $"Account is temporarily locked due to multiple failed login attempts. Try again in {remainingMinutes} minute(s).");
+            ModelState.AddModelError("", localizer["Account is temporarily locked due to multiple failed login attempts. Try again in {0} minute(s).",remainingMinutes]);
         }
 
         else if (u is Member m && m.IsBlocked)
         {
-            ModelState.AddModelError("", "This account is blocked.");
+            ModelState.AddModelError("", localizer["This account is blocked."]);
         }
 
         else if (!hp.VerifyPassword(u.PasswordHash, vm.Password))
@@ -53,12 +55,12 @@ public class AccountController(DB db, Helper hp) : Controller
             {
                 u.LockoutExpiry = DateTime.Now.AddMinutes(5);
                 db.SaveChanges();
-                ModelState.AddModelError("", "Too many failed attempts. Your account has been locked for 5 minutes.");
+                ModelState.AddModelError("", localizer["Too many failed attempts. Your account has been locked for 5 minutes."]);
             }
             else
             {
                 db.SaveChanges();
-                ModelState.AddModelError("", $"Login credentials do not match. Attempt {u.FailedLoginAttempts} of 3.");
+                ModelState.AddModelError("", localizer["Login credentials do not match. Attempt {0} of 3.", u.FailedLoginAttempts]);
             }
         }
 
@@ -68,7 +70,7 @@ public class AccountController(DB db, Helper hp) : Controller
             u.LockoutExpiry = null;
             db.SaveChanges();
 
-            TempData["Info"] = "Login successfully.";
+            TempData["Info"] = localizer["Login successfully."].Value;
             hp.SignIn(u.Email, u.Role, vm.RememberMe);
 
             if (!string.IsNullOrEmpty(returnURL) && Url.IsLocalUrl(returnURL))
@@ -90,7 +92,7 @@ public class AccountController(DB db, Helper hp) : Controller
 
     public IActionResult Logout()
     {
-        TempData["Info"] = "Logout successfully.";
+        TempData["Info"] = localizer["Logout successfully."].Value;
         hp.SignOut();
         return RedirectToAction("Index", "Home");
     }
@@ -107,17 +109,17 @@ public class AccountController(DB db, Helper hp) : Controller
 
         if (!isCaptchaValid)
         {
-            ModelState.AddModelError("", "Please verify that you are not a robot.");
+            ModelState.AddModelError("", localizer["Please verify that you are not a robot."]);
         }
 
         if (db.Users.Any(u => u.Email == vm.Email))
         {
-            ModelState.AddModelError("Email", "Email already in use.");
+            ModelState.AddModelError("Email", localizer["Email already in use."]);
         }
 
         if (db.Users.Any(u => u.UserName == vm.UserName))
         {
-            ModelState.AddModelError("UserName", "Username already in use.");
+            ModelState.AddModelError("UserName", localizer["Username already in use."]);
         }
 
         if (vm.Photo != null)
@@ -147,7 +149,7 @@ public class AccountController(DB db, Helper hp) : Controller
             db.Members.Add(member);
             await db.SaveChangesAsync();
 
-            TempData["Info"] = "Register successfully. Please login.";
+            TempData["Info"] = localizer["Register successfully. Please login."].Value;
             return RedirectToAction("Login");
         }
 
@@ -163,7 +165,7 @@ public class AccountController(DB db, Helper hp) : Controller
 
         if (u == null)
         {
-            ModelState.AddModelError("Email", "Email address not found.");
+            ModelState.AddModelError("Email", localizer["Email address not found."]);
         }
 
         if (ModelState.IsValid)
@@ -185,11 +187,11 @@ public class AccountController(DB db, Helper hp) : Controller
             try
             {
                 hp.SendEmail(mail);
-                TempData["Info"] = "A temporary password has been sent to your email.";
+                TempData["Info"] = localizer["A temporary password has been sent to your email."].Value;
             }
             catch
             {
-                TempData["Info"] = $"Password reset to <b>{randomPass}</b> (Email proxy failed).";
+                TempData["Info"] = localizer["Password reset to <b>{0}</b> (Email proxy failed).",randomPass].Value;
             }
 
             return RedirectToAction("Login");
@@ -250,7 +252,7 @@ public class AccountController(DB db, Helper hp) : Controller
             }
 
             db.SaveChanges();
-            TempData["Info"] = "Profile updated successfully.";
+            TempData["Info"] = localizer["Profile updated successfully."].Value;
             return RedirectToAction("Profile");
         }
 
@@ -271,7 +273,7 @@ public class AccountController(DB db, Helper hp) : Controller
 
         if (!hp.VerifyPassword(u.PasswordHash, vm.Current))
         {
-            ModelState.AddModelError("Current", "Current password is incorrect.");
+            ModelState.AddModelError("Current", localizer["Current password is incorrect."]);
         }
 
         if (ModelState.IsValid)
@@ -279,7 +281,7 @@ public class AccountController(DB db, Helper hp) : Controller
             u.PasswordHash = hp.HashPassword(vm.New);
             db.SaveChanges();
 
-            TempData["Info"] = "Password updated successfully.";
+            TempData["Info"] = localizer["Password updated successfully."].Value;
             return RedirectToAction("Profile");
         }
 

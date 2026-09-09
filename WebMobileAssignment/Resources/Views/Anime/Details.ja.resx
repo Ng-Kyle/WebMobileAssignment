@@ -153,6 +153,9 @@
   <data name="Lowest Rating" xml:space="preserve">
     <value>評価の低い順</value>
   </data>
+  <data name="Mobile Scan" xml:space="preserve">
+    <value>モバイルスキャン</value>
+  </data>
   <data name="Newest First" xml:space="preserve">
     <value>新しい順</value>
   </data>
@@ -179,6 +182,15 @@
   </data>
   <data name="Save to Watchlist" xml:space="preserve">
     <value>ウォッチリストに追加</value>
+  </data>
+  <data name="Scan to instantly watch trailer on YouTube app." xml:space="preserve">
+    <value>スキャンしてYouTubeアプリですぐに予告編を視聴します。</value>
+  </data>
+  <data name="Scan to open this anime on your mobile device." xml:space="preserve">
+    <value>スキャンしてこのアニメをモバイルデバイスで開きます。</value>
+  </data>
+  <data name="Scan with Phone" xml:space="preserve">
+    <value>スマートフォンでスキャン</value>
   </data>
   <data name="Select Rating" xml:space="preserve">
     <value>評価を選択</value>
