@@ -150,7 +150,7 @@
             }
 
             emailStatus.style.color = '#6c757d';
-            emailStatus.textContent = 'Checking...';
+            emailStatus.textContent = '@localizer["Checking..."]';
 
             emailTimer = setTimeout(async () => {
                 try {
@@ -162,7 +162,7 @@
                         emailStatus.textContent = data.message;
                     } else {
                         emailStatus.style.color = '#198754';
-                        emailStatus.textContent = 'Available';
+                        emailStatus.textContent = '@localizer["Available"]';
                     }
                 } catch {
                     emailStatus.textContent = '';
@@ -183,7 +183,7 @@
             }
 
             usernameStatus.style.color = '#6c757d';
-            usernameStatus.textContent = 'Checking...';
+            usernameStatus.textContent = '@localizer["Checking..."]';
 
             userTimer = setTimeout(async () => {
                 try {
@@ -192,10 +192,10 @@
 
                     if (data.exists) {
                         usernameStatus.style.color = '#dc3545';
-                        usernameStatus.textContent = data.message || 'Already taken';
+                        usernameStatus.textContent = data.message || '@localizer["Already taken"]';
                     } else {
                         usernameStatus.style.color = '#198754';
-                        usernameStatus.textContent = 'Available';
+                        usernameStatus.textContent = '@localizer["Available"]';
                     }
                 } catch {
                     usernameStatus.textContent = '';
