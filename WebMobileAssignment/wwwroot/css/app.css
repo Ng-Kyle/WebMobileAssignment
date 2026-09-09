@@ -1369,4 +1369,217 @@ body {
 
 /* NIGEL CSS*/
 
+/* 1. Card Container (Wider and well-spaced) */
+.account-box {
+    max-width: 680px;
+    width: 90%;
+    margin: 3rem auto;
+    background-color: #FFF4ED;
+    border: 2px solid #000000;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.9);
+}
+
+.account-box h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.8rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid #000000;
+    color: #000000;
+}
+
+/* 2. Form Grid (Stretches inputs across the column) */
+.account-box .form {
+    display: grid;
+    grid-template-columns: 150px 1fr auto;
+    gap: 18px 14px;
+    place-items: center stretch; /* Allows inputs to stretch horizontally */
+    width: 100%;
+}
+
+/* 3. Labels (Fixed height so Photo label doesn't turn into a giant block) */
+.account-box .form > label:not(:has(*)) {
+    background-color: #FFCDB2;
+    color: #000000;
+    font-weight: bold;
+    font-size: 0.95rem;
+    padding: 9px 12px;
+    border-radius: 6px;
+    border: 1.5px solid #000000;
+    box-sizing: border-box;
+    width: 100%;
+    height: fit-content;
+    align-self: center;
+}
+
+/* Align Photo label to the top of its row */
+.account-box .form > label[for="Photo"] {
+    align-self: start;
+    margin-top: 4px;
+}
+
+/* 4. Input Fields & Wrappers (Locked 320px Width) */
+.account-box .form > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: auto;
+}
+
+.account-box .form input[type="text"],
+.account-box .form input[type="email"],
+.account-box .form input[type="password"] {
+    width: 320px !important;
+    max-width: 320px !important;
+    height: 44px;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    border: 1.5px solid #000000;
+    border-radius: 6px;
+    background-color: #ffffff;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Remove blue autofill tint */
+.account-box input:-webkit-autofill,
+.account-box input:-webkit-autofill:hover,
+.account-box input:-webkit-autofill:focus,
+.account-box input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #000000 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.account-box .form input:focus {
+    border-color: #FF5E7E;
+    box-shadow: 0 0 6px rgba(255, 94, 126, 0.45);
+}
+
+/* 5. Live Badges */
+#username-status,
+#email-status {
+    font-weight: bold;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+/* 6. Drag-and-Drop Photo Box */
+.account-box .upload {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #000000;
+    border-radius: 8px;
+    padding: 6px;
+    background-color: #ffffff;
+    cursor: pointer;
+    width: fit-content;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.account-box .upload:hover {
+    background-color: #ffe5d9;
+}
+
+.account-box .upload.dragover {
+    border-color: #FF5E7E;
+    background-color: #FFCDB2;
+}
+
+.account-box .upload img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #000000;
+}
+
+/* 7. Action Buttons */
+.account-box .form > section {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 14px;
+    margin-top: 1.2rem;
+    width: 100%;
+}
+
+.account-box .form button,
+.account-box .btn-action {
+    flex: 1;
+    background-color: #FFB2BD;
+    color: #000000;
+    border: 2px solid #000000;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.15s, transform 0.1s;
+    text-align: center;
+    text-decoration: none;
+}
+
+.account-box .form button:hover,
+.account-box .btn-action:hover {
+    background-color: #FF8A9B;
+}
+
+.account-box .form button:active,
+.account-box .btn-action:active {
+    transform: scale(0.98);
+}
+
+.account-box .form button[type="reset"] {
+    background-color: #ffffff;
+    flex: 0 0 110px;
+}
+
+.account-box .form button[type="reset"]:hover {
+    background-color: #f2f2f2;
+}
+
+/* 8. Full-Width Spans (reCAPTCHA & Validation) */
+.account-box .form > div:has(.g-recaptcha) {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin: 8px 0;
+}
+
+.account-box .validation-summary-errors,
+.account-box .validation-summary-valid {
+    grid-column: 1 / -1;
+}
+
+.account-box .validation-summary-errors {
+    background-color: #ffe0e3;
+    border: 1.5px solid #d90429;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    color: #d90429;
+}
+
+/* 9. Subtext Links */
+.account-box p {
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    color: #222;
+}
+
+.account-box a {
+    color: #000000;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+    .account-box a:hover {
+color: #FF5E7E;
+}
 /* NIGEL CSS*/
