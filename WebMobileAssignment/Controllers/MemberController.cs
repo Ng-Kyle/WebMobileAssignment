@@ -443,7 +443,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         int? userId = GetCurrentUserId();
         if (!userId.HasValue)
         {
-            return RedirectToAction("Index", "Account");
+            return RedirectToAction("Index", "Account");    
         }
 
         var watchlistQuery = db.AnimeWatchLists
