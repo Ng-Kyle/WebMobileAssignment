@@ -1,9 +1,10 @@
 ﻿@{
     Layout = "_AdminLayout";
-    ViewBag.AdminHome = "admin_sidenav-active";
+    ViewBag.AdminReviews = "admin_sidenav-active";
     ViewData["Title"] = "Review Maintenance";
 }
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @model WebMobileAssignment.Models.AdminReviewIndexVM
 @using X.PagedList.Mvc.Core
 
@@ -277,36 +278,36 @@
 
 <div class="admin-rev-container">
     <div class="page-header">
-        <h1 class="page-title">Review Maintenance</h1>
-        <p class="page-subtitle">Search, filter, inspect, and moderate user reviews and ratings.</p>
+        <h1 class="page-title">@localizer["Review Maintenance"]</h1>
+        <p class="page-subtitle">@localizer["Search, filter, inspect, and moderate user reviews and ratings."]</p>
     </div>
 
     <!-- Filter Card -->
     <div class="filter-card">
         <form method="get" asp-action="Reviews" class="filter-grid">
             <div class="filter-group">
-                <label>Search Keyword</label>
-                <input type="text" name="search" value="@Model?.Search" class="form-control-custom" placeholder="Review text or username..." />
+                <label>@localizer["Search Keyword"]</label>
+                <input type="text" name="search" value="@Model?.Search" class="form-control-custom" placeholder="@localizer["Review text or username..."]" />
             </div>
             <div class="filter-group">
-                <label>Filter Rating</label>
+                <label>@localizer["Filter Rating"]</label>
                 <select name="rating" class="form-control-custom">
-                    <option value="">All Ratings</option>
+                    <option value="">@localizer["All Ratings"]</option>
                     @for (int i = 10; i >= 1; i--)
                     {
-                        <option value="@i" selected="@(Model?.SelectedRating == i)">★ @i Stars</option>
+                        <option value="@i" selected="@(Model?.SelectedRating == i)">★ @i @localizer["Stars"]</option>
                     }
                 </select>
             </div>
             <div class="filter-group">
-                <label>Filter Anime</label>
+                <label>@localizer["Filter Anime"]</label>
                 <select name="animeId" asp-items="ViewBag.AnimeList" class="form-control-custom">
-                    <option value="">All Anime</option>
+                    <option value="">@localizer["All Anime"]</option>
                 </select>
             </div>
             <div class="btn-group-filter">
-                <button type="submit" class="btn-ui btn-ui-primary">Filter</button>
-                <a asp-action="Reviews" class="btn-ui btn-ui-secondary">Reset</a>
+                <button type="submit" class="btn-ui btn-ui-primary">@localizer["Filter"]</button>
+                <a asp-action="Reviews" class="btn-ui btn-ui-secondary">@localizer["Reset"]</a>
             </div>
         </form>
     </div>
@@ -316,12 +317,12 @@
         <table class="rev-table">
             <thead>
                 <tr>
-                    <th>Anime</th>
-                    <th>User</th>
-                    <th>Rating</th>
-                    <th>Review Content</th>
-                    <th>Date</th>
-                    <th style="text-align: right;">Actions</th>
+                    <th>@localizer["Anime"]</th>
+                    <th>@localizer["User"]</th>
+                    <th>@localizer["Rating"]</th>
+                    <th>@localizer["Review Content"]</th>
+                    <th>@localizer["Date"]</th>
+                    <th style="text-align: right;">@localizer["Actions"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -343,17 +344,17 @@
                                     }
                                     else
                                     {
-                                        <em style="color: #94a3b8;">No text provided</em>
+                                        <em style="color: #94a3b8;">@localizer["No text provided"]</em>
                                     }
                                 </div>
                             </td>
                             <td><span class="date-text">@review.CreatedAt.ToString("MMM dd, yyyy")</span></td>
                             <td>
                                 <div class="action-group" style="justify-content: flex-end;">
-                                    <a asp-action="ReviewDetails" asp-route-id="@review.ReviewId" class="btn-action-sm btn-action-info">Details</a>
-                                    <form method="post" asp-action="DeleteReview" onsubmit="return confirm('Are you sure you want to delete this review?');" style="margin: 0;">
+                                    <a asp-action="ReviewDetails" asp-route-id="@review.ReviewId" class="btn-action-sm btn-action-info">@localizer["Details"]</a>
+                                    <form method="post" asp-action="DeleteReview" onsubmit="return confirm('@localizer["Are you sure you want to delete this review?"]');" style="margin: 0;">
                                         <input type="hidden" name="reviewId" value="@review.ReviewId" />
-                                        <button type="submit" class="btn-action-sm btn-action-danger">Delete</button>
+                                        <button type="submit" class="btn-action-sm btn-action-danger">@localizer["Delete"]</button>
                                     </form>
                                 </div>
                             </td>
@@ -365,8 +366,8 @@
                     <tr>
                         <td colspan="6">
                             <div class="empty-state">
-                                <strong>No reviews match your criteria.</strong>
-                                <p style="margin-top: 0.25rem; font-size: 0.875rem;">Try adjusting your filters or search term.</p>
+                                <strong>@localizer["No reviews match your criteria."]</strong>
+                                <p style="margin-top: 0.25rem; font-size: 0.875rem;">@localizer["Try adjusting your filters or search term."]</p>
                             </div>
                         </td>
                     </tr>

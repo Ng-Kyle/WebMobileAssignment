@@ -1,9 +1,10 @@
 ﻿@{
     Layout = "_AdminLayout";
-    ViewBag.AdminHome = "admin_sidenav-active";
+    ViewBag.AdminReviews = "admin_sidenav-active";
     ViewData["Title"] = "Review Details";
 }
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @model WebMobileAssignment.Models.Review
 
 <style>
@@ -54,45 +55,45 @@
 </style>
 
 <div class="details-card">
-    <h2>Review Details</h2>
+    <h2>@localizer["Review Details"]</h2>
     <hr />
 
     <div class="detail-row">
-        <div class="detail-label">Review ID:</div>
+        <div class="detail-label">@localizer["Review ID"]:</div>
         <div class="detail-value">#@Model.ReviewId</div>
     </div>
     <div class="detail-row">
-        <div class="detail-label">Anime Title:</div>
+        <div class="detail-label">@localizer["Anime Title"]:</div>
         <div class="detail-value"><strong>@Model.Anime?.Name</strong></div>
     </div>
     <div class="detail-row">
-        <div class="detail-label">Member:</div>
+        <div class="detail-label">@localizer["Member"]:</div>
         <div class="detail-value">@Model.Member?.UserName (@Model.Member?.Email)</div>
     </div>
     <div class="detail-row">
-        <div class="detail-label">Rating:</div>
+        <div class="detail-label">@localizer["Rating"]:</div>
         <div class="detail-value"><span class="badge-rating">★ @Model.Rating / 10</span></div>
     </div>
     <div class="detail-row">
-        <div class="detail-label">Created At:</div>
+        <div class="detail-label">@localizer["Created At"]:</div>
         <div class="detail-value">@Model.CreatedAt.ToString("FFFF f, yyyy - hh:mm tt")</div>
     </div>
     <div class="detail-row">
-        <div class="detail-label">Last Updated:</div>
+        <div class="detail-label">@localizer["Last Updated"]:</div>
         <div class="detail-value">@Model.UpdatedAt.ToString("FFFF f, yyyy - hh:mm tt")</div>
     </div>
 
-    <h4>Full Content</h4>
+    <h4>@localizer["Full Content"]</h4>
     <div class="review-body">
         @Model.Text
     </div>
 
     <div style="display: flex; gap: 1rem;">
-        <a asp-action="Reviews" class="btn btn-secondary">← Back to List</a>
+        <a asp-action="Reviews" class="btn btn-secondary">← @localizer["Back to List"]</a>
 
-        <form method="post" asp-action="DeleteReview" onsubmit="return confirm('Are you sure you want to moderate/delete this review?');">
+        <form method="post" asp-action="DeleteReview" onsubmit="return confirm('@localizer["Are you sure you want to moderate/delete this review?"]');">
             <input type="hidden" name="reviewId" value="@Model.ReviewId" />
-            <button type="submit" class="btn btn-danger">Moderate / Delete Review</button>
+            <button type="submit" class="btn btn-danger">@localizer["Moderate / Delete Review"]</button>
         </form>
     </div>
 </div>

@@ -123,6 +123,17 @@ namespace WebMobileAssignment.Controllers
 
             var today = DateOnly.FromDateTime(DateTime.Today);
 
+            if (status == "Completed")
+            {
+                progress = anime.Episodes;
+            }
+            else if (status == "Plan to Watch")
+            {
+                progress = 0;
+            }
+
+            int clampedProgress = Math.Clamp(progress, 0, anime.Episodes);
+
             if (entry == null)
             {
                 db.AnimeWatchLists.Add(new AnimeWatchList

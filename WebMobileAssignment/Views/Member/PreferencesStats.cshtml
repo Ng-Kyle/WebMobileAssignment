@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Genre & Studio Preferences";
 }
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 
 <style>
     /* ==========================================================================
@@ -110,12 +112,12 @@
 </style>
 
 <div class="pref-container">
-    <h2 class="pref-title">Genre & Studio Preferences</h2>
+    <h2 class="pref-title">@localizer["Genre & Studio Preferences"]</h2>
 
     <div class="pref-grid">
         <!-- TOP GENRES -->
         <div class="pref-card">
-            <div class="pref-card-header">Top 5 Favorite Genres</div>
+            <div class="pref-card-header">@localizer["Top 5 Favorite Genres"]</div>
             @if (Model.TopGenres.Any())
             {
                 <ul class="pref-list">
@@ -124,7 +126,7 @@
                         <li class="pref-item">
                             <span class="pref-name">@genre.Name</span>
                             <div class="pref-details">
-                                <span class="pref-pill">@genre.Count watched</span>
+                                <span class="pref-pill">@genre.Count @localizer["watched"]</span>
                                 <span class="pref-rating">★ @genre.AverageRating.ToString("0.0")</span>
                             </div>
                         </li>
@@ -133,13 +135,13 @@
             }
             else
             {
-                <div class="empty-msg">No genre preference data available yet.</div>
+                <div class="empty-msg">@localizer["No genre preference data available yet."]</div>
             }
         </div>
 
         <!-- TOP STUDIOS -->
         <div class="pref-card">
-            <div class="pref-card-header">Top 5 Favorite Studios</div>
+            <div class="pref-card-header">@localizer["Top 5 Favorite Studios"]</div>
             @if (Model.TopStudios.Any())
             {
                 <ul class="pref-list">
@@ -148,7 +150,7 @@
                         <li class="pref-item">
                             <span class="pref-name">@studio.Name</span>
                             <div class="pref-details">
-                                <span class="pref-pill">@studio.Count watched</span>
+                                <span class="pref-pill">@studio.Count @localizer["watched"]</span>
                                 <span class="pref-rating">★ @studio.AverageRating.ToString("0.0")</span>
                             </div>
                         </li>
@@ -157,7 +159,7 @@
             }
             else
             {
-                <div class="empty-msg">No studio preference data available yet.</div>
+                <div class="empty-msg">@localizer["No studio preference data available yet."]</div>
             }
         </div>
     </div>
