@@ -6,13 +6,13 @@
 
 <div class="stats-container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-        <h2 class="stats-title" style="margin-bottom: 0;">Progress & Completion Statistics</h2>
+        <h2 class="stats-title" style="margin-bottom: 0;">@localizer["Progress & Completion Statistics"]</h2>
 
         <!-- Tab Navigation to Teammate's other stats views -->
         <div style="display: inline-flex; gap: 0.5rem;">
-            <a asp-action="ProgressStats" style="padding: 0.4rem 0.85rem; border-radius: 6px; background: #0d6efd; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.85rem;">Watchlist Stats</a>
-            <a asp-action="RatingStats" style="padding: 0.4rem 0.85rem; border-radius: 6px; background: #e2e8f0; color: #334155; text-decoration: none; font-weight: 600; font-size: 0.85rem;">Rating Stats</a>
-            <a asp-action="PreferencesStats" style="padding: 0.4rem 0.85rem; border-radius: 6px; background: #e2e8f0; color: #334155; text-decoration: none; font-weight: 600; font-size: 0.85rem;">Genre & Studio</a>
+            <a asp-action="ProgressStats" style="padding: 0.4rem 0.85rem; border-radius: 6px; background: #0d6efd; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.85rem;">@localizer["Watchlist Stats"]</a>
+            <a asp-action="RatingStats" style="padding: 0.4rem 0.85rem; border-radius: 6px; background: #e2e8f0; color: #334155; text-decoration: none; font-weight: 600; font-size: 0.85rem;">@localizer["Rating Stats"]</a>
+            <a asp-action="PreferencesStats" style="padding: 0.4rem 0.85rem; border-radius: 6px; background: #e2e8f0; color: #334155; text-decoration: none; font-weight: 600; font-size: 0.85rem;">@localizer["Genre & Studio"]</a>
         </div>
     </div>
 
@@ -21,7 +21,7 @@
         <div class="stats-section-card" style="text-align: center; padding: 3rem 1.5rem;">
             <p style="color: #64748b; font-size: 1.1rem; margin-bottom: 1rem;">You have not added any anime to your watchlist yet.</p>
             <a asp-controller="Anime" asp-action="Index" style="display: inline-block; padding: 0.6rem 1.25rem; background: #ff6b35; color: #fff; border-radius: 6px; text-decoration: none; font-weight: 700;">
-                Browse Anime Catalogue
+                @localizer["Browse Anime Catalogue"]
             </a>
         </div>
     }
@@ -30,57 +30,57 @@
         <!-- Summary Cards -->
         <div class="stats-summary-grid">
             <div class="stats-card stats-card-primary">
-                <span class="stats-card-label">Total Anime Tracked</span>
+                <span class="stats-card-label">@localizer["Total Anime Tracked"]</span>
                 <p class="stats-card-value text-primary">@Model.TotalAnimesInList</p>
             </div>
             <div class="stats-card stats-card-success">
-                <span class="stats-card-label">Episodes Watched</span>
+                <span class="stats-card-label">@localizer["Episodes Watched"]</span>
                 <p class="stats-card-value text-success">@Model.TotalEpisodesWatched</p>
             </div>
             <div class="stats-card stats-card-info">
-                <span class="stats-card-label">Completion Rate</span>
+                <span class="stats-card-label">@localizer["Completion Rate"]</span>
                 <p class="stats-card-value text-info">@Model.CompletionRatePercentage%</p>
             </div>
         </div>
 
         <!-- Status Breakdown Bar -->
         <div class="stats-section-card">
-            <div class="stats-section-header">Watchlist Breakdown</div>
+            <div class="stats-section-header">@localizer["Watchlist Breakdown"]</div>
             <div class="stats-section-body">
                 <div class="progress-bar-container">
                     <div class="progress-segment bg-watching"
                          style="width: @((double)Model.WatchingCount / Model.TotalAnimesInList * 100)%"
-                         title="Watching">
+                         title="@localizer["Watching"]">
                         @(Model.WatchingCount > 0 ? Model.WatchingCount.ToString() : "")
                     </div>
                     <div class="progress-segment bg-completed"
                          style="width: @((double)Model.CompletedCount / Model.TotalAnimesInList * 100)%"
-                         title="Completed">
+                         title="@localizer["Completed"]">
                         @(Model.CompletedCount > 0 ? Model.CompletedCount.ToString() : "")
                     </div>
                     <div class="progress-segment bg-plantowatch"
                          style="width: @((double)Model.PlanToWatchCount / Model.TotalAnimesInList * 100)%"
-                         title="Plan to Watch">
+                         title="@localizer["Plan to Watch"]">
                         @(Model.PlanToWatchCount > 0 ? Model.PlanToWatchCount.ToString() : "")
                     </div>
                     <div class="progress-segment bg-onhold"
                          style="width: @((double)Model.OnHoldCount / Model.TotalAnimesInList * 100)%"
-                         title="On Hold">
+                         title="@localizer["On Hold"]">
                         @(Model.OnHoldCount > 0 ? Model.OnHoldCount.ToString() : "")
                     </div>
                     <div class="progress-segment bg-dropped"
                          style="width: @((double)Model.DroppedCount / Model.TotalAnimesInList * 100)%"
-                         title="Dropped">
+                         title="@localizer["Dropped"]">
                         @(Model.DroppedCount > 0 ? Model.DroppedCount.ToString() : "")
                     </div>
                 </div>
 
                 <div class="status-badges-group">
-                    <span class="status-badge bg-watching">Watching: @Model.WatchingCount</span>
-                    <span class="status-badge bg-completed">Completed: @Model.CompletedCount</span>
-                    <span class="status-badge bg-plantowatch">Plan to Watch: @Model.PlanToWatchCount</span>
-                    <span class="status-badge bg-onhold">On Hold: @Model.OnHoldCount</span>
-                    <span class="status-badge bg-dropped">Dropped: @Model.DroppedCount</span>
+                    <span class="status-badge bg-watching">@localizer["Watching"]: @Model.WatchingCount</span>
+                    <span class="status-badge bg-completed">@localizer["Completed"]: @Model.CompletedCount</span>
+                    <span class="status-badge bg-plantowatch">@localizer["Plan to Watch"]: @Model.PlanToWatchCount</span>
+                    <span class="status-badge bg-onhold">@localizer["On Hold"]: @Model.OnHoldCount</span>
+                    <span class="status-badge bg-dropped">@localizer["Dropped"]: @Model.DroppedCount</span>
                 </div>
             </div>
         </div>
@@ -89,13 +89,13 @@
         @if (Model.RecentlyCompleted.Any())
         {
             <div class="stats-section-card">
-                <div class="stats-section-header">Recently Completed Anime</div>
+                <div class="stats-section-header">@localizer["Recently Completed Anime"]</div>
                 <ul class="recent-list">
                     @foreach (var item in Model.RecentlyCompleted)
                     {
                         <li class="recent-list-item">
                             <span class="recent-anime-title">@item.Anime.Name</span>
-                            <span class="recent-anime-date">Completed: @item.EndDate?.ToString("MMM dd, yyyy")</span>
+                            <span class="recent-anime-date">@localizer["Completed"]: @item.EndDate?.ToString("MMM dd, yyyy")</span>
                         </li>
                     }
                 </ul>

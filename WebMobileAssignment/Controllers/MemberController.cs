@@ -247,13 +247,13 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         int userId = GetCurrentUserId();
         if (userId == 0)
         {
-            TempData["Error"] = "You must be logged in as a member to leave a review.";
+            TempData["Error"] = localizer["You must be logged in as a member to leave a review."].Value;
             return RedirectToAction("Login", "Account");
         }
 
         if (!ModelState.IsValid)
         {
-            TempData["Error"] = "Please provide a valid rating (1-10) and review text.";
+            TempData["Error"] = localizer["Please provide a valid rating (1-10) and review text."].Value;
             return RedirectToAction("Details", "Anime", new { id = vm.AnimeId });
         }
 
@@ -266,7 +266,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             existingReview.Text = vm.Text;
             existingReview.UpdatedAt = DateTime.Now;
             db.Reviews.Update(existingReview);
-            TempData["Info"] = "Your review has been updated!";
+            TempData["Info"] = localizer["Your review has been updated!"].Value;
         }
         else
         {
@@ -283,7 +283,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
                 Anime = anime
             };
             db.Reviews.Add(newReview);
-            TempData["Info"] = "Thank you! Your review has been posted.";
+            TempData["Info"] = localizer["Thank you! Your review has been posted."].Value;
         }
 
         await db.SaveChangesAsync();
@@ -307,7 +307,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         {
             db.Reviews.Remove(review);
             await db.SaveChangesAsync();
-            TempData["Info"] = "Your review was deleted successfully.";
+            TempData["Info"] = localizer["Your review was deleted successfully."].Value;
         }
 
         return RedirectToAction("Details", "Anime", new { id = animeId });

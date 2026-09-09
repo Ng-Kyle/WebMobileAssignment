@@ -5,7 +5,7 @@
 }
 
 <div class="rating-container">
-    <h2 class="rating-title">Rating Statistics</h2>
+    <h2 class="rating-title">@localizer["Rating Statistics"]</h2>
 
     <!-- Side-by-Side Main Grid -->
     <div class="rating-dashboard-grid">
@@ -13,26 +13,26 @@
         <!-- LEFT COLUMN: Metrics Stack -->
         <div class="rating-summary-stack">
             <div class="rating-card card-border-warning">
-                <span class="rating-card-label">Mean Score</span>
+                <span class="rating-card-label">@localizer["Mean Score"]</span>
                 <p class="rating-card-value text-warning">★ @Model.AverageRating</p>
             </div>
             <div class="rating-card card-border-primary">
-                <span class="rating-card-label">Total Reviews</span>
+                <span class="rating-card-label">@localizer["Total Reviews"]</span>
                 <p class="rating-card-value text-primary">@Model.TotalReviewsCount</p>
             </div>
             <div class="rating-card card-border-success">
-                <span class="rating-card-label">Highest Score</span>
+                <span class="rating-card-label">@localizer["Highest Score"]</span>
                 <p class="rating-card-value text-success">@Model.HighestRating / 10</p>
             </div>
             <div class="rating-card card-border-danger">
-                <span class="rating-card-label">Lowest Score</span>
+                <span class="rating-card-label">@localizer["Lowest Score"]</span>
                 <p class="rating-card-value text-danger">@Model.LowestRating / 10</p>
             </div>
         </div>
 
         <!-- RIGHT COLUMN: Score Distribution -->
         <div class="rating-section-card">
-            <div class="rating-section-header">Score Breakdown (1 to 10 Stars)</div>
+            <div class="rating-section-header">@localizer["Score Breakdown (1 to 10 Stars)"]</div>
             <div class="rating-section-body">
                 <table class="distribution-table">
                     <tbody>
@@ -62,7 +62,7 @@
     @if (Model.TopRatedReviews.Any())
     {
         <div class="rating-section-card top-reviews-wrapper">
-            <div class="rating-section-header">Top Rated Reviews</div>
+            <div class="rating-section-header">@localizer["Top Rated Reviews"]</div>
             <ul class="review-list">
                 @foreach (var review in Model.TopRatedReviews)
                 {

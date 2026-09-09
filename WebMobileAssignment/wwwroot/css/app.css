@@ -1432,7 +1432,6 @@ body {
 
 /* NIGEL CSS*/
 
-/* 1. Card Container (Wider and well-spaced) */
 .account-box {
     max-width: 680px;
     width: 90%;
@@ -1453,16 +1452,14 @@ body {
     color: #000000;
 }
 
-/* 2. Form Grid (Stretches inputs across the column) */
 .account-box .form {
     display: grid;
     grid-template-columns: 150px 1fr auto;
     gap: 18px 14px;
-    place-items: center stretch; /* Allows inputs to stretch horizontally */
+    place-items: center stretch;
     width: 100%;
 }
 
-/* 3. Labels (Fixed height so Photo label doesn't turn into a giant block) */
 .account-box .form > label:not(:has(*)) {
     background-color: #FFCDB2;
     color: #000000;
@@ -1477,13 +1474,11 @@ body {
     align-self: center;
 }
 
-/* Align Photo label to the top of its row */
 .account-box .form > label[for="Photo"] {
     align-self: start;
     margin-top: 4px;
 }
 
-/* 4. Input Fields & Wrappers (Locked 320px Width) */
 .account-box .form > div {
     display: flex;
     align-items: center;
@@ -1507,7 +1502,6 @@ body {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Remove blue autofill tint */
 .account-box input:-webkit-autofill,
 .account-box input:-webkit-autofill:hover,
 .account-box input:-webkit-autofill:focus,
@@ -1523,7 +1517,6 @@ body {
     box-shadow: 0 0 6px rgba(255, 94, 126, 0.45);
 }
 
-/* 5. Live Badges */
 #username-status,
 #email-status {
     font-weight: bold;
@@ -1531,7 +1524,6 @@ body {
     white-space: nowrap;
 }
 
-/* 6. Drag-and-Drop Photo Box */
 .account-box .upload {
     display: inline-flex;
     align-items: center;
@@ -1563,7 +1555,6 @@ body {
     border: 1px solid #000000;
 }
 
-/* 7. Action Buttons */
 .account-box .form > section {
     grid-column: 1 / -1;
     display: flex;
@@ -1607,7 +1598,6 @@ body {
     background-color: #f2f2f2;
 }
 
-/* 8. Full-Width Spans (reCAPTCHA & Validation) */
 .account-box .form > div:has(.g-recaptcha) {
     grid-column: 1 / -1;
     display: flex;
@@ -1629,7 +1619,6 @@ body {
     color: #d90429;
 }
 
-/* 9. Subtext Links */
 .account-box p {
     margin-top: 1.5rem;
     font-size: 0.95rem;
