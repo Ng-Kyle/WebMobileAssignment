@@ -27,13 +27,23 @@
         </div>
         <span></span>
 
-        <label asp-for="Password">@localizer["Password"]</label>
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
+        <label asp-for="Password"></label>
+        <div>
+            <div class="password-box">
+                <input asp-for="Password" />
+            </div>
+            <span asp-validation-for="Password"></span>
+        </div>
+        <span></span>
 
-        <label asp-for="Confirm">@localizer["Confirm"]</label>
-        <input asp-for="Confirm" />
-        <span asp-validation-for="Confirm"></span>
+        <label asp-for="Confirm"></label>
+        <div>
+            <div class="password-box">
+                <input asp-for="Confirm" />
+            </div>
+            <span asp-validation-for="Confirm"></span>
+        </div>
+        <span></span>
 
         <label asp-for="Photo">@localizer["Photo"]</label>
         <label class="upload">
@@ -58,7 +68,6 @@
 </div>
 @section foot {
     <script>
-        // Enables client-side validation for hidden file inputs
         $.validator.setDefaults({ ignore: '' });
 
         const dropZone = document.querySelector('.upload');
@@ -108,7 +117,6 @@
             clearTimeout(debounceTimer);
             const email = emailInput.value.trim();
 
-            // Escaped with @@ so Razor knows it is plain text
             if (!email || !email.includes('@@')) {
                 emailStatus.textContent = '';
                 return;

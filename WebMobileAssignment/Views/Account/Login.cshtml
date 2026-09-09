@@ -17,7 +17,9 @@
         <span asp-validation-for="Email"></span>
 
         <label asp-for="Password">@localizer["Password"]</label>
-        <input asp-for="Password" />
+        <div class="password-box">
+            <input asp-for="Password" />
+        </div>
         <span asp-validation-for="Password"></span>
 
         <label asp-for="RememberMe">@localizer["Remember Me"]</label>

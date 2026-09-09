@@ -24,7 +24,6 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         return View(new RegisterAdminVM());
     }
 
-    // 2. Admin Register (POST)
     [HttpPost]
     public async Task<IActionResult> RegisterAdmin(RegisterAdminVM vm)
     {
@@ -62,7 +61,6 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
             return RedirectToAction(nameof(Admins));
         }
 
-        // If validation fails, reload the admin list and stay on the page
         ViewBag.AdminListing = "admin_sidenav-active";
         ViewBag.Admins = db.Users.OfType<Admin>().ToList();
         return View("Admins", vm);
@@ -110,7 +108,6 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         return RedirectToAction(nameof(Admins));
     }
 
-    // GET: Admin Review Listing, Search, & Filter
     public async Task<IActionResult> Reviews(string search, int? rating, int? animeId, string sort = "Date", string direction = "des", int page = 1)
     {
         var query = db.Reviews
@@ -118,7 +115,6 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
             .Include(r => r.Anime)
             .AsQueryable();
 
-        // Search by review text or member username
         if (!string.IsNullOrWhiteSpace(search))
         {
             var clean = search.Trim();
@@ -126,19 +122,16 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
             ViewBag.Search = clean;
         }
 
-        // Filter by Rating
         if (rating.HasValue && rating > 0)
         {
             query = query.Where(r => r.Rating == rating.Value);
         }
 
-        // Filter by Anime
         if (animeId.HasValue && animeId > 0)
         {
             query = query.Where(r => r.Anime.AnimeId == animeId.Value);
         }
 
-        // Sorting
         query = (sort, direction) switch
         {
             ("Rating", "asc") => query.OrderBy(r => r.Rating),
@@ -162,7 +155,6 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         return View(vm);
     }
 
-    // POST: Admin Moderation / Deletion
     [HttpPost]
     public async Task<IActionResult> DeleteReview(int reviewId)
     {
@@ -176,7 +168,6 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         return RedirectToAction(nameof(Reviews));
     }
 
-    // GET: Admin/ReviewDetails/5
     public async Task<IActionResult> ReviewDetails(int id)
     {
         var review = await db.Reviews

@@ -1634,3 +1634,77 @@ body {
     .account-box a:hover {
 color: #FF5E7E;
 }
+
+
+.password-box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content !important;
+    justify-self: start;
+}
+
+.account-box .password-box {
+    width: 320px !important;
+    max-width: 320px !important;
+}
+
+    .account-box .password-box input {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+.password-box input {
+    padding-right: 42px !important;
+}
+
+.account-box .form button.password-toggle,
+button.password-toggle,
+.password-toggle {
+    position: absolute !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #444 !important;
+    z-index: 5 !important;
+}
+
+.account-box .form button.password-toggle:hover,
+button.password-toggle:hover,
+.password-toggle:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #000 !important;
+    transform: translateY(-50%) !important;
+}
+
+.account-box {
+    width: fit-content !important;
+    min-width: 540px !important;
+    max-width: 95vw !important;
+    padding-right: 2.5rem !important;
+    box-sizing: border-box !important;
+}
+
+.account-box .field-validation-error {
+    white-space: nowrap !important;
+    font-size: 0.85rem !important;
+    font-weight: bold;
+}
