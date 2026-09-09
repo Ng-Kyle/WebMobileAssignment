@@ -30,8 +30,15 @@ else
                     <p class="price">@localizer["Score"]: ⭐ @avgScore</p>
                 </a>
                 <div class="buttonGroup">
-                   <a data-ajax="true" data-ajax-method="POST" data-ajax-url="@Url.Action("QuickAdd", "Watchlist", new { animeId = item.AnimeId })" 
-                      data-ajax-success="alert('@localizer["Added to Watchlist!"]') " class="productListQuickAdd"> + @localizer["Watchlist"]</a>
+                    @if (User.IsInRole("Member"))
+                    {
+                       <a data-ajax="true" data-ajax-method="POST" data-ajax-url="@Url.Action("QuickAdd", "Watchlist", new { animeId = item.AnimeId })" 
+                          data-ajax-success="alert('@localizer["Added to Watchlist!"]') " class="productListQuickAdd"> + @localizer["Watchlist"]</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="productListQuickAdd"> + @localizer["Watchlist"]</a>
+                    }
                 </div>
             </div>
         }

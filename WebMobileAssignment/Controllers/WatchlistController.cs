@@ -1,16 +1,38 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using WebMobileAssignment.Models;
 
 namespace WebMobileAssignment.Controllers
 {
+    [Authorize(Roles = "Member")]
     public class WatchlistController(DB db) : Controller
     {
         public int GetCurrentUserId()
         {
-            return 1;
+            var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (int.TryParse(idClaim, out int id))
+            {
+                return id;
+            }
+
+            var identifier = User.Identity?.Name;
+            if (!string.IsNullOrEmpty(identifier))
+            {
+                var member = db.Members.FirstOrDefault(m => m.Email == identifier || m.UserName == identifier);
+                if (member != null)
+                {
+                    return member.UserId;
+                }
+            }
+
+            return 0;
         }
+        
 
         public IActionResult Index(string? search, string? status)
         {
@@ -80,20 +102,10 @@ namespace WebMobileAssignment.Controllers
         public void SaveOrUpdateRecord(int animeId, string status, int progress)
         {
             int memberId = GetCurrentUserId();
+            if (memberId == 0) return;
 
-            var member = db.Members.FirstOrDefault(m => m.UserId == memberId) ?? db.Members.FirstOrDefault();
-
-            if (member == null)
-            {
-                member = new Member
-                {
-                    UserName = "DemoUser",
-                    Email = "demo@example.com",
-                    PasswordHash = "demo"
-                };
-                db.Members.Add(member);
-                db.SaveChanges();
-            }
+            var member = db.Members.FirstOrDefault(m => m.UserId == memberId);
+            if (member == null) return;
 
             var watchList = db.WatchLists.FirstOrDefault(w => w.Member.UserId == memberId);
             if (watchList == null)
