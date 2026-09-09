@@ -25,26 +25,54 @@ public class AccountController(DB db, Helper hp) : Controller
     {
         var u = db.Users.FirstOrDefault(x => x.Email == vm.Email);
 
-        if (u == null || !hp.VerifyPassword(u.PasswordHash, vm.Password))
+        if (u == null)
         {
             ModelState.AddModelError("", "Login credentials do not match.");
         }
+        // 1. Check if account is currently locked out
+        else if (u.LockoutExpiry != null && u.LockoutExpiry > DateTime.Now)
+        {
+            var remainingMinutes = Math.Ceiling((u.LockoutExpiry.Value - DateTime.Now).TotalMinutes);
+            ModelState.AddModelError("", $"Account is temporarily locked due to multiple failed login attempts. Try again in {remainingMinutes} minute(s).");
+        }
+        // 2. Check if account is suspended by admin
         else if (u is Member m && m.IsBlocked)
         {
             ModelState.AddModelError("", "This account is blocked.");
         }
+        // 3. Password verification failed -> count attempts
+        else if (!hp.VerifyPassword(u.PasswordHash, vm.Password))
+        {
+            u.FailedLoginAttempts++;
 
+            if (u.FailedLoginAttempts >= 3)
+            {
+                u.LockoutExpiry = DateTime.Now.AddMinutes(5);
+                db.SaveChanges();
+                ModelState.AddModelError("", "Too many failed attempts. Your account has been locked for 5 minutes.");
+            }
+            else
+            {
+                db.SaveChanges();
+                ModelState.AddModelError("", $"Login credentials do not match. Attempt {u.FailedLoginAttempts} of 3.");
+            }
+        }
+
+        // 4. Success: reset counters and proceed with login
         if (ModelState.IsValid)
         {
+            u!.FailedLoginAttempts = 0;
+            u.LockoutExpiry = null;
+            db.SaveChanges();
+
             TempData["Info"] = "Login successfully.";
-            hp.SignIn(u!.Email, u.Role, vm.RememberMe);
+            hp.SignIn(u.Email, u.Role, vm.RememberMe);
 
             if (!string.IsNullOrEmpty(returnURL) && Url.IsLocalUrl(returnURL))
             {
                 return Redirect(returnURL);
             }
 
-            // Redirect Admin to the Admin portal, Member to the Anime catalog
             if (u.Role == "Admin")
             {
                 return RedirectToAction("Index", "Admin");
@@ -70,8 +98,17 @@ public class AccountController(DB db, Helper hp) : Controller
     public IActionResult Register() => View();
 
     [HttpPost]
-    public IActionResult Register(RegisterVM vm)
+    public async Task<IActionResult> Register(RegisterVM vm)
     {
+        // 1. Verify Google reCAPTCHA
+        string? captchaResponse = Request.Form["g-recaptcha-response"];
+        bool isCaptchaValid = await VerifyCaptchaAsync(captchaResponse);
+
+        if (!isCaptchaValid)
+        {
+            ModelState.AddModelError("", "Please verify that you are not a robot.");
+        }
+
         if (db.Users.Any(u => u.Email == vm.Email))
         {
             ModelState.AddModelError("Email", "Email already in use.");
@@ -102,7 +139,7 @@ public class AccountController(DB db, Helper hp) : Controller
             };
 
             db.Members.Add(member);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             TempData["Info"] = "Register successfully. Please login.";
             return RedirectToAction("Login");
@@ -243,5 +280,22 @@ public class AccountController(DB db, Helper hp) : Controller
         }
 
         return View(vm);
+    }
+    private async Task<bool> VerifyCaptchaAsync(string? responseToken)
+    {
+        if (string.IsNullOrEmpty(responseToken)) return false;
+
+        const string secretKey = "6Lft27EtAAAAAHJF2hmbM_2HF6sV4yH5NT6156gx";
+        using var client = new HttpClient();
+
+        var response = await client.PostAsync(
+            $"https://www.google.com/recaptcha/api/siteverify?secret={secretKey}&response={responseToken}",
+            null
+        );
+
+        if (!response.IsSuccessStatusCode) return false;
+
+        var jsonString = await response.Content.ReadAsStringAsync();
+        return jsonString.Contains("\"success\": true");
     }
 }
