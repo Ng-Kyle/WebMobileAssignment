@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using WebMobileAssignment.Models;
 using X.PagedList;
 using X.PagedList.Extensions;
@@ -9,7 +10,7 @@ using X.PagedList.Extensions;
 namespace WebMobileAssignment.Controllers;
 
 [Authorize(Roles = "Admin")]
-public class AdminController(DB db) : Controller
+public class AdminController(DB db, IStringLocalizer<SharedResource> localizer) : Controller
 {
     public IActionResult Index()
     {
@@ -77,7 +78,7 @@ public class AdminController(DB db) : Controller
         {
             db.Reviews.Remove(review);
             await db.SaveChangesAsync();
-            TempData["Info"] = "Review has been deleted by administrator.";
+            TempData["Info"] = localizer["Review has been deleted by administrator."].Value;
         }
         return RedirectToAction(nameof(Reviews));
     }

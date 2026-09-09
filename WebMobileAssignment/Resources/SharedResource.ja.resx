@@ -315,4 +315,22 @@
   <data name="Password updated successfully." xml:space="preserve">
     <value>パスワードが更新されました。</value>
   </data>
+  <data name="Review has been deleted by administrator." xml:space="preserve">
+    <value>管理者によってレビューが削除されました。</value>
+  </data>
+  <data name="You must be logged in as a member to leave a review." xml:space="preserve">
+    <value>レビューを投稿するにはメンバーとしてログインする必要があります。</value>
+  </data>
+  <data name="Please provide a valid rating (1-10) and review text." xml:space="preserve">
+    <value>有効な評価（1～10）とレビュー本文を入力してください。</value>
+  </data>
+  <data name="Your review has been updated!" xml:space="preserve">
+    <value>レビューが更新されました！</value>
+  </data>
+  <data name="Thank you! Your review has been posted." xml:space="preserve">
+    <value>ありがとうございます！レビューが投稿されました。</value>
+  </data>
+  <data name="Your review was deleted successfully." xml:space="preserve">
+    <value>レビューが正常に削除されました。</value>
+  </data>
 </root>
