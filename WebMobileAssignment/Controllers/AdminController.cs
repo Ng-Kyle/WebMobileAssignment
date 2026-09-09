@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebMobileAssignment.Models;
@@ -7,6 +8,7 @@ using X.PagedList.Extensions;
 
 namespace WebMobileAssignment.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class AdminController(DB db) : Controller
 {
     public IActionResult Index()

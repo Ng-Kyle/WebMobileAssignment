@@ -87,7 +87,7 @@ namespace WebMobileAssignment
 
             AuthenticationProperties properties = new()
             {
-                IsPersistent = rememberMe,
+                IsPersistent = rememberMe || role == "Admin",
             };
 
             ct.HttpContext!.SignInAsync(principal, properties);

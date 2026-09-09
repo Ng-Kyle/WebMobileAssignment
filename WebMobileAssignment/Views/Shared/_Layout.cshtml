@@ -39,7 +39,6 @@
 
                 @if (User.Identity!.IsAuthenticated)
                 {
-                    <span>@User.Identity.Name | @(User.IsInRole("Admin") ? "Admin" : "Member")</span>
 
                     @if (User.IsInRole("Member"))
                     {

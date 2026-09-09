@@ -36,5 +36,7 @@ app.UseRequestLocalization();
 app.UseSession();
 
 app.MapDefaultControllerRoute();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
