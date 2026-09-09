@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Account | Profile";
-        
+
     if (User.IsInRole("Admin"))
     {
         Layout = "_AdminLayout";
@@ -10,35 +10,37 @@
     }
 }
 
-<table class="table detail">
-    <tr>
-        <th>Username</th>
-        <td>@Model.UserName</td>
-    </tr>
-    <tr>
-        <th>Email</th>
-        <td>@Model.Email</td>
-    </tr>
-    <tr>
-        <th>Role</th>
-        <td>@Model.Role</td>
-    </tr>
-    @if (Model is WebMobileAssignment.Models.Member m)
-    {
-        <tr>
-            <th>Photo</th>
-            <td>
-                <img src="/images/member/@(m.ImageLink ?? "photo.jpg")"
-                     style="width: 120px; height: 120px; object-fit: cover; border: 1px solid #333;" />
-            </td>
-        </tr>
-    }
-</table>
+<div class="account-box">
+    <h2>My Profile</h2>
 
-<p>
-    @if (User.IsInRole("Member"))
-    {
-        <a href="/Account/UpdateProfile">Update Profile</a> <text>|</text>
-    }
-    <a href="/Account/UpdatePassword">Update Password</a>
-</p>
+    <div class="form">
+        <label asp-for="Email"></label>
+        <b>@Model.Email</b>
+        <br />
+
+        <label asp-for="UserName"></label>
+        <b>@Model.UserName</b>
+        <br />
+
+        <label asp-for="Role"></label>
+        <b>@Model.Role</b>
+        <br />
+
+        @if (Model is WebMobileAssignment.Models.Member m)
+        {
+            <label>Photo</label>
+            <label class="upload" style="cursor: default;">
+                <img src="@(string.IsNullOrEmpty(m.ImageLink) ? "/images/photo.jpg" : $"/images/member/{m.ImageLink}")" />
+            </label>
+            <br />
+        }
+
+        <section>
+            @if (User.IsInRole("Member"))
+            {
+                <a href="/Account/UpdateProfile" class="btn-action">Update Profile</a>
+            }
+            <a href="/Account/UpdatePassword" class="btn-action" style="background-color: #ffffff;">Update Password</a>
+        </section>
+    </div>
+</div>

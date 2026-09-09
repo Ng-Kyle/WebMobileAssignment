@@ -4,33 +4,38 @@
     ViewBag.Title = "Account | Update Profile";
 }
 
-<form method="post" enctype="multipart/form-data" class="form">
-    <div asp-validation-summary="ModelOnly"></div>
+<div class="account-box">
+    <h2>Update Profile</h2>
 
-    <label asp-for="Email"></label>
-    <b>@Model?.Email</b>
-    <br />
+    <form method="post" enctype="multipart/form-data" class="form">
+        <div asp-validation-summary="ModelOnly"></div>
 
-    <label asp-for="UserName"></label>
-    <input asp-for="UserName" autofocus />
-    <span asp-validation-for="UserName"></span>
+        <label asp-for="Email"></label>
+        <b>@Model?.Email</b>
+        <br />
 
-    <label asp-for="Photo"></label>
-    <label class="upload">
-        <input asp-for="Photo" accept="image/jpeg,image/png" hidden />
-        <img src="/images/member/@(Model?.ImageLink ?? "photo.jpg")" />
-    </label>
-    <span asp-validation-for="Photo"></span>
+        <label asp-for="UserName"></label>
+        <input asp-for="UserName" autofocus />
+        <span asp-validation-for="UserName"></span>
 
-    <section>
-        <button>Update</button>
-        <button type="reset">Reset</button>
-    </section>
-</form>
+        <label asp-for="Photo"></label>
+        <label class="upload">
+            <input asp-for="Photo" accept="image/jpeg,image/png" hidden />
+            <img src="/images/member/@(Model?.ImageLink ?? "photo.jpg")" />
+        </label>
+        <span asp-validation-for="Photo"></span>
 
-<p>
-    <a href="/Account/Profile">Back to Profile</a>
-</p>
+        <section>
+            <button>Update</button>
+            <button type="reset">Reset</button>
+        </section>
+    </form>
+
+    <p>
+        <a href="/Account/Profile">Back to Profile</a>
+    </p>
+
+</div>
 
 @section foot {
     <script>

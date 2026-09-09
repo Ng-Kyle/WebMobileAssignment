@@ -7,13 +7,17 @@ namespace WebMobileAssignment.Controllers;
 
 public class AccountController(DB db, Helper hp) : Controller
 {
-    // 1. REMOTE VALIDATION
+
     public bool CheckEmail(string email)
     {
         return !db.Users.Any(u => u.Email == email);
     }
+    public bool CheckUserName(string userName)
+    {
+        return !db.Users.Any(u => u.UserName == userName);
+    }
 
-    // 2. LOGIN & LOGOUT
+
     public IActionResult Login(string? returnURL)
     {
         ViewBag.ReturnURL = returnURL;
@@ -29,18 +33,18 @@ public class AccountController(DB db, Helper hp) : Controller
         {
             ModelState.AddModelError("", "Login credentials do not match.");
         }
-        // 1. Check if account is currently locked out
+
         else if (u.LockoutExpiry != null && u.LockoutExpiry > DateTime.Now)
         {
             var remainingMinutes = Math.Ceiling((u.LockoutExpiry.Value - DateTime.Now).TotalMinutes);
             ModelState.AddModelError("", $"Account is temporarily locked due to multiple failed login attempts. Try again in {remainingMinutes} minute(s).");
         }
-        // 2. Check if account is suspended by admin
+
         else if (u is Member m && m.IsBlocked)
         {
             ModelState.AddModelError("", "This account is blocked.");
         }
-        // 3. Password verification failed -> count attempts
+
         else if (!hp.VerifyPassword(u.PasswordHash, vm.Password))
         {
             u.FailedLoginAttempts++;
@@ -58,7 +62,6 @@ public class AccountController(DB db, Helper hp) : Controller
             }
         }
 
-        // 4. Success: reset counters and proceed with login
         if (ModelState.IsValid)
         {
             u!.FailedLoginAttempts = 0;
@@ -94,13 +97,11 @@ public class AccountController(DB db, Helper hp) : Controller
 
     public IActionResult AccessDenied() => View();
 
-    // 3. REGISTRATION
     public IActionResult Register() => View();
 
     [HttpPost]
     public async Task<IActionResult> Register(RegisterVM vm)
     {
-        // 1. Verify Google reCAPTCHA
         string? captchaResponse = Request.Form["g-recaptcha-response"];
         bool isCaptchaValid = await VerifyCaptchaAsync(captchaResponse);
 
@@ -112,6 +113,11 @@ public class AccountController(DB db, Helper hp) : Controller
         if (db.Users.Any(u => u.Email == vm.Email))
         {
             ModelState.AddModelError("Email", "Email already in use.");
+        }
+
+        if (db.Users.Any(u => u.UserName == vm.UserName))
+        {
+            ModelState.AddModelError("UserName", "Username already in use.");
         }
 
         if (vm.Photo != null)
@@ -148,7 +154,6 @@ public class AccountController(DB db, Helper hp) : Controller
         return View(vm);
     }
 
-    // 4. PASSWORD RESET
     public IActionResult ResetPassword() => View();
 
     [HttpPost]
@@ -193,7 +198,6 @@ public class AccountController(DB db, Helper hp) : Controller
         return View(vm);
     }
 
-    // 5. USER PROFILE & PASSWORD MANAGEMENT
     [Authorize]
     public IActionResult Profile()
     {

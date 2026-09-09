@@ -6,51 +6,166 @@
 
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-<form method="post" enctype="multipart/form-data" class="form">
-    <div asp-validation-summary="ModelOnly"></div>
+<div class="account-box">
+    <h2>Register Account</h2>
 
-    <label asp-for="UserName"></label>
-    <input asp-for="UserName" autofocus />
-    <span asp-validation-for="UserName"></span>
+    <form method="post" enctype="multipart/form-data" class="form">
+        <div asp-validation-summary="ModelOnly"></div>
 
-    <label asp-for="Email"></label>
-    <input asp-for="Email" />
-    <span asp-validation-for="Email"></span>
+        <label asp-for="UserName"></label>
+        <div>
+            <input asp-for="UserName" autofocus autocomplete="off" />
+            <span id="username-status" style="font-weight: bold; font-size: 0.85rem; margin-left: 8px;"></span>
+        </div>
+        <span></span>
 
-    <label asp-for="Password"></label>
-    <input asp-for="Password" />
-    <span asp-validation-for="Password"></span>
+        <label asp-for="Email"></label>
+        <div>
+            <input asp-for="Email" autocomplete="off" />
+            <span id="email-status" style="font-weight: bold; font-size: 0.85rem; margin-left: 8px;"></span>
+        </div>
+        <span></span>
 
-    <label asp-for="Confirm"></label>
-    <input asp-for="Confirm" />
-    <span asp-validation-for="Confirm"></span>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
 
-    <label asp-for="Photo"></label>
-    <label class="upload">
-        <input asp-for="Photo" accept="image/jpeg,image/png" hidden />
-        <img src="/images/photo.jpg" />
-    </label>
-    <span asp-validation-for="Photo"></span>
+        <label asp-for="Confirm"></label>
+        <input asp-for="Confirm" />
+        <span asp-validation-for="Confirm"></span>
 
-    <!-- Added pair to match your 2-column grid -->
-    <label>Security</label>
-    <div>
-        <div class="g-recaptcha" data-sitekey="6Lft27EtAAAAABmWjglFkMYispzyUeK4eR0ln9kJ"></div>
-    </div>
+        <label asp-for="Photo"></label>
+        <label class="upload">
+            <input asp-for="Photo" accept="image/jpeg,image/png" hidden />
+            <img src="/images/photo.jpg" />
+        </label>
+        <span asp-validation-for="Photo"></span>
 
-    <section>
-        <button>Register</button>
-        <button type="reset">Reset</button>
-    </section>
-</form>
+        <div>
+            <div class="g-recaptcha" data-sitekey="6Lft27EtAAAAABmWjglFkMYispzyUeK4eR0ln9kJ"></div>
+        </div>
 
-<p>
-    Already have an account? <a href="/Account/Login">Login here</a>
-</p>
+        <section>
+            <button>Register</button>
+            <button type="reset">Reset</button>
+        </section>
+    </form>
 
+    <p>
+        Already have an account? <a href="/Account/Login">Login here</a>
+    </p>
+</div>
 @section foot {
     <script>
         // Enables client-side validation for hidden file inputs
         $.validator.setDefaults({ ignore: '' });
+
+        const dropZone = document.querySelector('.upload');
+        const fileInput = document.querySelector('input[type="file"][name="Photo"]');
+        const previewImg = dropZone.querySelector('img');
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('dragover');
+            });
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                const file = files[0];
+                if (file.type === "image/jpeg" || file.type === "image/png") {
+                    fileInput.files = files;
+                    previewImg.src = URL.createObjectURL(file);
+                    $(fileInput).valid?.();
+                } else {
+                    alert("Only JPG and PNG images are allowed.");
+                }
+            }
+        });
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files && fileInput.files[0]) {
+                previewImg.src = URL.createObjectURL(fileInput.files[0]);
+            }
+        });
+
+        const emailInput = document.getElementById('Email');
+        const emailStatus = document.getElementById('email-status');
+        let debounceTimer;
+
+        emailInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            const email = emailInput.value.trim();
+
+            // Escaped with @@ so Razor knows it is plain text
+            if (!email || !email.includes('@@')) {
+                emailStatus.textContent = '';
+                return;
+            }
+
+            emailStatus.style.color = '#6c757d';
+            emailStatus.textContent = 'Checking...';
+
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/Account/CheckEmail?email=${encodeURIComponent(email)}`);
+                    const isAvailable = await res.json();
+
+                    if (isAvailable) {
+                        emailStatus.style.color = '#198754';
+                        emailStatus.textContent = 'Available';
+                    } else {
+                        emailStatus.style.color = '#dc3545';
+                        emailStatus.textContent = 'Already taken';
+                    }
+                } catch {
+                    emailStatus.textContent = '';
+                }
+            }, 400);
+        });
+
+        const usernameInput = document.getElementById('UserName');
+        const usernameStatus = document.getElementById('username-status');
+        let userDebounceTimer;
+
+        usernameInput.addEventListener('input', () => {
+            clearTimeout(userDebounceTimer);
+            const userName = usernameInput.value.trim();
+
+            if (!userName) {
+                usernameStatus.textContent = '';
+                return;
+            }
+
+            usernameStatus.style.color = '#6c757d';
+            usernameStatus.textContent = 'Checking...';
+
+            userDebounceTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/Account/CheckUserName?userName=${encodeURIComponent(userName)}`);
+                    const isAvailable = await res.json();
+
+                    if (isAvailable) {
+                        usernameStatus.style.color = '#198754';
+                        usernameStatus.textContent = 'Available';
+                    } else {
+                        usernameStatus.style.color = '#dc3545';
+                        usernameStatus.textContent = 'Already taken';
+                    }
+                } catch {
+                    usernameStatus.textContent = '';
+                }
+            }, 400);
+        });
     </script>
 }
