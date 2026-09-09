@@ -32,17 +32,17 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         {
             if (existingUser.Role == "Member")
             {
-                ModelState.AddModelError("Email", "This email belongs to a Member (cannot promote to Admin).");
+                ModelState.AddModelError("Email", localizer["This email belongs to a Member (cannot promote to Admin)."]);
             }
             else
             {
-                ModelState.AddModelError("Email", "Email is already in use by an Admin.");
+                ModelState.AddModelError("Email", localizer["Email is already in use by an Admin."]);
             }
         }
 
         if (db.Users.Any(u => u.UserName == vm.UserName))
         {
-            ModelState.AddModelError("UserName", "Username is already taken.");
+            ModelState.AddModelError("UserName", localizer["Username is already taken."]);
         }
 
         if (ModelState.IsValid)
@@ -57,7 +57,7 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
             db.Add(admin);
             await db.SaveChangesAsync();
 
-            TempData["Info"] = $"Admin account '{admin.UserName}' created successfully.";
+            TempData["Info"] = localizer["Admin account '{0}' created successfully.", admin.UserName].Value;
             return RedirectToAction(nameof(Admins));
         }
 
@@ -73,8 +73,8 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         if (user != null)
         {
             string message = user.Role == "Member"
-                ? "This email belongs to a Member (cannot promote to Admin)."
-                : "Email is already in use by an Admin.";
+                ? localizer["This email belongs to a Member (cannot promote to Admin)."]
+                : localizer["Email is already in use by an Admin."];
 
             return Json(new { exists = true, message });
         }
@@ -86,7 +86,7 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
     public IActionResult CheckUserName(string userName)
     {
         bool exists = db.Users.Any(u => u.UserName == userName);
-        return Json(new { exists, message = exists ? "Username is already taken." : "" });
+        return Json(new { exists, message = exists ? localizer["Username is already taken."] : "" });
     }
 
     [HttpPost]
@@ -94,7 +94,7 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
     {
         if (email.Equals(User.Identity!.Name, StringComparison.OrdinalIgnoreCase))
         {
-            TempData["Info"] = "Action denied: You cannot delete your own admin account.";
+            TempData["Info"] = localizer["Action denied: You cannot delete your own admin account."].Value;
             return RedirectToAction(nameof(Admins));
         }
         var target = db.Users.OfType<Admin>().FirstOrDefault(u => u.Email == email);
@@ -102,7 +102,7 @@ public class AdminController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         {
             db.Users.Remove(target);
             db.SaveChanges();
-            TempData["Info"] = $"Admin '{target.UserName}' has been deleted.";
+            TempData["Info"] = localizer["Admin '{0}' has been deleted.", target.UserName].Value;
         }
 
         return RedirectToAction(nameof(Admins));

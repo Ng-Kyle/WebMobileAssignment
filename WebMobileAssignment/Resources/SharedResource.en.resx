@@ -333,4 +333,22 @@
   <data name="Your review was deleted successfully." xml:space="preserve">
     <value>Your review was deleted successfully.</value>
   </data>
+  <data name="This email belongs to a Member (cannot promote to Admin)." xml:space="preserve">
+    <value>This email belongs to a Member (cannot promote to Admin).</value>
+  </data>
+  <data name="Email is already in use by an Admin." xml:space="preserve">
+    <value>Email is already in use by an Admin.</value>
+  </data>
+  <data name="Username is already taken." xml:space="preserve">
+    <value>Username is already taken.</value>
+  </data>
+  <data name="Admin account '{0}' created successfully." xml:space="preserve">
+    <value>Admin account '{0}' created successfully.</value>
+  </data>
+  <data name="Action denied: You cannot delete your own admin account." xml:space="preserve">
+    <value>Action denied: You cannot delete your own admin account.</value>
+  </data>
+  <data name="Admin '{0}' has been deleted." xml:space="preserve">
+    <value>Admin '{0}' has been deleted.</value>
+  </data>
 </root>

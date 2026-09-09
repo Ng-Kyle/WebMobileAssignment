@@ -333,4 +333,22 @@
   <data name="Your review was deleted successfully." xml:space="preserve">
     <value>レビューが正常に削除されました。</value>
   </data>
+  <data name="This email belongs to a Member (cannot promote to Admin)." xml:space="preserve">
+    <value>このメールアドレスはメンバーに使用されています（管理者に昇格できません）。</value>
+  </data>
+  <data name="Email is already in use by an Admin." xml:space="preserve">
+    <value>このメールアドレスは既に管理者によって使用されています。</value>
+  </data>
+  <data name="Username is already taken." xml:space="preserve">
+    <value>このユーザー名は既に使用されています。</value>
+  </data>
+  <data name="Admin account '{0}' created successfully." xml:space="preserve">
+    <value>管理者アカウント「{0}」が正常に作成されました。</value>
+  </data>
+  <data name="Action denied: You cannot delete your own admin account." xml:space="preserve">
+    <value>操作が拒否されました。自分の管理者アカウントは削除できません。</value>
+  </data>
+  <data name="Admin '{0}' has been deleted." xml:space="preserve">
+    <value>管理者「{0}」が削除されました。</value>
+  </data>
 </root>
