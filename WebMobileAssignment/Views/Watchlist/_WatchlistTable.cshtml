@@ -32,6 +32,10 @@
         <input type="radio" name="status" value="Dropped" @(currentStatus == "Dropped" ? "checked" : "") onchange="$('#statusFilterInput').val('Dropped'); $('#f').submit();" style="display: none;" />
         @localizer["Dropped"] (@ViewBag.DroppedCount)
     </label>
+
+    <a asp-action="ExportCsv" class="exportCsvBtn">
+        📥 @localizer["Export Watchlist (CSV)"]
+    </a>
 </div>
 
 <div class="watchlistSummaryBar">
