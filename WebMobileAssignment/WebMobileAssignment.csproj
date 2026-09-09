@@ -24,8 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\anime\" />
-    <Folder Include="wwwroot\images\member\" />
     <Folder Include="wwwroot\images\studio\" />
   </ItemGroup>
 
