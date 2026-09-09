@@ -326,7 +326,7 @@
                     <form asp-controller="Member" asp-action="DeleteMyReview" method="post" style="margin-top: 0.75rem; text-align: right;">
                         <input type="hidden" name="reviewId" value="@rev.ReviewId" />
                         <input type="hidden" name="animeId" value="@Model.AnimeId" />
-                        <button type="submit" class="btn-delete-rev" onclick="return confirm('Are you sure you want to delete your review?');">
+                        <button type="submit" class="btn-delete-rev" onclick="return confirm('@localizer["Are you sure you want to delete your review?"]');">
                             @localizer["Delete My Review"]
                         </button>
                     </form>

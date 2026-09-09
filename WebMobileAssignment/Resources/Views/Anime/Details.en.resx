@@ -117,11 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Are you sure you want to delete your review?" xml:space="preserve">
+    <value>Are you sure you want to delete your review?</value>
+  </data>
+  <data name="Community Reviews &amp; Ratings" xml:space="preserve">
+    <value>Community Reviews &amp; Ratings</value>
+  </data>
   <data name="Completed" xml:space="preserve">
     <value>Completed</value>
   </data>
+  <data name="Delete My Review" xml:space="preserve">
+    <value>Delete My Review</value>
+  </data>
   <data name="Dropped" xml:space="preserve">
     <value>Dropped</value>
+  </data>
+  <data name="Edit Your Review" xml:space="preserve">
+    <value>Edit Your Review</value>
   </data>
   <data name="Episodes" xml:space="preserve">
     <value>Episodes</value>
@@ -131,6 +143,21 @@
   </data>
   <data name="General" xml:space="preserve">
     <value>General</value>
+  </data>
+  <data name="Highest Rating" xml:space="preserve">
+    <value>Highest Rating</value>
+  </data>
+  <data name="Leave a Review &amp; Rating" xml:space="preserve">
+    <value>Leave a Review &amp; Rating</value>
+  </data>
+  <data name="Lowest Rating" xml:space="preserve">
+    <value>Lowest Rating</value>
+  </data>
+  <data name="Newest First" xml:space="preserve">
+    <value>Newest First</value>
+  </data>
+  <data name="No reviews yet. Be the first to leave one!" xml:space="preserve">
+    <value>No reviews yet. Be the first to leave one!</value>
   </data>
   <data name="No synopsis has been provided for this title yet." xml:space="preserve">
     <value>No synopsis has been provided for this title yet.</value>
@@ -144,17 +171,32 @@
   <data name="Progress" xml:space="preserve">
     <value>Progress</value>
   </data>
+  <data name="Rating" xml:space="preserve">
+    <value>Rating</value>
+  </data>
   <data name="Release Date" xml:space="preserve">
     <value>Release Date</value>
   </data>
   <data name="Save to Watchlist" xml:space="preserve">
     <value>Save to Watchlist</value>
   </data>
+  <data name="Select Rating" xml:space="preserve">
+    <value>Select Rating</value>
+  </data>
+  <data name="Share your thoughts..." xml:space="preserve">
+    <value>Share your thoughts...</value>
+  </data>
+  <data name="Sort by" xml:space="preserve">
+    <value>Sort by</value>
+  </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
   </data>
   <data name="Studio" xml:space="preserve">
     <value>Studio</value>
+  </data>
+  <data name="Submit Review" xml:space="preserve">
+    <value>Submit Review</value>
   </data>
   <data name="Synopsis" xml:space="preserve">
     <value>Synopsis</value>
@@ -165,13 +207,22 @@
   <data name="Trailer" xml:space="preserve">
     <value>Trailer</value>
   </data>
+  <data name="Update Review" xml:space="preserve">
+    <value>Update Review</value>
+  </data>
   <data name="Update Watchlist" xml:space="preserve">
     <value>Update Watchlist</value>
+  </data>
+  <data name="User Reviews" xml:space="preserve">
+    <value>User Reviews</value>
   </data>
   <data name="Watch on YouTube" xml:space="preserve">
     <value>Watch on YouTube</value>
   </data>
   <data name="Watching" xml:space="preserve">
     <value>Watching</value>
+  </data>
+  <data name="Your Review" xml:space="preserve">
+    <value>Your Review</value>
   </data>
 </root>

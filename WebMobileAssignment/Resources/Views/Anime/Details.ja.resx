@@ -117,11 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Are you sure you want to delete your review?" xml:space="preserve">
+    <value>レビューを削除してもよろしいですか？</value>
+  </data>
+  <data name="Community Reviews &amp; Ratings" xml:space="preserve">
+    <value>コミュニティレビューと評価</value>
+  </data>
   <data name="Completed" xml:space="preserve">
     <value>視聴完了</value>
   </data>
+  <data name="Delete My Review" xml:space="preserve">
+    <value>自分のレビューを削除</value>
+  </data>
   <data name="Dropped" xml:space="preserve">
     <value>視聴中止</value>
+  </data>
+  <data name="Edit Your Review" xml:space="preserve">
+    <value>レビューを編集</value>
   </data>
   <data name="Episodes" xml:space="preserve">
     <value>エピソード数</value>
@@ -131,6 +143,21 @@
   </data>
   <data name="General" xml:space="preserve">
     <value>基本情報</value>
+  </data>
+  <data name="Highest Rating" xml:space="preserve">
+    <value>評価の高い順</value>
+  </data>
+  <data name="Leave a Review &amp; Rating" xml:space="preserve">
+    <value>レビューと評価を投稿</value>
+  </data>
+  <data name="Lowest Rating" xml:space="preserve">
+    <value>評価の低い順</value>
+  </data>
+  <data name="Newest First" xml:space="preserve">
+    <value>新しい順</value>
+  </data>
+  <data name="No reviews yet. Be the first to leave one!" xml:space="preserve">
+    <value>まだレビューはありません。最初にレビューを投稿しましょう！</value>
   </data>
   <data name="No synopsis has been provided for this title yet." xml:space="preserve">
     <value>このタイトルにはまだあらすじがありません。</value>
@@ -144,17 +171,32 @@
   <data name="Progress" xml:space="preserve">
     <value>進捗</value>
   </data>
+  <data name="Rating" xml:space="preserve">
+    <value>評価</value>
+  </data>
   <data name="Release Date" xml:space="preserve">
     <value>放送開始日</value>
   </data>
   <data name="Save to Watchlist" xml:space="preserve">
     <value>ウォッチリストに追加</value>
   </data>
+  <data name="Select Rating" xml:space="preserve">
+    <value>評価を選択</value>
+  </data>
+  <data name="Share your thoughts..." xml:space="preserve">
+    <value>感想を共有してください…</value>
+  </data>
+  <data name="Sort by" xml:space="preserve">
+    <value>並べ替え</value>
+  </data>
   <data name="Status" xml:space="preserve">
     <value>ステータス</value>
   </data>
   <data name="Studio" xml:space="preserve">
     <value>スタジオ</value>
+  </data>
+  <data name="Submit Review" xml:space="preserve">
+    <value>レビューを投稿</value>
   </data>
   <data name="Synopsis" xml:space="preserve">
     <value>あらすじ</value>
@@ -165,13 +207,22 @@
   <data name="Trailer" xml:space="preserve">
     <value>予告編</value>
   </data>
+  <data name="Update Review" xml:space="preserve">
+    <value>レビューを更新</value>
+  </data>
   <data name="Update Watchlist" xml:space="preserve">
     <value>ウォッチリストを更新</value>
+  </data>
+  <data name="User Reviews" xml:space="preserve">
+    <value>ユーザーレビュー</value>
   </data>
   <data name="Watch on YouTube" xml:space="preserve">
     <value>YouTubeで見る</value>
   </data>
   <data name="Watching" xml:space="preserve">
     <value>視聴中</value>
+  </data>
+  <data name="Your Review" xml:space="preserve">
+    <value>あなたのレビュー</value>
   </data>
 </root>

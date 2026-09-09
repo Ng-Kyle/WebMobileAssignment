@@ -126,6 +126,9 @@
   <data name="genre_side" xml:space="preserve">
     <value>ジャンル</value>
   </data>
+  <data name="Login" xml:space="preserve">
+    <value>ログイン</value>
+  </data>
   <data name="logout" xml:space="preserve">
     <value>ログアウト</value>
   </data>
@@ -137,6 +140,12 @@
   </data>
   <data name="profile_side" xml:space="preserve">
     <value>プロフィル</value>
+  </data>
+  <data name="Progress Stats" xml:space="preserve">
+    <value>進捗統計</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>登録</value>
   </data>
   <data name="review_side" xml:space="preserve">
     <value>レビュー</value>
