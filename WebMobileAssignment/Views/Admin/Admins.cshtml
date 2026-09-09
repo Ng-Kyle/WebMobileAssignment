@@ -46,7 +46,11 @@
                             <div class="anime_table-buttons">
                                 @if (!isSelf)
                                 {
-                                    <a class="anime_table-delete" data-post="/Admin/DeleteAdmin?email=@admin.Email">Delete</a>
+                                    <a class="anime_table-delete" 
+                                       data-post="/Admin/DeleteAdmin?email=@admin.Email"
+                                       onclick="if (!confirm('Are you sure you want to delete admin @admin.UserName? This action cannot be undone.')) { event.stopImmediatePropagation(); event.preventDefault(); return false; }">
+                                        Delete
+                                    </a>
                                 }
                                 else
                                 {
@@ -66,7 +70,6 @@
         </tbody>
     </table>
 </div>
-
 
 
 
@@ -104,7 +107,7 @@
 
         <div class="addanime_button-area" style="max-width: 510px; margin-top: 1rem;">
             <button type="submit" id="btnSubmitAdmin" class="addanime_button">Register Admin</button>
-            <button type="reset" id="btnResetAdmin" class="addanime_button" style="background-color: #ffffff; border: 1px solid black;">Reset</button>
+            <button type="reset" id="btnResetAdmin" class="addanime_button"; border: 1px solid black;">Reset</button>
         </div>
     </form>
 </div>
