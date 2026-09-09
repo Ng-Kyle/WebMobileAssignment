@@ -1351,6 +1351,69 @@ body {
     color: #333;
 }
 
+/*watchlist export csv*/
+.exportCsvBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #FFCDB2;
+    color: black !important;
+    border: 2px solid #FF5E7E;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.exportCsvBtn:hover {
+    background-color: #FF5E7E;
+}
+
+/*qr code*/
+.qr-share-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.qr-code-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    background: #fff;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.qr-code-img {
+    width: 75px;
+    height: 75px;
+    border: 2px solid #FF5E7E;
+    border-radius: 6px;
+    padding: 2px;
+    background-color: #ffffff;
+}
+
+.qr-code-desc strong {
+    display: block;
+    font-size: 0.85rem;
+    color: #0f172a;
+    margin-bottom: 0.2rem;
+}
+
+.qr-code-desc p {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.3;
+}
 
 /*ajax*/
 .ajax-loading {

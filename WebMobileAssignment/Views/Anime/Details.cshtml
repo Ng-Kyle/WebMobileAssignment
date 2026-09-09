@@ -199,6 +199,19 @@
                     </span>
                 </div>
             }
+
+            <div class="metaItem metaItemFull qr-share-box">
+                <span class="metaKey">@localizer["Mobile Scan"]:</span>
+                <div class="qr-code-wrapper">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=95x95&data=@(string.IsNullOrWhiteSpace(Model.TrailerLink) ? System.Net.WebUtility.UrlEncode($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}") : System.Net.WebUtility.UrlEncode(Model.TrailerLink))"
+                         alt="QR Code"
+                         class="qr-code-img" />
+                    <div class="qr-code-desc">
+                        <strong>@localizer["Scan with Phone"]</strong>
+                        <p>@(string.IsNullOrWhiteSpace(Model.TrailerLink) ? localizer["Scan to open this anime on your mobile device."] : localizer["Scan to instantly watch trailer on YouTube app."])</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="productDetailsDescriptionBox">
