@@ -232,5 +232,41 @@ namespace WebMobileAssignment.Controllers
 
             return Index(search, currentFilterStatus);
         }
+
+        [HttpGet]
+        public IActionResult ExportCsv()
+        {
+            int memberId = GetCurrentUserId();
+            if (memberId == 0)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var list = db.AnimeWatchLists
+                .Include(aw => aw.Anime)
+                .Where(aw => aw.WatchList.Member.UserId == memberId)
+                .OrderBy(aw => aw.Status)
+                .ThenBy(aw => aw.Anime.Name)
+                .ToList();
+
+            var builder = new System.Text.StringBuilder();
+            builder.AppendLine("Anime Title,Status,Episodes Watched,Total Episodes,Start Date,End Date");
+
+            foreach (var item in list)
+            {
+                string title = $"\"{item.Anime.Name.Replace("\"", "\"\"")}\"";
+                string startDate = item.StartDate?.ToString("yyyy-MM-dd") ?? "N/A";
+                string endDate = item.EndDate?.ToString("yyyy-MM-dd") ?? "N/A";
+
+                builder.AppendLine($"{title},{item.Status},{item.Progress},{item.Anime.Episodes},{startDate},{endDate}");
+            }
+
+            byte[] preamble = System.Text.Encoding.UTF8.GetPreamble();
+            byte[] content = System.Text.Encoding.UTF8.GetBytes(builder.ToString());
+            byte[] fileBytes = [.. preamble, .. content];
+
+            string fileName = $"AnonAnimeList_Watchlist_{DateTime.Now:yyyyMMdd_HHmm}.csv";
+            return File(fileBytes, "text/csv", fileName);
+        }
     }
 }

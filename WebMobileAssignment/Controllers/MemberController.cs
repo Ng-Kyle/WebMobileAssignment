@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using System.Security.Claims;
 using WebMobileAssignment.Models;
 using X.PagedList.Extensions;
 
@@ -84,11 +86,19 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         return View(user);
     }
 
-    public async Task<IActionResult> ProgressStats(int userId)
+    [Authorize(Roles = "Member")]
+    public async Task<IActionResult> ProgressStats(int? userId)
     {
+        int targetId = userId ?? GetCurrentUserId();
+
+        if (targetId == 0)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
         var userWatchlist = await db.AnimeWatchLists
             .Include(aw => aw.Anime)
-            .Where(aw => aw.WatchList.Member.UserId == userId)
+            .Where(aw => aw.WatchList.Member.UserId == targetId)
             .ToListAsync();
 
         int totalAnimes = userWatchlist.Count;
@@ -105,7 +115,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             WatchingCount = userWatchlist.Count(aw => aw.Status.Equals("Watching", StringComparison.OrdinalIgnoreCase)),
             CompletedCount = completedCount,
             PlanToWatchCount = userWatchlist.Count(aw => aw.Status.Equals("Plan to Watch", StringComparison.OrdinalIgnoreCase)),
-            OnHoldCount = userWatchlist.Count(aw => aw.Status.Equals("On Hold", StringComparison.OrdinalIgnoreCase)),
+            OnHoldCount = userWatchlist.Count(aw => aw.Status.Replace(" ", "-").Equals("On-Hold", StringComparison.OrdinalIgnoreCase)),
             DroppedCount = userWatchlist.Count(aw => aw.Status.Equals("Dropped", StringComparison.OrdinalIgnoreCase)),
 
             RecentlyCompleted = userWatchlist
@@ -118,11 +128,15 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         return View(vm);
     }
 
-    public async Task<IActionResult> RatingStats(int userId)
+    [Authorize(Roles = "Member")]
+    public async Task<IActionResult> RatingStats(int? userId)
     {
+        int targetId = userId ?? GetCurrentUserId();
+        if (targetId == 0) return RedirectToAction("Login", "Account");
+
         var memberReviews = await db.Reviews
             .Include(r => r.Anime)
-            .Where(r => r.Member.UserId == userId)
+            .Where(r => r.Member.UserId == targetId)
             .ToListAsync();
 
         int totalReviews = memberReviews.Count;
@@ -149,19 +163,18 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         return View(vm);
     }
 
-    public async Task<IActionResult> PreferencesStats(int userId)
+    [Authorize(Roles = "Member")]
+    public async Task<IActionResult> PreferencesStats(int? userId)
     {
+        int targetId = userId ?? GetCurrentUserId();
+        if (targetId == 0) return RedirectToAction("Login", "Account");
+
         var watchlistItems = await db.AnimeWatchLists
-            .Include(w => w.WatchList)
-                .ThenInclude(wl => wl.Member)
-            .Include(w => w.Anime)
-                .ThenInclude(a => a.Genres)
-            .Include(w => w.Anime)
-                .ThenInclude(a => a.Studio)
-            .Include(w => w.Anime)
-                .ThenInclude(a => a.Reviews)
-                    .ThenInclude(r => r.Member)
-            .Where(w => w.WatchList.Member.UserId == userId)
+            .Include(w => w.WatchList).ThenInclude(wl => wl.Member)
+            .Include(w => w.Anime).ThenInclude(a => a.Genres)
+            .Include(w => w.Anime).ThenInclude(a => a.Studio)
+            .Include(w => w.Anime).ThenInclude(a => a.Reviews).ThenInclude(r => r.Member)
+            .Where(w => w.WatchList.Member.UserId == targetId)
             .ToListAsync();
 
         var genreStats = watchlistItems
@@ -171,7 +184,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             {
                 Name = g.Key,
                 Count = g.Count(),
-                AverageRating = g.SelectMany(x => x.Anime.Reviews.Where(r => r.Member.UserId == userId))
+                AverageRating = g.SelectMany(x => x.Anime.Reviews.Where(r => r.Member.UserId == targetId))
                                  .Select(r => (double?)r.Rating)
                                  .Average() ?? 0.0
             })
@@ -187,7 +200,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             {
                 Name = g.Key,
                 Count = g.Count(),
-                AverageRating = g.SelectMany(w => w.Anime.Reviews.Where(r => r.Member.UserId == userId))
+                AverageRating = g.SelectMany(w => w.Anime.Reviews.Where(r => r.Member.UserId == targetId))
                                  .Select(r => (double?)r.Rating)
                                  .Average() ?? 0.0
             })
@@ -205,15 +218,37 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         return View(vm);
     }
 
+
+    private int GetCurrentUserId()
+    {
+        var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (int.TryParse(idClaim, out int id))
+        {
+            return id;
+        }
+
+        var identifier = User.Identity?.Name;
+        if (!string.IsNullOrEmpty(identifier))
+        {
+            var member = db.Members.FirstOrDefault(m => m.Email == identifier || m.UserName == identifier);
+            if (member != null)
+            {
+                return member.UserId;
+            }
+        }
+
+        return 0;
+    }
+
     // POST: Member/SaveReview
     [HttpPost]
     public async Task<IActionResult> SaveReview(MemberReviewVM vm)
     {
-        int? userId = HttpContext.Session.GetInt32("UserId");
-        if (!userId.HasValue)
+        int userId = GetCurrentUserId();
+        if (userId == 0)
         {
-            TempData["Error"] = "You must be logged in to leave a review.";
-            return RedirectToAction("Details", "Anime", new { id = vm.AnimeId });
+            TempData["Error"] = "You must be logged in as a member to leave a review.";
+            return RedirectToAction("Login", "Account");
         }
 
         if (!ModelState.IsValid)
@@ -223,7 +258,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         }
 
         var existingReview = await db.Reviews
-            .FirstOrDefaultAsync(r => r.Anime.AnimeId == vm.AnimeId && r.Member.UserId == userId.Value);
+            .FirstOrDefaultAsync(r => r.Anime.AnimeId == vm.AnimeId && r.Member.UserId == userId);
 
         if (existingReview != null)
         {
@@ -235,7 +270,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         }
         else
         {
-            var member = await db.Members.FirstAsync(m => m.UserId == userId.Value);
+            var member = await db.Members.FirstAsync(m => m.UserId == userId);
             var anime = await db.Animes.FirstAsync(a => a.AnimeId == vm.AnimeId);
 
             var newReview = new Review
@@ -259,14 +294,14 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
     [HttpPost]
     public async Task<IActionResult> DeleteMyReview(int reviewId, int animeId)
     {
-        int? userId = HttpContext.Session.GetInt32("UserId");
-        if (!userId.HasValue)
+        int userId = GetCurrentUserId();
+        if (userId == 0)
         {
-            return RedirectToAction("Details", "Anime", new { id = animeId });
+            return RedirectToAction("Login", "Account");
         }
 
         var review = await db.Reviews
-            .FirstOrDefaultAsync(r => r.ReviewId == reviewId && r.Member.UserId == userId.Value);
+            .FirstOrDefaultAsync(r => r.ReviewId == reviewId && r.Member.UserId == userId);
 
         if (review != null)
         {
@@ -277,4 +312,5 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
 
         return RedirectToAction("Details", "Anime", new { id = animeId });
     }
+
 }

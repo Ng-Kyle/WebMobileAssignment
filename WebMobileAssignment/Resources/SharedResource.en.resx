@@ -237,4 +237,82 @@
   <data name="MemberUnblocked" xml:space="preserve">
     <value>{0} has been unblocked.</value>
   </data>
+  <data name="Your email is required." xml:space="preserve">
+    <value>Your email is required.</value>
+  </data>
+  <data name="Your email cannot exceed 100 characters." xml:space="preserve">
+    <value>Your email cannot exceed 100 characters.</value>
+  </data>
+  <data name="This is not a valid email address." xml:space="preserve">
+    <value>This is not a valid email address.</value>
+  </data>
+  <data name="Your password cannot exceed 100 characters." xml:space="preserve">
+    <value>Your password cannot exceed 100 characters.</value>
+  </data>
+  <data name="Your password is required." xml:space="preserve">
+    <value>Your password is required.</value>
+  </data>
+  <data name="Email already in use." xml:space="preserve">
+    <value>Email already in use.</value>
+  </data>
+  <data name="Your password must be within 5 and 100 characters." xml:space="preserve">
+    <value>Your password must be within 5 and 100 characters.</value>
+  </data>
+  <data name="Your passwords do not match." xml:space="preserve">
+    <value>Your passwords do not match.</value>
+  </data>
+  <data name="Your username is required." xml:space="preserve">
+    <value>Your username is required.</value>
+  </data>
+  <data name="Your username cannot exceed 30 characters." xml:space="preserve">
+    <value>Your username cannot exceed 30 characters.</value>
+  </data>
+  <data name="Login credentials do not match." xml:space="preserve">
+    <value>Login credentials do not match.</value>
+  </data>
+  <data name="Account is temporarily locked due to multiple failed login attempts. Try again in {0} minute(s)." xml:space="preserve">
+    <value>Account is temporarily locked due to multiple failed login attempts. Try again in {0} minute(s).</value>
+  </data>
+  <data name="This account is blocked." xml:space="preserve">
+    <value>This account is blocked.</value>
+  </data>
+  <data name="Too many failed attempts. Your account has been locked for 5 minutes." xml:space="preserve">
+    <value>Too many failed attempts. Your account has been locked for 5 minutes.</value>
+  </data>
+  <data name="Login credentials do not match. Attempt {0} of 3." xml:space="preserve">
+    <value>Login credentials do not match. Attempt {0} of 3.</value>
+  </data>
+  <data name="Login successfully." xml:space="preserve">
+    <value>Login successfully.</value>
+  </data>
+  <data name="Logout successfully." xml:space="preserve">
+    <value>Logout successfully.</value>
+  </data>
+  <data name="Please verify that you are not a robot." xml:space="preserve">
+    <value>Please verify that you are not a robot.</value>
+  </data>
+  <data name="Username already in use." xml:space="preserve">
+    <value>Username already in use.</value>
+  </data>
+  <data name="Register successfully. Please login." xml:space="preserve">
+    <value>Register successfully. Please login.</value>
+  </data>
+  <data name="Email address not found." xml:space="preserve">
+    <value>Email address not found.</value>
+  </data>
+  <data name="A temporary password has been sent to your email." xml:space="preserve">
+    <value>A temporary password has been sent to your email.</value>
+  </data>
+  <data name="Password reset to &lt;b&gt;{0}&lt;/b&gt; (Email proxy failed)." xml:space="preserve">
+    <value>Password reset to &lt;b&gt;{0}&lt;/b&gt; (Email proxy failed).</value>
+  </data>
+  <data name="Profile updated successfully." xml:space="preserve">
+    <value>Profile updated successfully.</value>
+  </data>
+  <data name="Current password is incorrect." xml:space="preserve">
+    <value>Current password is incorrect.</value>
+  </data>
+  <data name="Password updated successfully." xml:space="preserve">
+    <value>Password updated successfully.</value>
+  </data>
 </root>

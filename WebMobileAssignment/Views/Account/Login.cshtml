@@ -1,40 +1,41 @@
 ﻿@model WebMobileAssignment.Models.LoginVM
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @{
     ViewBag.Title = "Account | Login";
 }
 <div class="account-box">
-    <h2>Login</h2>
+    <h2>@localizer["Login"]</h2>
 
     <form method="post" class="form">
         <div asp-validation-summary="ModelOnly"></div>
 
         <input type="hidden" name="returnURL" value="@ViewBag.ReturnURL" />
 
-        <label asp-for="Email"></label>
+        <label asp-for="Email">@localizer["Email"]</label>
         <input asp-for="Email" autofocus />
         <span asp-validation-for="Email"></span>
 
-        <label asp-for="Password"></label>
+        <label asp-for="Password">@localizer["Password"]</label>
         <input asp-for="Password" />
         <span asp-validation-for="Password"></span>
 
         <label></label>
         <div>
             <label>
-                <input asp-for="RememberMe" /> Remember Me
+                <input asp-for="RememberMe" /> @localizer["Remember Me"]
             </label>
         </div>
         <span></span>
 
         <section>
-            <button>Login</button>
-            <button type="reset">Reset</button>
+            <button>@localizer["Login"]</button>
+            <button type="reset">@localizer["Reset"]</button>
         </section>
     </form>
 
     <p>
-        [ <a href="/Account/Register">Register</a> |
-        <a href="/Account/ResetPassword">Reset Password</a> ]
+        [ <a href="/Account/Register">@localizer["Register"]</a> |
+        <a href="/Account/ResetPassword">@localizer["Reset Password"]</a> ]
     </p>
 </div>

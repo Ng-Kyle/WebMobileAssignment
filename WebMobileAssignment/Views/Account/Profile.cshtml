@@ -1,5 +1,6 @@
 ﻿@model WebMobileAssignment.Models.User
-
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 @{
     ViewBag.Title = "Account | Profile";
 
@@ -11,24 +12,24 @@
 }
 
 <div class="account-box">
-    <h2>My Profile</h2>
+    <h2>@localizer["My Profile"]</h2>
 
     <div class="form">
-        <label asp-for="Email"></label>
+        <label asp-for="Email">@localizer["Email"]</label>
         <b>@Model.Email</b>
         <br />
 
-        <label asp-for="UserName"></label>
+        <label asp-for="UserName">@localizer["UserName"]</label>
         <b>@Model.UserName</b>
         <br />
 
-        <label asp-for="Role"></label>
+        <label asp-for="Role">@localizer["Role"]</label>
         <b>@Model.Role</b>
         <br />
 
         @if (Model is WebMobileAssignment.Models.Member m)
         {
-            <label>Photo</label>
+            <label>@localizer["Photo"]</label>
             <label class="upload" style="cursor: default;">
                 <img src="@(string.IsNullOrEmpty(m.ImageLink) ? "/images/photo.jpg" : $"/images/member/{m.ImageLink}")" />
             </label>
@@ -38,9 +39,9 @@
         <section>
             @if (User.IsInRole("Member"))
             {
-                <a href="/Account/UpdateProfile" class="btn-action">Update Profile</a>
+                <a href="/Account/UpdateProfile" class="btn-action">@localizer["Update Profile"]</a>
             }
-            <a href="/Account/UpdatePassword" class="btn-action" style="background-color: #ffffff;">Update Password</a>
+            <a href="/Account/UpdatePassword" class="btn-action" style="background-color: #ffffff;">@localizer["Update Password"]</a>
         </section>
     </div>
 </div>

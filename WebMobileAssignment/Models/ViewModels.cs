@@ -173,10 +173,14 @@ public class MemberReviewVM
 }
 public class LoginVM
 {
-    [Required, StringLength(100), EmailAddress]
+    [Required(ErrorMessage = "Your email is required.")] 
+    [StringLength(100,ErrorMessage = "Your email cannot exceed 100 characters.")]
+    [EmailAddress(ErrorMessage = "This is not a valid email address.")]
     public string Email { get; set; }
 
-    [Required, StringLength(100, MinimumLength = 5), DataType(DataType.Password)]
+    [Required(ErrorMessage = "Your password is required.")]
+    [StringLength(100, ErrorMessage = "Your password cannot exceed 100 characters.")]
+    [DataType(DataType.Password)]
     public string Password { get; set; }
 
     public bool RememberMe { get; set; }
@@ -187,14 +191,17 @@ public class RegisterVM
     [Required, StringLength(30)]
     public string UserName { get; set; }
 
-    [Required, StringLength(100), EmailAddress]
+    [Required(ErrorMessage = "Your email is required.")]
+    [StringLength(100, ErrorMessage = "Your email cannot exceed 100 characters.")]
+    [EmailAddress(ErrorMessage = "This is not a valid email address.")]
     [Remote("CheckEmail", "Account", ErrorMessage = "Email already in use.")]
     public string Email { get; set; }
 
-    [Required, StringLength(100, MinimumLength = 5), DataType(DataType.Password)]
+    [Required(ErrorMessage = "Your password is required.")]
+    [StringLength(100, MinimumLength = 5, ErrorMessage = "Your password must be within 5 and 100 characters."), DataType(DataType.Password)]
     public string Password { get; set; }
 
-    [Required, Compare("Password"), DataType(DataType.Password)]
+    [Required(ErrorMessage = "Your passwords do not match."), Compare("Password",ErrorMessage ="Your passwords do not match."), DataType(DataType.Password)]
     [DisplayName("Confirm Password")]
     public string Confirm { get; set; }
 
@@ -203,7 +210,9 @@ public class RegisterVM
 
 public class ResetPasswordVM
 {
-    [Required, StringLength(100), EmailAddress]
+    [Required(ErrorMessage = "Your email is required.")]
+    [StringLength(100, ErrorMessage = "Your email cannot exceed 100 characters.")]
+    [EmailAddress(ErrorMessage = "This is not a valid email address.")]
     public string Email { get; set; }
 }
 
@@ -211,7 +220,7 @@ public class UpdateProfileVM
 {
     public string? Email { get; set; }
 
-    [Required, StringLength(30)]
+    [Required(ErrorMessage = "Your username is required."), StringLength(30,ErrorMessage ="Your username cannot exceed 30 characters.")]
     public string UserName { get; set; }
 
     public string? ImageLink { get; set; }
@@ -221,15 +230,16 @@ public class UpdateProfileVM
 
 public class UpdatePasswordVM
 {
-    [Required, DataType(DataType.Password)]
+    [Required(ErrorMessage = "Your password is required.")]
     [DisplayName("Current Password")]
     public string Current { get; set; }
 
-    [Required, StringLength(100, MinimumLength = 5), DataType(DataType.Password)]
+    [Required(ErrorMessage = "Your password is required.")]
+    [StringLength(100, MinimumLength = 5, ErrorMessage = "Your password must be within 5 and 100 characters."), DataType(DataType.Password)]
     [DisplayName("New Password")]
     public string New { get; set; }
 
-    [Required, Compare("New"), DataType(DataType.Password)]
+    [Required(ErrorMessage = "Your passwords do not match."), Compare("New", ErrorMessage = "Your passwords do not match."), DataType(DataType.Password)]
     [DisplayName("Confirm Password")]
     public string Confirm { get; set; }
 }

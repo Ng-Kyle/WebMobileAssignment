@@ -20,7 +20,6 @@
     <div class="productListSearchBar">
         @Html.TextBox("search", (string)ViewBag.Search,
                  new { id = "search", @class = "admin_searchbar", type = "search", autofocus = "", data_trim = "", placeholder = localizer["Search your watchlist..."].Value })
-        <img src="/images/loader.gif" id="loader" style="display: none; vertical-align: middle; height: 30px;" />
     </div>
 </form>
 

@@ -237,4 +237,82 @@
   <data name="MemberUnblocked" xml:space="preserve">
     <value>{0}のブロックが解除されました。</value>
   </data>
+  <data name="Your email is required." xml:space="preserve">
+    <value>メールアドレスは必須です。</value>
+  </data>
+  <data name="Your email cannot exceed 100 characters." xml:space="preserve">
+    <value>メールアドレスは100文字以内で入力してください。</value>
+  </data>
+  <data name="This is not a valid email address." xml:space="preserve">
+    <value>有効なメールアドレスを入力してください。</value>
+  </data>
+  <data name="Your password cannot exceed 100 characters." xml:space="preserve">
+    <value>パスワードは100文字以内で入力してください。</value>
+  </data>
+  <data name="Your password is required." xml:space="preserve">
+    <value>パスワードは必須です。</value>
+  </data>
+  <data name="Email already in use." xml:space="preserve">
+    <value>メールアドレスは既に使用されています。</value>
+  </data>
+  <data name="Your password must be within 5 and 100 characters." xml:space="preserve">
+    <value>パスワードは5文字以上100文字以内で入力してください。</value>
+  </data>
+  <data name="Your passwords do not match." xml:space="preserve">
+    <value>パスワードが一致しません。</value>
+  </data>
+  <data name="Your username is required." xml:space="preserve">
+    <value>ユーザー名は必須です。</value>
+  </data>
+  <data name="Your username cannot exceed 30 characters." xml:space="preserve">
+    <value>ユーザー名は30文字以内で入力してください。</value>
+  </data>
+  <data name="Login credentials do not match." xml:space="preserve">
+    <value>ログイン情報が一致しません。</value>
+  </data>
+  <data name="Account is temporarily locked due to multiple failed login attempts. Try again in {0} minute(s)." xml:space="preserve">
+    <value>複数回のログイン失敗によりアカウントが一時的にロックされています。{0}分後にもう一度お試しください。</value>
+  </data>
+  <data name="This account is blocked." xml:space="preserve">
+    <value>このアカウントはブロックされています。</value>
+  </data>
+  <data name="Too many failed attempts. Your account has been locked for 5 minutes." xml:space="preserve">
+    <value>ログイン試行回数が多すぎます。アカウントは5分間ロックされました。</value>
+  </data>
+  <data name="Login credentials do not match. Attempt {0} of 3." xml:space="preserve">
+    <value>ログイン情報が一致しません。3回中{0}回目の試行です。</value>
+  </data>
+  <data name="Login successfully." xml:space="preserve">
+    <value>ログインしました。</value>
+  </data>
+  <data name="Logout successfully." xml:space="preserve">
+    <value>ログアウトしました。</value>
+  </data>
+  <data name="Please verify that you are not a robot." xml:space="preserve">
+    <value>ロボットではないことを確認してください。</value>
+  </data>
+  <data name="Username already in use." xml:space="preserve">
+    <value>ユーザー名は既に使用されています。</value>
+  </data>
+  <data name="Register successfully. Please login." xml:space="preserve">
+    <value>登録が完了しました。ログインしてください。</value>
+  </data>
+  <data name="Email address not found." xml:space="preserve">
+    <value>メールアドレスが見つかりません。</value>
+  </data>
+  <data name="A temporary password has been sent to your email." xml:space="preserve">
+    <value>仮パスワードをメールアドレスに送信しました。</value>
+  </data>
+  <data name="Password reset to &lt;b&gt;{0}&lt;/b&gt; (Email proxy failed)." xml:space="preserve">
+    <value>パスワードが&lt;b&gt;{0}&lt;/b&gt;にリセットされました（メール送信に失敗しました）。</value>
+  </data>
+  <data name="Profile updated successfully." xml:space="preserve">
+    <value>プロフィールが更新されました。</value>
+  </data>
+  <data name="Current password is incorrect." xml:space="preserve">
+    <value>現在のパスワードが正しくありません。</value>
+  </data>
+  <data name="Password updated successfully." xml:space="preserve">
+    <value>パスワードが更新されました。</value>
+  </data>
 </root>
