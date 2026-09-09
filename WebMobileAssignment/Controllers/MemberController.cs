@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using System.Security.Claims;
 using WebMobileAssignment.Models;
 using X.PagedList.Extensions;
-using System.Security.Claims;
 
 namespace WebMobileAssignment.Controllers;
 
@@ -85,11 +86,19 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         return View(user);
     }
 
-    public async Task<IActionResult> ProgressStats(int userId)
+    [Authorize(Roles = "Member")]
+    public async Task<IActionResult> ProgressStats(int? userId)
     {
+        int targetId = userId ?? GetCurrentUserId();
+
+        if (targetId == 0)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
         var userWatchlist = await db.AnimeWatchLists
             .Include(aw => aw.Anime)
-            .Where(aw => aw.WatchList.Member.UserId == userId)
+            .Where(aw => aw.WatchList.Member.UserId == targetId)
             .ToListAsync();
 
         int totalAnimes = userWatchlist.Count;
@@ -106,7 +115,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             WatchingCount = userWatchlist.Count(aw => aw.Status.Equals("Watching", StringComparison.OrdinalIgnoreCase)),
             CompletedCount = completedCount,
             PlanToWatchCount = userWatchlist.Count(aw => aw.Status.Equals("Plan to Watch", StringComparison.OrdinalIgnoreCase)),
-            OnHoldCount = userWatchlist.Count(aw => aw.Status.Equals("On Hold", StringComparison.OrdinalIgnoreCase)),
+            OnHoldCount = userWatchlist.Count(aw => aw.Status.Replace(" ", "-").Equals("On-Hold", StringComparison.OrdinalIgnoreCase)),
             DroppedCount = userWatchlist.Count(aw => aw.Status.Equals("Dropped", StringComparison.OrdinalIgnoreCase)),
 
             RecentlyCompleted = userWatchlist
@@ -119,11 +128,15 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         return View(vm);
     }
 
-    public async Task<IActionResult> RatingStats(int userId)
+    [Authorize(Roles = "Member")]
+    public async Task<IActionResult> RatingStats(int? userId)
     {
+        int targetId = userId ?? GetCurrentUserId();
+        if (targetId == 0) return RedirectToAction("Login", "Account");
+
         var memberReviews = await db.Reviews
             .Include(r => r.Anime)
-            .Where(r => r.Member.UserId == userId)
+            .Where(r => r.Member.UserId == targetId)
             .ToListAsync();
 
         int totalReviews = memberReviews.Count;
@@ -150,19 +163,18 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         return View(vm);
     }
 
-    public async Task<IActionResult> PreferencesStats(int userId)
+    [Authorize(Roles = "Member")]
+    public async Task<IActionResult> PreferencesStats(int? userId)
     {
+        int targetId = userId ?? GetCurrentUserId();
+        if (targetId == 0) return RedirectToAction("Login", "Account");
+
         var watchlistItems = await db.AnimeWatchLists
-            .Include(w => w.WatchList)
-                .ThenInclude(wl => wl.Member)
-            .Include(w => w.Anime)
-                .ThenInclude(a => a.Genres)
-            .Include(w => w.Anime)
-                .ThenInclude(a => a.Studio)
-            .Include(w => w.Anime)
-                .ThenInclude(a => a.Reviews)
-                    .ThenInclude(r => r.Member)
-            .Where(w => w.WatchList.Member.UserId == userId)
+            .Include(w => w.WatchList).ThenInclude(wl => wl.Member)
+            .Include(w => w.Anime).ThenInclude(a => a.Genres)
+            .Include(w => w.Anime).ThenInclude(a => a.Studio)
+            .Include(w => w.Anime).ThenInclude(a => a.Reviews).ThenInclude(r => r.Member)
+            .Where(w => w.WatchList.Member.UserId == targetId)
             .ToListAsync();
 
         var genreStats = watchlistItems
@@ -172,7 +184,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             {
                 Name = g.Key,
                 Count = g.Count(),
-                AverageRating = g.SelectMany(x => x.Anime.Reviews.Where(r => r.Member.UserId == userId))
+                AverageRating = g.SelectMany(x => x.Anime.Reviews.Where(r => r.Member.UserId == targetId))
                                  .Select(r => (double?)r.Rating)
                                  .Average() ?? 0.0
             })
@@ -188,7 +200,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             {
                 Name = g.Key,
                 Count = g.Count(),
-                AverageRating = g.SelectMany(w => w.Anime.Reviews.Where(r => r.Member.UserId == userId))
+                AverageRating = g.SelectMany(w => w.Anime.Reviews.Where(r => r.Member.UserId == targetId))
                                  .Select(r => (double?)r.Rating)
                                  .Average() ?? 0.0
             })
