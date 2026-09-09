@@ -28,6 +28,9 @@ public class User
     public string Email { get; set; }
     public string PasswordHash { get; set; }
     public string Role => GetType().Name;
+
+    public int FailedLoginAttempts { get; set; } = 0;
+    public DateTime? LockoutExpiry { get; set; }
 }
 
 public class Member : User
