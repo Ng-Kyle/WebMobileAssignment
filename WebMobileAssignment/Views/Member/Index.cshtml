@@ -1,0 +1,199 @@
+﻿@model IEnumerable<WebMobileAssignment.Models.AnimeWatchList>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
+
+@{
+    ViewData["Title"] = "My Watchlist";
+    Layout = "_Layout";
+    string currentStatus = ViewBag.CurrentStatus ?? "All";
+}
+
+<style>
+    .watchlist-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .filter-bar {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        border: 1px solid #cbd5e1;
+        background-color: #f8fafc;
+        color: #334155;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+        background-color: #ff6b35;
+        color: #ffffff;
+        border-color: #ff6b35;
+    }
+
+    .watchlist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .watchlist-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+
+    .watchlist-thumb {
+        width: 110px;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    .watchlist-info {
+        padding: 1rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .watchlist-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 0.5rem 0;
+        text-decoration: none;
+    }
+
+    .watchlist-title:hover {
+        color: #ff6b35;
+    }
+
+    .update-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .inline-controls {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .form-select-sm, .form-input-sm {
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+        font-size: 0.8125rem;
+    }
+
+    .form-input-sm {
+        width: 60px;
+    }
+
+    .btn-save-sm {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+
+    .btn-remove-sm {
+        background: none;
+        border: none;
+        color: #ef4444;
+        font-size: 0.75rem;
+        cursor: pointer;
+        padding: 0;
+        text-align: right;
+    }
+</style>
+
+<div class="watchlist-container">
+    <h2>@localizer["My Watchlist"]</h2>
+
+    <!-- Filter Tabs -->
+    <div class="filter-bar">
+        @foreach (var statusOption in new[] { "All", "Watching", "Completed", "Plan to Watch", "On-Hold", "Dropped" })
+        {
+            <a asp-action="MyWatchlist" asp-route-status="@statusOption" 
+               class="filter-btn @(currentStatus == statusOption ? "active" : "")">
+                @statusOption
+            </a>
+        }
+    </div>
+
+    <!-- Watchlist Grid -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="watchlist-grid">
+            @foreach (var item in Model)
+            {
+                var thumb = item.Anime.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink 
+                         ?? item.Anime.AnimeImages?.FirstOrDefault()?.ImageLink 
+                         ?? "photo.jpg";
+
+                <div class="watchlist-card">
+                    <img src="/images/anime/@thumb" class="watchlist-thumb" alt="@item.Anime.Name" />
+                    <div class="watchlist-info">
+                        <div>
+                            <a asp-controller="Anime" asp-action="Details" asp-route-id="@item.Anime.AnimeId" class="watchlist-title">
+                                @item.Anime.Name
+                            </a>
+                        </div>
+
+                        <!-- Update Form -->
+                        <form asp-controller="Member" asp-action="UpdateWatchlistProgress" method="post" class="update-form">
+                            <input type="hidden" name="animeId" value="@item.Anime.AnimeId" />
+                            
+                            <select name="status" class="form-select-sm">
+                                <option value="Watching" selected="@(item.Status == "Watching")">Watching</option>
+                                <option value="Completed" selected="@(item.Status == "Completed")">Completed</option>
+                                <option value="Plan to Watch" selected="@(item.Status == "Plan to Watch")">Plan to Watch</option>
+                                <option value="On-Hold" selected="@(item.Status == "On-Hold")">On-Hold</option>
+                                <option value="Dropped" selected="@(item.Status == "Dropped")">Dropped</option>
+                            </select>
+
+                            <div class="inline-controls">
+                                <input type="number" name="progress" value="@item.Progress" min="0" max="@item.Anime.Episodes" class="form-input-sm" />
+                                <span style="font-size: 0.8125rem; color: #64748b;">/ @item.Anime.Episodes eps</span>
+                                <button type="submit" class="btn-save-sm">Save</button>
+                            </div>
+                        </form>
+
+                        <!-- Remove Link -->
+                        <form asp-controller="Member" asp-action="RemoveFromWatchlist" method="post" style="margin-top: 0.25rem;">
+                            <input type="hidden" name="animeId" value="@item.Anime.AnimeId" />
+                            <button type="submit" class="btn-remove-sm" onclick="return confirm('Remove from your watchlist?');">
+                                Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div style="text-align: center; color: #64748b; margin: 4rem 0;">
+            <p>@localizer["No titles found in this status category."]</p>
+        </div>
+    }
+</div>

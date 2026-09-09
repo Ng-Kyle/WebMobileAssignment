@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using System.Security.Claims;
 using WebMobileAssignment.Models;
 using X.PagedList.Extensions;
 
@@ -8,6 +9,21 @@ namespace WebMobileAssignment.Controllers;
 
 public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource> localizer) : Controller
 {
+    // Helper method to safely resolve current logged in UserId from Session or Auth Claims
+    private int? GetCurrentUserId()
+    {
+        int? userId = HttpContext.Session.GetInt32("UserId");
+        if (!userId.HasValue)
+        {
+            var claimValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (int.TryParse(claimValue, out int parsedId))
+            {
+                userId = parsedId;
+            }
+        }
+        return userId;
+    }
+
     public IActionResult Management(string? name, string? sort, string? direction, int page = 1)
     {
         ViewBag.Name = name = name?.Trim() ?? "";
@@ -84,11 +100,19 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         return View(user);
     }
 
-    public async Task<IActionResult> ProgressStats(int userId)
+    public async Task<IActionResult> ProgressStats(int? userId)
     {
+        int targetUserId = userId ?? GetCurrentUserId() ?? 0;
+
+        if (targetUserId == 0)
+        {
+            // Redirects to Account index/login view instead of missing /Account/Login path
+            return RedirectToAction("Index", "Account");
+        }
+
         var userWatchlist = await db.AnimeWatchLists
             .Include(aw => aw.Anime)
-            .Where(aw => aw.WatchList.Member.UserId == userId)
+            .Where(aw => aw.WatchList.Member.UserId == targetUserId)
             .ToListAsync();
 
         int totalAnimes = userWatchlist.Count;
@@ -105,7 +129,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             WatchingCount = userWatchlist.Count(aw => aw.Status.Equals("Watching", StringComparison.OrdinalIgnoreCase)),
             CompletedCount = completedCount,
             PlanToWatchCount = userWatchlist.Count(aw => aw.Status.Equals("Plan to Watch", StringComparison.OrdinalIgnoreCase)),
-            OnHoldCount = userWatchlist.Count(aw => aw.Status.Equals("On Hold", StringComparison.OrdinalIgnoreCase)),
+            OnHoldCount = userWatchlist.Count(aw => aw.Status.Equals("On-Hold", StringComparison.OrdinalIgnoreCase)),
             DroppedCount = userWatchlist.Count(aw => aw.Status.Equals("Dropped", StringComparison.OrdinalIgnoreCase)),
 
             RecentlyCompleted = userWatchlist
@@ -118,11 +142,18 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         return View(vm);
     }
 
-    public async Task<IActionResult> RatingStats(int userId)
+    public async Task<IActionResult> RatingStats(int? userId)
     {
+        int targetUserId = userId ?? GetCurrentUserId() ?? 0;
+
+        if (targetUserId == 0)
+        {
+            return RedirectToAction("Index", "Account");
+        }
+
         var memberReviews = await db.Reviews
             .Include(r => r.Anime)
-            .Where(r => r.Member.UserId == userId)
+            .Where(r => r.Member.UserId == targetUserId)
             .ToListAsync();
 
         int totalReviews = memberReviews.Count;
@@ -149,8 +180,15 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         return View(vm);
     }
 
-    public async Task<IActionResult> PreferencesStats(int userId)
+    public async Task<IActionResult> PreferencesStats(int? userId)
     {
+        int targetUserId = userId ?? GetCurrentUserId() ?? 0;
+
+        if (targetUserId == 0)
+        {
+            return RedirectToAction("Index", "Account");
+        }
+
         var watchlistItems = await db.AnimeWatchLists
             .Include(w => w.WatchList)
                 .ThenInclude(wl => wl.Member)
@@ -161,7 +199,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             .Include(w => w.Anime)
                 .ThenInclude(a => a.Reviews)
                     .ThenInclude(r => r.Member)
-            .Where(w => w.WatchList.Member.UserId == userId)
+            .Where(w => w.WatchList.Member.UserId == targetUserId)
             .ToListAsync();
 
         var genreStats = watchlistItems
@@ -171,7 +209,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             {
                 Name = g.Key,
                 Count = g.Count(),
-                AverageRating = g.SelectMany(x => x.Anime.Reviews.Where(r => r.Member.UserId == userId))
+                AverageRating = g.SelectMany(x => x.Anime.Reviews.Where(r => r.Member.UserId == targetUserId))
                                  .Select(r => (double?)r.Rating)
                                  .Average() ?? 0.0
             })
@@ -187,7 +225,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
             {
                 Name = g.Key,
                 Count = g.Count(),
-                AverageRating = g.SelectMany(w => w.Anime.Reviews.Where(r => r.Member.UserId == userId))
+                AverageRating = g.SelectMany(w => w.Anime.Reviews.Where(r => r.Member.UserId == targetUserId))
                                  .Select(r => (double?)r.Rating)
                                  .Average() ?? 0.0
             })
@@ -209,7 +247,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
     [HttpPost]
     public async Task<IActionResult> SaveReview(MemberReviewVM vm)
     {
-        int? userId = HttpContext.Session.GetInt32("UserId");
+        int? userId = GetCurrentUserId();
         if (!userId.HasValue)
         {
             TempData["Error"] = "You must be logged in to leave a review.";
@@ -259,7 +297,7 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
     [HttpPost]
     public async Task<IActionResult> DeleteMyReview(int reviewId, int animeId)
     {
-        int? userId = HttpContext.Session.GetInt32("UserId");
+        int? userId = GetCurrentUserId();
         if (!userId.HasValue)
         {
             return RedirectToAction("Details", "Anime", new { id = animeId });
@@ -276,5 +314,151 @@ public class MemberController(DB db, Helper hp, IStringLocalizer<SharedResource>
         }
 
         return RedirectToAction("Details", "Anime", new { id = animeId });
+    }
+
+    // GET: /Member/MyReviews
+    public async Task<IActionResult> MyReviews(int page = 1)
+    {
+        int? userId = GetCurrentUserId();
+
+        if (!userId.HasValue)
+        {
+            return RedirectToAction("Index", "Account");
+        }
+
+        var reviewsQuery = db.Reviews
+            .Include(r => r.Anime)
+            .Where(r => r.Member != null && r.Member.UserId == userId.Value)
+            .OrderByDescending(r => r.CreatedAt);
+
+        var pagedReviews = (await reviewsQuery.ToListAsync()).ToPagedList(page, 5);
+
+        return View(pagedReviews);
+    }
+
+    // POST: Member/AddToWatchlist
+    [HttpPost]
+    public async Task<IActionResult> AddToWatchlist(int animeId, string status = "Plan to Watch")
+    {
+        int? userId = GetCurrentUserId();
+        if (!userId.HasValue) return RedirectToAction("Index", "Account");
+
+        var member = await db.Members
+            .Include(m => m.WatchList)
+            .ThenInclude(w => w.AnimeWatchLists)
+            .FirstOrDefaultAsync(m => m.UserId == userId.Value);
+
+        if (member == null) return RedirectToAction("Details", "Anime", new { id = animeId });
+
+        if (member.WatchList == null)
+        {
+            member.WatchList = new WatchList { Member = member };
+            db.WatchLists.Add(member.WatchList);
+            await db.SaveChangesAsync();
+        }
+
+        var existingEntry = member.WatchList.AnimeWatchLists
+            .FirstOrDefault(aw => aw.AnimeId == animeId);
+
+        if (existingEntry != null)
+        {
+            existingEntry.Status = status;
+            if (status.Equals("Completed", StringComparison.OrdinalIgnoreCase) && !existingEntry.EndDate.HasValue)
+            {
+                existingEntry.EndDate = DateOnly.FromDateTime(DateTime.Now);
+            }
+        }
+        else
+        {
+            var anime = await db.Animes.FindAsync(animeId);
+            if (anime != null)
+            {
+                member.WatchList.AnimeWatchLists.Add(new AnimeWatchList
+                {
+                    WatchListId = member.WatchList.WatchListId,
+                    AnimeId = animeId,
+                    Status = status,
+                    Progress = 0,
+                    StartDate = DateOnly.FromDateTime(DateTime.Now)
+                });
+            }
+        }
+
+        await db.SaveChangesAsync();
+        TempData["Info"] = "Watchlist updated!";
+        return RedirectToAction("Details", "Anime", new { id = animeId });
+    }
+
+    // POST: Member/UpdateWatchlistProgress
+    [HttpPost]
+    public async Task<IActionResult> UpdateWatchlistProgress(int animeId, int progress, string status)
+    {
+        int? userId = GetCurrentUserId();
+        if (!userId.HasValue) return RedirectToAction("Index", "Account");
+
+        var entry = await db.AnimeWatchLists
+            .Include(aw => aw.Anime)
+            .FirstOrDefaultAsync(aw => aw.AnimeId == animeId && aw.WatchList.Member.UserId == userId.Value);
+
+        if (entry != null)
+        {
+            entry.Progress = Math.Clamp(progress, 0, entry.Anime?.Episodes ?? progress);
+            entry.Status = status;
+
+            if (status.Equals("Completed", StringComparison.OrdinalIgnoreCase) && !entry.EndDate.HasValue)
+            {
+                entry.EndDate = DateOnly.FromDateTime(DateTime.Now);
+            }
+
+            await db.SaveChangesAsync();
+            TempData["Info"] = "Progress saved!";
+        }
+
+        return RedirectToAction("MyWatchlist");
+    }
+
+    // POST: Member/RemoveFromWatchlist
+    [HttpPost]
+    public async Task<IActionResult> RemoveFromWatchlist(int animeId)
+    {
+        int? userId = GetCurrentUserId();
+        if (!userId.HasValue) return RedirectToAction("Index", "Account");
+
+        var entry = await db.AnimeWatchLists
+            .FirstOrDefaultAsync(aw => aw.AnimeId == animeId && aw.WatchList.Member.UserId == userId.Value);
+
+        if (entry != null)
+        {
+            db.AnimeWatchLists.Remove(entry);
+            await db.SaveChangesAsync();
+            TempData["Info"] = "Removed from watchlist.";
+        }
+
+        return RedirectToAction("MyWatchlist");
+    }
+
+    // GET: /Member/MyWatchlist
+    public async Task<IActionResult> MyWatchlist(string? status)
+    {
+        int? userId = GetCurrentUserId();
+        if (!userId.HasValue)
+        {
+            return RedirectToAction("Index", "Account");
+        }
+
+        var watchlistQuery = db.AnimeWatchLists
+            .Include(aw => aw.Anime)
+                .ThenInclude(a => a.AnimeImages)
+            .Where(aw => aw.WatchList.Member.UserId == userId.Value);
+
+        if (!string.IsNullOrWhiteSpace(status) && !status.Equals("All", StringComparison.OrdinalIgnoreCase))
+        {
+            watchlistQuery = watchlistQuery.Where(aw => aw.Status.Equals(status, StringComparison.OrdinalIgnoreCase));
+        }
+
+        ViewBag.CurrentStatus = status ?? "All";
+        var items = await watchlistQuery.ToListAsync();
+
+        return View(items);
     }
 }

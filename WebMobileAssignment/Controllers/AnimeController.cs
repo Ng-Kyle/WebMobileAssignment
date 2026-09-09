@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using X.PagedList.Extensions;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
+using WebMobileAssignment.Models;
+
 namespace WebMobileAssignment.Controllers;
 
 public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> localizer) : Controller
 {
-    //ANIME CATALOGUE
+    // ANIME CATALOGUE
     public IActionResult Index(string? search, int? studioId, List<int> genreIds, int? min, int? max)
     {
         search = search?.Trim() ?? "";
@@ -63,29 +65,68 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         return View(m);
     }
 
-    public IActionResult Details(int id)
+    // GET: /Anime/Details/5
+    public async Task<IActionResult> Details(int? id, int? ratingFilter, string sort = "newest")
     {
-        var anime = db.Animes
-            .Include(a => a.Studio)
-            .Include(a => a.Genres)
+        if (!id.HasValue)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        var anime = await db.Animes
             .Include(a => a.AnimeImages)
+            .Include(a => a.Genres)
+            .Include(a => a.Studio)
             .Include(a => a.Reviews)
-            .FirstOrDefault(a => a.AnimeId == id);
+                .ThenInclude(r => r.Member)
+            .FirstOrDefaultAsync(a => a.AnimeId == id.Value);
 
         if (anime == null)
         {
             return NotFound();
         }
+
+        // Apply rating filter and sorting on reviews
+        if (anime.Reviews != null && anime.Reviews.Any())
+        {
+            var reviewsQuery = anime.Reviews.AsEnumerable();
+
+            if (ratingFilter.HasValue && ratingFilter > 0)
+            {
+                reviewsQuery = reviewsQuery.Where(r => r.Rating == ratingFilter.Value);
+            }
+
+            anime.Reviews = sort switch
+            {
+                "oldest" => reviewsQuery.OrderBy(r => r.CreatedAt).ToList(),
+                "highest" => reviewsQuery.OrderByDescending(r => r.Rating).ToList(),
+                "lowest" => reviewsQuery.OrderBy(r => r.Rating).ToList(),
+                _ => reviewsQuery.OrderByDescending(r => r.CreatedAt).ToList()
+            };
+        }
+
+        // Identify logged-in member & existing review
+        int? currentUserId = HttpContext.Session.GetInt32("UserId");
+        ViewBag.CurrentUserId = currentUserId;
+
+        if (currentUserId.HasValue && anime.Reviews != null)
+        {
+            ViewBag.MyReview = anime.Reviews.FirstOrDefault(r => r.Member?.UserId == currentUserId.Value);
+        }
+
+        ViewBag.ReviewSort = sort;
+        ViewBag.CurrentRatingFilter = ratingFilter;
+
         return View(anime);
     }
 
-    //ADMIN SECTION
+    // ADMIN SECTION
     public IActionResult Management(string? name, int? StudioId, int? GenreId, string? Status, string? sort, string? direction, int page = 1)
     {
         ViewBag.Name = name = name?.Trim() ?? "";
         var searched = db.Animes.Include(a => a.Studio).Include(a => a.AnimeImages).Include(a => a.Genres).Where(a => a.Name.Contains(name));
 
-        string[] status =["Upcoming","Airing","Completed"]; 
+        string[] status = ["Upcoming", "Airing", "Completed"];
         ViewBag.Sort = sort;
         ViewBag.Direction = direction;
         ViewBag.StatusList = new SelectList(status);
@@ -95,7 +136,7 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         ViewBag.Status = Status;
         ViewBag.StudioId = StudioId;
 
-        if(StudioId  != null)
+        if (StudioId != null)
         {
             searched = searched.Where(a => a.Studio.StudioId == StudioId);
         }
@@ -142,10 +183,10 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         vm.AnimeVMs.Add(animeVM);
         return View(vm);
     }
+
     [HttpPost]
     public IActionResult Add(AnimeManagementVM AdminManagementVM)
     {
-
         string[] status = ["Upcoming", "Airing", "Completed"];
         for (int i = 0; i < AdminManagementVM.AnimeVMs.Count; i++)
         {
@@ -203,10 +244,10 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
                 }
             }
         }
-        
+
         if (ModelState.IsValid)
         {
-            foreach(var vm in AdminManagementVM.AnimeVMs)
+            foreach (var vm in AdminManagementVM.AnimeVMs)
             {
                 Anime anime = new()
                 {
@@ -217,7 +258,6 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
                     TrailerLink = vm.TrailerLink,
                     ReleaseDate = vm.ReleaseDate,
                     Studio = db.Studios.First(s => s.StudioId == vm.StudioId),
-
                 };
                 foreach (var genre in vm.Genres.Where(g => g.Selected))
                 {
@@ -280,6 +320,7 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         ViewBag.StudioList = new SelectList(db.Studios, "StudioId", "Name");
         return View(animeVM);
     }
+
     [HttpPost]
     public IActionResult Edit(AnimeVM animeVM)
     {
@@ -372,8 +413,9 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         ViewBag.StatusList = new SelectList(status);
         ViewBag.StudioList = new SelectList(db.Studios, "StudioId", "Name");
         animeVM.AnimeImages = anime.AnimeImages;
-        return View("ManagementDetails",animeVM);
+        return View("ManagementDetails", animeVM);
     }
+
     [HttpPost]
     public IActionResult Delete(int animeId)
     {
@@ -390,10 +432,11 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         }
         return RedirectToAction("Management");
     }
+
     [HttpPost]
     public IActionResult DeleteMany(int[] animeIds)
     {
-        if(animeIds.Length == 0)
+        if (animeIds.Length == 0)
         {
             TempData["Info"] = localizer["No animes were selected."].Value;
             return RedirectToAction("Management");
@@ -403,50 +446,4 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         TempData["Info"] = localizer["AnimeDeletedCount", n].Value;
         return RedirectToAction("Management");
     }
-
-    // GET: Anime/Details/5
-    public async Task<IActionResult> Details(int? id, string sort = "newest")
-    {
-        if (!id.HasValue)
-        {
-            return RedirectToAction(nameof(Index));
-        }
-
-        // 1. Fetch Anime along with Images, Genres, Studio, and Reviews (with Member)
-        var anime = await db.Animes
-            .Include(a => a.AnimeImages)
-            .Include(a => a.Genres)
-            .Include(a => a.Studio)
-            .Include(a => a.Reviews)
-                .ThenInclude(r => r.Member)
-            .FirstOrDefaultAsync(a => a.AnimeId == id.Value);
-
-        if (anime == null)
-        {
-            return NotFound();
-        }
-
-        // 2. Sort Reviews
-        if (anime.Reviews != null)
-        {
-            anime.Reviews = sort switch
-            {
-                "highest" => anime.Reviews.OrderByDescending(r => r.Rating).ToList(),
-                "lowest" => anime.Reviews.OrderBy(r => r.Rating).ToList(),
-                _ => anime.Reviews.OrderByDescending(r => r.CreatedAt).ToList() // Default: newest
-            };
-        }
-
-        // 3. Identify Logged-in Member & Existing Review
-        int? currentUserId = HttpContext.Session.GetInt32("UserId"); // Adjust session key if different
-        ViewBag.CurrentUserId = currentUserId;
-
-        if (currentUserId.HasValue && anime.Reviews != null)
-        {
-            ViewBag.MyReview = anime.Reviews.FirstOrDefault(r => r.Member?.UserId == currentUserId.Value);
-        }
-
-        return View(anime);
-    }
 }
-

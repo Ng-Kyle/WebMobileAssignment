@@ -1,21 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebMobileAssignment.Models;
-using X.PagedList;
 using X.PagedList.Extensions;
 
 namespace WebMobileAssignment.Controllers;
 
 public class AdminController(DB db) : Controller
 {
+    // GET: /Admin
     public IActionResult Index()
     {
         return RedirectToAction("Management", "Anime");
     }
 
-    // GET: Admin Review Listing, Search, & Filter
-    public async Task<IActionResult> Reviews(string search, int? rating, int? animeId, string sort = "Date", string direction = "des", int page = 1)
+    // GET: /Admin/Reviews
+    public async Task<IActionResult> Reviews(string? search, int? rating, int? animeId, string sort = "Date", string direction = "des", int page = 1)
     {
         var query = db.Reviews
             .Include(r => r.Member)
@@ -26,7 +27,7 @@ public class AdminController(DB db) : Controller
         if (!string.IsNullOrWhiteSpace(search))
         {
             var clean = search.Trim();
-            query = query.Where(r => r.Text.Contains(clean) || r.Member.UserName.Contains(clean));
+            query = query.Where(r => r.Text.Contains(clean) || (r.Member != null && r.Member.UserName.Contains(clean)));
             ViewBag.Search = clean;
         }
 
@@ -39,7 +40,7 @@ public class AdminController(DB db) : Controller
         // Filter by Anime
         if (animeId.HasValue && animeId > 0)
         {
-            query = query.Where(r => r.Anime.AnimeId == animeId.Value);
+            query = query.Where(r => r.Anime != null && r.Anime.AnimeId == animeId.Value);
         }
 
         // Sorting
@@ -53,9 +54,12 @@ public class AdminController(DB db) : Controller
 
         ViewBag.AnimeList = new SelectList(await db.Animes.OrderBy(a => a.Name).ToListAsync(), "AnimeId", "Name");
 
+        var list = await query.ToListAsync();
+        var pagedReviews = list.ToPagedList(page, 10);
+
         var vm = new AdminReviewIndexVM
         {
-            Reviews = query.ToPagedList(page, 10),
+            Reviews = pagedReviews,
             Search = search,
             SelectedRating = rating,
             SelectedAnimeId = animeId,
@@ -66,7 +70,7 @@ public class AdminController(DB db) : Controller
         return View(vm);
     }
 
-    // POST: Admin Moderation / Deletion
+    // POST: /Admin/DeleteReview
     [HttpPost]
     public async Task<IActionResult> DeleteReview(int reviewId)
     {
@@ -80,7 +84,7 @@ public class AdminController(DB db) : Controller
         return RedirectToAction(nameof(Reviews));
     }
 
-    // GET: Admin/ReviewDetails/5
+    // GET: /Admin/ReviewDetails/5
     public async Task<IActionResult> ReviewDetails(int id)
     {
         var review = await db.Reviews

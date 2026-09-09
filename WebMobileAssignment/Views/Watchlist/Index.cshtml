@@ -1,1 +1,359 @@
-﻿
+﻿@model IEnumerable<WebMobileAssignment.Models.AnimeWatchList>
+@{
+    ViewData["Title"] = "My Watchlist";
+    Layout = "_Layout";
+}
+
+<div class="watchlist-container">
+    <div class="watchlist-header">
+        <h1>My Watchlist</h1>
+    </div>
+
+    <!-- Stat Summary Cards -->
+    <div class="stats-grid">
+        <div class="stat-card total">
+            <span class="stat-value">@ViewBag.TotalCount</span>
+            <span class="stat-label">Total Anime</span>
+        </div>
+        <div class="stat-card watching">
+            <span class="stat-value">@ViewBag.WatchingCount</span>
+            <span class="stat-label">Watching</span>
+        </div>
+        <div class="stat-card completed">
+            <span class="stat-value">@ViewBag.CompletedCount</span>
+            <span class="stat-label">Completed</span>
+        </div>
+        <div class="stat-card plan">
+            <span class="stat-value">@ViewBag.PlanCount</span>
+            <span class="stat-label">Plan to Watch</span>
+        </div>
+        <div class="stat-card hold">
+            <span class="stat-value">@ViewBag.OnHoldCount</span>
+            <span class="stat-label">On-Hold</span>
+        </div>
+        <div class="stat-card dropped">
+            <span class="stat-value">@ViewBag.DroppedCount</span>
+            <span class="stat-label">Dropped</span>
+        </div>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="filter-bar">
+        <form asp-controller="Watchlist" asp-action="Index" method="get" class="filter-form">
+            <input type="text" name="search" value="@ViewBag.Search" placeholder="Search watchlist..." class="search-input" />
+
+            <select name="status" class="status-select" onchange="this.form.submit()">
+                <option value="All" selected="@(ViewBag.SelectedStatus == "All")">All Statuses</option>
+                <option value="Watching" selected="@(ViewBag.SelectedStatus == "Watching")">Watching</option>
+                <option value="Completed" selected="@(ViewBag.SelectedStatus == "Completed")">Completed</option>
+                <option value="Plan to Watch" selected="@(ViewBag.SelectedStatus == "Plan to Watch")">Plan to Watch</option>
+                <option value="On-Hold" selected="@(ViewBag.SelectedStatus == "On-Hold")">On-Hold</option>
+                <option value="Dropped" selected="@(ViewBag.SelectedStatus == "Dropped")">Dropped</option>
+            </select>
+
+            <button type="submit" class="btn-filter">Filter</button>
+            <a asp-action="Index" class="btn-reset">Reset</a>
+        </form>
+    </div>
+
+    <!-- Anime Items Grid -->
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <p>No anime entries found matching your criteria.</p>
+        </div>
+    }
+    else
+    {
+        <div class="watchlist-grid">
+            @foreach (var item in Model)
+            {
+                var img = item.Anime.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink
+                       ?? item.Anime.AnimeImages?.FirstOrDefault()?.ImageLink
+                       ?? "/images/no-image.jpg";
+
+                <div class="watchlist-item-card">
+                    <img src="@img" alt="@item.Anime.Name" class="anime-cover" />
+                    <div class="anime-info">
+                        <h3>
+                            <a asp-controller="Anime" asp-action="Details" asp-route-id="@item.AnimeId">
+                                @item.Anime.Name
+                            </a>
+                        </h3>
+                        <p class="studio-name">Studio: @(item.Anime.Studio?.Name ?? "Unknown")</p>
+
+                        <div class="status-badge @item.Status.Replace(" ", "-").ToLower()">
+                            @item.Status
+                        </div>
+
+                        <!-- Update Form -->
+                        <form asp-controller="Watchlist" asp-action="SaveOrUpdate" method="post" class="update-form">
+                            <input type="hidden" name="animeId" value="@item.AnimeId" />
+
+                            <div class="form-row">
+                                <label>Progress:</label>
+                                <input type="number" name="progress" value="@item.Progress" min="0" max="@item.Anime.Episodes" class="progress-input" />
+                                <span>/ @(item.Anime.Episodes > 0 ? item.Anime.Episodes.ToString() : "?") eps</span>
+                            </div>
+
+                            <div class="form-row">
+                                <label>Status:</label>
+                                <select name="status" class="status-dropdown">
+                                    <option value="Watching" selected="@(item.Status == "Watching")">Watching</option>
+                                    <option value="Completed" selected="@(item.Status == "Completed")">Completed</option>
+                                    <option value="Plan to Watch" selected="@(item.Status == "Plan to Watch")">Plan to Watch</option>
+                                    <option value="On-Hold" selected="@(item.Status == "On-Hold")">On-Hold</option>
+                                    <option value="Dropped" selected="@(item.Status == "Dropped")">Dropped</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn-save">Update</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+
+    .watchlist-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .watchlist-header h1 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* Summary Bar */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: center;
+        border-top: 4px solid #6c757d;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+        .stat-card.watching {
+            border-color: #2ed573;
+        }
+
+        .stat-card.completed {
+            border-color: #1e90ff;
+        }
+
+        .stat-card.plan {
+            border-color: #ffa502;
+        }
+
+        .stat-card.hold {
+            border-color: #70a1ff;
+        }
+
+        .stat-card.dropped {
+            border-color: #ff4757;
+        }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        display: block;
+        color: #333;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    /* Filters */
+    .filter-bar {
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+
+    .filter-form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .search-input {
+        flex: 1;
+        min-width: 200px;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .status-select {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .btn-filter {
+        background: #ff6b81;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+        .btn-filter:hover {
+            background: #ff4757;
+        }
+
+    .btn-reset {
+        background: #e0e0e0;
+        color: #333;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    /* Cards */
+    .watchlist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+    }
+
+    .watchlist-item-card {
+        display: flex;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .anime-cover {
+        width: 110px;
+        height: 170px;
+        object-fit: cover;
+    }
+
+    .anime-info {
+        padding: 12px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .anime-info h3 {
+            margin: 0 0 4px 0;
+            font-size: 1.05rem;
+        }
+
+            .anime-info h3 a {
+                color: #333;
+                text-decoration: none;
+            }
+
+                .anime-info h3 a:hover {
+                    color: #ff6b81;
+                }
+
+    .studio-name {
+        font-size: 0.8rem;
+        color: #888;
+        margin: 0 0 8px 0;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        color: white;
+        background: #6c757d;
+        margin-bottom: 8px;
+        width: fit-content;
+    }
+
+        .status-badge.watching {
+            background: #2ed573;
+        }
+
+        .status-badge.completed {
+            background: #1e90ff;
+        }
+
+        .status-badge.plan-to-watch {
+            background: #ffa502;
+        }
+
+        .status-badge.on-hold {
+            background: #70a1ff;
+        }
+
+        .status-badge.dropped {
+            background: #ff4757;
+        }
+
+    .update-form {
+        margin-top: auto;
+        font-size: 0.85rem;
+    }
+
+    .form-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+
+    .progress-input {
+        width: 50px;
+        padding: 2px 4px;
+    }
+
+    .status-dropdown {
+        padding: 2px 4px;
+        flex: 1;
+    }
+
+    .btn-save {
+        background: #ff6b81;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 4px;
+        font-weight: bold;
+    }
+
+        .btn-save:hover {
+            background: #ff4757;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #777;
+        background: #fff;
+        border-radius: 8px;
+    }
+</style>

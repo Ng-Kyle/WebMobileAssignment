@@ -1162,3 +1162,24 @@ body {
     font-weight: bold;
     color: #FF8A9B;
 }
+
+
+/* Clean up and enlarge the middle navigation links */
+.member_nav_links {
+    display: flex;
+    gap: 5rem; /* Increased spacing between larger items */
+    align-items: center;
+}
+
+.member_nav_links a {
+    color: #000000 !important; /* Clean black text */
+    text-decoration: none !important; /* Removes default blue underline */
+    font-weight: 700; /* Bold text */
+    font-size: 1.25rem !important; /* Bumped up size (20px) */
+    transition: opacity 0.2s ease;
+}
+
+.member_nav_links a:hover {
+    opacity: 0.7; /* Subtle hover effect */
+    text-decoration: none !important;
+}
