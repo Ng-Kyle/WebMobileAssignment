@@ -92,13 +92,17 @@
 
         <div class="addanime_input-container">
             <label class="addanime_label" asp-for="Password">@localizer["Password"]</label>
-            <input asp-for="Password" class="addanime_input-text" type="password" style="flex: none; width: 380px;" />
+            <div class="password-box">
+                <input asp-for="Password" class="addanime_input-text" type="password" style="flex: none; width: 380px;" />
+            </div>
             <span asp-validation-for="Password" style="margin-left: 12px;"></span>
         </div>
 
         <div class="addanime_input-container">
             <label class="addanime_label" asp-for="ConfirmPassword">@localizer["Confirm"]</label>
-            <input asp-for="ConfirmPassword" class="addanime_input-text" type="password" style="flex: none; width: 380px;" />
+            <div class="password-box">
+                <input asp-for="ConfirmPassword" class="addanime_input-text" type="password" style="flex: none; width: 380px;" />
+            </div>
             <span asp-validation-for="ConfirmPassword" style="margin-left: 12px;"></span>
         </div>
 
@@ -111,7 +115,6 @@
 
 @section foot {
     <script>
-        // Smooth scroll to the registration card inside .admin_main
         document.getElementById('btnScrollToRegister').addEventListener('click', (e) => {
             e.preventDefault();
             const target = document.getElementById('register-section');
@@ -138,7 +141,6 @@
             submitBtn.style.cursor = hasBlocked ? "not-allowed" : "pointer";
         }
 
-        // Live Debounced Email Check
         emailInput.addEventListener('input', () => {
             clearTimeout(emailTimer);
             const email = emailInput.value.trim();
@@ -150,7 +152,7 @@
             }
 
             emailStatus.style.color = '#6c757d';
-            emailStatus.textContent = 'Checking...';
+            emailStatus.textContent = '@localizer["Checking..."]';
 
             emailTimer = setTimeout(async () => {
                 try {
@@ -162,7 +164,7 @@
                         emailStatus.textContent = data.message;
                     } else {
                         emailStatus.style.color = '#198754';
-                        emailStatus.textContent = 'Available';
+                        emailStatus.textContent = '@localizer["Available"]';
                     }
                 } catch {
                     emailStatus.textContent = '';
@@ -171,7 +173,6 @@
             }, 400);
         });
 
-        // Live Debounced Username Check
         usernameInput.addEventListener('input', () => {
             clearTimeout(userTimer);
             const userName = usernameInput.value.trim();
@@ -183,7 +184,7 @@
             }
 
             usernameStatus.style.color = '#6c757d';
-            usernameStatus.textContent = 'Checking...';
+            usernameStatus.textContent = '@localizer["Checking..."]';
 
             userTimer = setTimeout(async () => {
                 try {
@@ -192,10 +193,10 @@
 
                     if (data.exists) {
                         usernameStatus.style.color = '#dc3545';
-                        usernameStatus.textContent = data.message || 'Already taken';
+                        usernameStatus.textContent = data.message || '@localizer["Already taken"]';
                     } else {
                         usernameStatus.style.color = '#198754';
-                        usernameStatus.textContent = 'Available';
+                        usernameStatus.textContent = '@localizer["Available"]';
                     }
                 } catch {
                     usernameStatus.textContent = '';
@@ -204,7 +205,6 @@
             }, 400);
         });
 
-        // Clear status indicators on Reset
         resetBtn.addEventListener('click', () => {
             emailStatus.textContent = '';
             usernameStatus.textContent = '';

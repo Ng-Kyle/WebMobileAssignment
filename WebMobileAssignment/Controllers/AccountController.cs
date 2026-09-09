@@ -176,7 +176,6 @@ public class AccountController(DB db, Helper hp, IStringLocalizer<SharedResource
 
             var mail = new MailMessage();
 
-            // 1. Custom Sender Name & Address
             mail.From = new MailAddress("anonfigures@gmail.com", "AnonAnimeList Support");
             mail.To.Add(new MailAddress(u.Email, u.UserName));
             mail.Subject = "Reset Password - AnonAnimeList";
