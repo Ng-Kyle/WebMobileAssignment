@@ -246,16 +246,18 @@ public class UpdatePasswordVM
 
 public class RegisterAdminVM
 {
-    [Required, EmailAddress, MaxLength(100)]
+    [Required(ErrorMessage = "Your email is required.")]
+    [StringLength(100, ErrorMessage = "Your email cannot exceed 100 characters.")]
+    [EmailAddress(ErrorMessage = "This is not a valid email address.")]
     public string Email { get; set; } = null!;
 
-    [Required, MaxLength(50)]
+    [Required(ErrorMessage = "Your username is required."), StringLength(30, ErrorMessage = "Your username cannot exceed 30 characters.")]
     public string UserName { get; set; } = null!;
 
-    [Required, DataType(DataType.Password), StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters.")]
+    [Required(ErrorMessage = "Your password is required.")]
+    [StringLength(100, MinimumLength = 5, ErrorMessage = "Your password must be within 5 and 100 characters."), DataType(DataType.Password)]
     public string Password { get; set; } = null!;
 
-    [Required, DataType(DataType.Password)]
-    [Compare("Password", ErrorMessage = "Passwords do not match.")]
+    [Required(ErrorMessage = "Your passwords do not match."), Compare("Password", ErrorMessage = "Your passwords do not match."), DataType(DataType.Password)]
     public string ConfirmPassword { get; set; } = null!;
 }
