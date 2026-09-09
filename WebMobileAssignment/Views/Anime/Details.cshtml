@@ -278,33 +278,46 @@
 <div class="review-section">
     <h3 class="review-header-title">@localizer["Community Reviews & Ratings"]</h3>
 
-    <!-- Review Form -->
-    <div class="review-form-card">
-        <h4>@(ViewBag.MyReview != null ? localizer["Edit Your Review"] : localizer["Leave a Review & Rating"])</h4>
-        <form asp-controller="Member" asp-action="SaveReview" method="post">
-            <input type="hidden" name="AnimeId" value="@Model.AnimeId" />
+    @if (User.IsInRole("Member"))
+    {
+        <!-- Review Form for Logged-In Members -->
+        <div class="review-form-card">
+            <h4>@(ViewBag.MyReview != null ? localizer["Edit Your Review"] : localizer["Leave a Review & Rating"])</h4>
+            <form asp-controller="Member" asp-action="SaveReview" method="post">
+                <input type="hidden" name="AnimeId" value="@Model.AnimeId" />
 
-            <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">@localizer["Rating"]:</label>
-                <select name="Rating" class="star-select-input" required>
-                    <option value="">@localizer["Select Rating"]...</option>
-                    @for (int i = 10; i >= 1; i--)
-                    {
-                        <option value="@i" selected="@(ViewBag.MyReview?.Rating == i)">★ @i / 10</option>
-                    }
-                </select>
-            </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">@localizer["Rating"]:</label>
+                    <select name="Rating" class="star-select-input" required>
+                        <option value="">@localizer["Select Rating"]...</option>
+                        @for (int i = 10; i >= 1; i--)
+                        {
+                            <option value="@i" selected="@(ViewBag.MyReview?.Rating == i)">★ @i / 10</option>
+                        }
+                    </select>
+                </div>
 
-            <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">@localizer["Your Review"]:</label>
-                <textarea name="Text" rows="4" class="form-control" style="width: 100%; padding: 0.625rem; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="@localizer["Share your thoughts..."]" required>@(ViewBag.MyReview?.Text)</textarea>
-            </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 0.25rem;">@localizer["Your Review"]:</label>
+                    <textarea name="Text" rows="4" class="form-control" style="width: 100%; padding: 0.625rem; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="@localizer["Share your thoughts..."]" required>@(ViewBag.MyReview?.Text)</textarea>
+                </div>
 
-            <button type="submit" class="btn-submit-rev">
-                @(ViewBag.MyReview != null ? localizer["Update Review"] : localizer["Submit Review"])
-            </button>
-        </form>
-    </div>
+                <button type="submit" class="btn-submit-rev">
+                    @(ViewBag.MyReview != null ? localizer["Update Review"] : localizer["Submit Review"])
+                </button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <!-- Prompt for Guests / Non-Members -->
+        <div class="review-form-card" style="text-align: center; padding: 1.75rem;">
+            <p style="color: #475569; font-weight: 600; margin-bottom: 0.75rem;">@localizer["Want to review this anime?"]</p>
+            <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn-submit-rev" style="display: inline-block; text-decoration: none;">
+                @localizer["Log in as a Member"]
+            </a>
+        </div>
+    }
 
     <!-- Review Header Bar -->
     <div class="review-list-bar">
@@ -326,9 +339,14 @@
         {
             <div class="review-card">
                 <div class="review-card-header">
-                    <div>
-                        <span class="review-user-name">@@@(rev.Member?.UserName ?? "Anonymous")</span>
-                        <span class="review-date">@rev.CreatedAt.ToString("MMM dd, yyyy")</span>
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <img src="/images/member/@(rev.Member?.ImageLink ?? "photo.jpg")"
+                             style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #e2e8f0;"
+                             alt="Avatar" />
+                        <div>
+                            <span class="review-user-name">@@@(rev.Member?.UserName ?? "Anonymous")</span>
+                            <span class="review-date">@rev.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        </div>
                     </div>
                     <span class="review-badge-star">★ @rev.Rating / 10</span>
                 </div>

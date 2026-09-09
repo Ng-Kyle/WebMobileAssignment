@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using X.PagedList.Extensions;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
+using System.Security.Claims;
+using X.PagedList.Extensions;
 namespace WebMobileAssignment.Controllers;
 
 public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> localizer) : Controller
@@ -428,13 +429,27 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
             };
         }
 
-        // 3. Identify Logged-in Member & Existing Review
-        int? currentUserId = HttpContext.Session.GetInt32("UserId"); // Adjust session key if different
+        // 3. Resolve Current Logged-in Member ID via Claims
+        int? currentUserId = null;
+        var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (int.TryParse(idClaim, out int parsedId))
+        {
+            currentUserId = parsedId;
+        }
+        else if (!string.IsNullOrEmpty(User.Identity?.Name))
+        {
+            var member = await db.Members.FirstOrDefaultAsync(m => m.Email == User.Identity.Name || m.UserName == User.Identity.Name);
+            if (member != null)
+            {
+                currentUserId = member.UserId;
+            }
+        }
+
         ViewBag.CurrentUserId = currentUserId;
 
         if (currentUserId.HasValue && anime.Reviews != null)
         {
-            ViewBag.MyReview = anime.Reviews.FirstOrDefault(r => r.Member?.UserId == currentUserId.Value);
+            ViewBag.MyReview = anime.Reviews.FirstOrDefault(r => r.Member != null && r.Member.UserId == currentUserId.Value);
         }
 
         return View(anime);
