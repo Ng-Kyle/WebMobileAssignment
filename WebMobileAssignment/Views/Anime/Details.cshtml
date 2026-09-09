@@ -214,40 +214,37 @@
 
         <div class="watchlistActionBox">
             <h4>@localizer["Update Watchlist"]</h4>
-            @if (Context.Session.GetInt32("UserId") != null)
-            {
-                <form asp-controller="Member" asp-action="AddToWatchlist" method="post" class="productDetailsAddCartButton">
-                    <input type="hidden" name="animeId" value="@Model.AnimeId" />
+            <form asp-controller="Watchlist" asp-action="SaveOrUpdate" method="post" class="productDetailsAddCartButton">
+                <input type="hidden" name="animeId" value="@Model.AnimeId" />
 
-                    <div class="formRowGroup">
-                        <div class="productDetailsQuantityInput">
-                            <label>@localizer["Status"]:</label>
-                            <select name="status" id="watchlistStatus" onchange="handleStatusChange()">
-                                @if (isUnreleased)
-                                {
-                                    <option value="Plan to Watch" selected>Plan to Watch</option>
-                                }
-                                else
-                                {
-                                    <option value="Watching">@localizer["Watching"]</option>
-                                    <option value="Completed">@localizer["Completed"]</option>
-                                    <option value="Plan to Watch">@localizer["Plan to Watch"]</option>
-                                    <option value="On-Hold">@localizer["On-Hold"]</option>
-                                    <option value="Dropped">@localizer["Dropped"]</option>
-                                }
-                            </select>
-                        </div>
+                <div class="formRowGroup">
+                    <div class="productDetailsQuantityInput">
+                        <label>@localizer["Status"]:</label>
+                        <select name="status" id="watchlistStatus" onchange="handleStatusChange()">
+                            @if (isUnreleased)
+                            {
+                                <option value="Plan to Watch" selected>Plan to Watch</option>
+                            }
+                            else
+                            {
+                                <option value="Watching">@localizer["Watching"]</option>
+                                <option value="Completed">@localizer["Completed"]</option>
+                                <option value="Plan to Watch">@localizer["Plan to Watch"]</option>
+                                <option value="On-Hold">@localizer["On-Hold"]</option>
+                                <option value="Dropped">@localizer["Dropped"]</option>
+                            }
+                        </select>
                     </div>
 
-                    <button type="submit" class="productDetailsBtn">+ @localizer["Save to Watchlist"]</button>
-                </form>
-            }
-            else
-            {
-                <p style="color: #64748b; margin-top: 0.5rem;">
-                    @localizer["Please"] <a asp-controller="Account" asp-action="Login" style="color: #ff6b35; font-weight: 600;">@localizer["login"]</a> @localizer["to add this anime to your watchlist."]
-                </p>
-            }
+                    <div class="productDetailsQuantityInput">
+                        <label>@localizer["Progress"]:</label>
+                        <input type="number" name="progress" id="watchlistProgress" min="0" max="@Model.Episodes" value="0" />
+                        <span>/ @Model.Episodes @localizer["eps"]</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="productDetailsBtn">+ @localizer["Save to Watchlist"]</button>
+            </form>
         </div>
     </div>
 </div>
@@ -320,7 +317,7 @@
                     <form asp-controller="Member" asp-action="DeleteMyReview" method="post" style="margin-top: 0.75rem; text-align: right;">
                         <input type="hidden" name="reviewId" value="@rev.ReviewId" />
                         <input type="hidden" name="animeId" value="@Model.AnimeId" />
-                        <button type="submit" class="btn-delete-rev" onclick="return confirm('Are you sure you want to delete your review?');">
+                        <button type="submit" class="btn-delete-rev" onclick="return confirm('@localizer["Are you sure you want to delete your review?"]');">
                             @localizer["Delete My Review"]
                         </button>
                     </form>
@@ -362,12 +359,12 @@
 
             if (statusSelect.value === "Plan to Watch") {
                 progressInput.value = 0;
-                progressInput.disabled = true;
+                progressInput.readOnly = true;
                 progressInput.style.backgroundColor = "#e0e0e0";
                 progressInput.style.cursor = "not-allowed";
                 progressInput.style.pointerEvents = "none";
             } else {
-                progressInput.disabled = false;
+                progressInput.readOnly = false;
                 progressInput.style.backgroundColor = "#FFF4ED";
                 progressInput.style.cursor = "auto";
                 progressInput.style.pointerEvents = "auto";

@@ -1,0 +1,44 @@
+﻿@model WebMobileAssignment.Models.User
+
+@{
+    ViewBag.Title = "Account | Profile";
+        
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "_AdminLayout";
+        ViewBag.AdminProfile = "active";
+    }
+}
+
+<table class="table detail">
+    <tr>
+        <th>Username</th>
+        <td>@Model.UserName</td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td>@Model.Email</td>
+    </tr>
+    <tr>
+        <th>Role</th>
+        <td>@Model.Role</td>
+    </tr>
+    @if (Model is WebMobileAssignment.Models.Member m)
+    {
+        <tr>
+            <th>Photo</th>
+            <td>
+                <img src="/images/member/@(m.ImageLink ?? "photo.jpg")"
+                     style="width: 120px; height: 120px; object-fit: cover; border: 1px solid #333;" />
+            </td>
+        </tr>
+    }
+</table>
+
+<p>
+    @if (User.IsInRole("Member"))
+    {
+        <a href="/Account/UpdateProfile">Update Profile</a> <text>|</text>
+    }
+    <a href="/Account/UpdatePassword">Update Password</a>
+</p>

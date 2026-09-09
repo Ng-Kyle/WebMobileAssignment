@@ -15,7 +15,7 @@
     @RenderSection("head", false)
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="member_body">
+<body class="admin_body">
     <div class="info">@Html.Raw(TempData["Info"])</div>
 
     <header>
@@ -26,24 +26,45 @@
                 </a>
             </div>
 
-            <div class="member_nav_links">
+            <div class="member_nav-links">
                 <a asp-controller="Anime" asp-action="Index">@localizer["anime_side"]</a>
                 <a asp-controller="Studio" asp-action="Index">@localizer["studio_side"]</a>
-                <a asp-controller="Member" asp-action="MyWatchlist">@localizer["My Watchlist"]</a>
+                <a asp-controller="Watchlist" asp-action="Index">@localizer["My Watchlist"]</a>
                 <a asp-controller="Member" asp-action="ProgressStats">@localizer["Progress Stats"]</a>
             </div>
 
             <div class="admin_topnav-end">
                 <a asp-controller="Language" asp-action="Index" asp-route-culture="ja">日本語</a>
                 <a asp-controller="Language" asp-action="Index" asp-route-culture="en">English</a>
-                <a asp-controller="Account" asp-action="Logout">@localizer["logout"]</a>
+
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    @if (User.IsInRole("Member"))
+                    {
+                        var m = db.Members.FirstOrDefault(x => x.Email == User.Identity.Name);
+                        <a asp-controller="Account" asp-action="Profile">
+                        <img src="/images/member/@(m?.ImageLink ?? "photo.jpg")" 
+                             style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; vertical-align: middle;" />
+                            @localizer["profile_side"]
+                        </a>
+                    }
+
+                   
+                    <a asp-controller="Account" asp-action="Logout">@localizer["logout"]</a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login">@localizer["Login"]</a>
+                    <a asp-controller="Account" asp-action="Register">@localizer["Register"]</a>
+                }
             </div>
         </nav>
     </header>
-
-    <main class="member_main">
-        @RenderBody()
-    </main>
+    <div class="admin_wrapper">
+        <main class="admin_main">
+            @RenderBody()
+        </main>
+    </div>
 
     <footer class="admin_footer">
         <div class="copyright">

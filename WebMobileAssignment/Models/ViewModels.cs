@@ -171,4 +171,3 @@ public class MemberReviewVM
     [StringLength(1000, ErrorMessage = "Review cannot exceed 1000 characters.")]
     public string Text { get; set; } = string.Empty;
 }
-

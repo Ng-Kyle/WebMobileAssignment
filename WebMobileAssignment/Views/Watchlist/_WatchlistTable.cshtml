@@ -1,0 +1,140 @@
+﻿@model IEnumerable<WebMobileAssignment.Models.AnimeWatchList>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
+
+@{
+    string currentStatus = ViewBag.SelectedStatus as string ?? "All";
+    string currentSearch = ViewBag.Search as string ?? "";
+}
+
+<div class="watchlistTabContainer">
+    <label class="watchlistTab @(currentStatus == "All" ? "active-tab" : "")">
+        <input type="radio" name="status" value="All" @(currentStatus == "All" ? "checked" : "") onchange="$('#statusFilterInput').val('All'); $('#f').submit();" style="display: none;" />
+        @localizer["All"] (@ViewBag.TotalCount)
+    </label>
+    <label class="watchlistTab @(currentStatus == "Watching" ? "active-tab" : "")">
+        <input type="radio" name="status" value="Watching" @(currentStatus == "Watching" ? "checked" : "") onchange="$('#statusFilterInput').val('Watching'); $('#f').submit();" style="display: none;" />
+        @localizer["Watching"] (@ViewBag.WatchingCount)
+    </label>
+    <label class="watchlistTab @(currentStatus == "Completed" ? "active-tab" : "")">
+        <input type="radio" name="status" value="Completed" @(currentStatus == "Completed" ? "checked" : "") onchange="$('#statusFilterInput').val('Completed'); $('#f').submit();" style="display: none;" />
+        @localizer["Completed"] (@ViewBag.CompletedCount)
+    </label>
+    <label class="watchlistTab @(currentStatus == "Plan to Watch" ? "active-tab" : "")">
+        <input type="radio" name="status" value="Plan to Watch" @(currentStatus == "Plan to Watch" ? "checked" : "") onchange="$('#statusFilterInput').val('Plan to Watch'); $('#f').submit();" style="display: none;" />
+        @localizer["Plan to Watch"] (@ViewBag.PlanCount)
+    </label>
+    <label class="watchlistTab @(currentStatus == "On-Hold" ? "active-tab" : "")">
+        <input type="radio" name="status" value="On-Hold" @(currentStatus == "On-Hold" ? "checked" : "") onchange="$('#statusFilterInput').val('On-Hold'); $('#f').submit();" style="display: none;" />
+        @localizer["On-Hold"] (@ViewBag.OnHoldCount)
+    </label>
+    <label class="watchlistTab @(currentStatus == "Dropped" ? "active-tab" : "")">
+        <input type="radio" name="status" value="Dropped" @(currentStatus == "Dropped" ? "checked" : "") onchange="$('#statusFilterInput').val('Dropped'); $('#f').submit();" style="display: none;" />
+        @localizer["Dropped"] (@ViewBag.DroppedCount)
+    </label>
+</div>
+
+<div class="watchlistSummaryBar">
+    <span>@localizer["Showing"]: <strong>@Model.Count()</strong> @localizer["titles"]</span>
+</div>
+
+@if (!Model.Any())
+{
+    <div style="padding: 3rem; text-align: center; color: #666; font-weight: bold;">
+        @localizer["Your watchlist is empty for this criteria."]
+    </div>
+}
+else
+{
+    <div class="watchlistGrid">
+        @foreach (var item in Model)
+        {
+            var rawThumb = item.Anime.AnimeImages?.FirstOrDefault(i => i.IsThumbnail)?.ImageLink
+                        ?? item.Anime.AnimeImages?.FirstOrDefault()?.ImageLink;
+            var thumb = string.IsNullOrWhiteSpace(rawThumb) ? "/images/photo.jpg" : $"/images/anime/{rawThumb}";
+
+            <div class="watchlistCard">
+                <img src="@thumb" asp-append-version="true" alt="@item.Anime.Name" class="watchlistThumb" />
+
+                <div class="watchlistDetails">
+                    <a asp-controller="Anime" asp-action="Details" asp-route-id="@item.AnimeId" class="watchlistTitle">
+                        @item.Anime.Name
+                    </a>
+                    <span class="watchlistStudio">@(item.Anime.Studio?.Name ?? "Unknown Studio")</span>
+
+                    <form data-ajax="true"
+                          data-ajax-update="#target"
+                          data-ajax-loading="#loader"
+                          method="post"
+                          asp-action="SaveOrUpdate"
+                          class="watchlistStatusForm">
+                        <input type="hidden" name="animeId" value="@item.AnimeId" />
+                        <input type="hidden" name="progress" value="@item.Progress" />
+                        <input type="hidden" name="currentFilterStatus" value="@currentStatus" />
+                        <input type="hidden" name="search" value="@currentSearch" />
+                        <select name="status" onchange="$(this.form).submit()" class="watchlistSelect">
+                            <option value="Watching" selected="@(item.Status == "Watching")">@localizer["Watching"]</option>
+                            <option value="Completed" selected="@(item.Status == "Completed")">@localizer["Completed"]</option>
+                            <option value="Plan to Watch" selected="@(item.Status == "Plan to Watch")">@localizer["Plan to Watch"]</option>
+                            <option value="On-Hold" selected="@(item.Status == "On-Hold")">@localizer["On-Hold"]</option>
+                            <option value="Dropped" selected="@(item.Status == "Dropped")">@localizer["Dropped"]</option>
+                        </select>
+                    </form>
+
+                    <div class="watchlistProgressControls">
+                        <span>@localizer["Progress"]:</span>
+                        <form data-ajax="true" data-ajax-update="#target" data-ajax-loading="#loader" method="post" asp-action="UpdateProgress">
+                            <input type="hidden" name="animeWatchListId" value="@item.AnimeWatchListId" />
+                            <input type="hidden" name="step" value="-1" />
+                            <input type="hidden" name="currentFilterStatus" value="@currentStatus" />
+                            <input type="hidden" name="search" value="@currentSearch" />
+                            <button type="submit" class="progressBtn" @(item.Progress <= 0 ? "disabled" : "")>-</button>
+                        </form>
+
+                        <form data-ajax="true"
+                              data-ajax-update="#target"
+                              data-ajax-loading="#loader"
+                              method="post"
+                              asp-action="SetProgress"
+                              class="progressInputForm">
+                            <input type="hidden" name="animeWatchListId" value="@item.AnimeWatchListId" />
+                            <input type="hidden" name="currentFilterStatus" value="@currentStatus" />
+                            <input type="hidden" name="search" value="@currentSearch" />
+
+                            <input type="number"
+                                   name="newProgress"
+                                   value="@item.Progress"
+                                   min="0"
+                                   max="@item.Anime.Episodes"
+                                   class="progressNumberBox"
+                                   onchange="$(this.form).submit()" />
+                        </form>
+
+                        <span class="progressTotal">/ @item.Anime.Episodes @localizer["eps"]</span>
+
+                        <form data-ajax="true" data-ajax-update="#target" data-ajax-loading="#loader" method="post" asp-action="UpdateProgress">
+                            <input type="hidden" name="animeWatchListId" value="@item.AnimeWatchListId" />
+                            <input type="hidden" name="step" value="1" />
+                            <input type="hidden" name="currentFilterStatus" value="@currentStatus" />
+                            <input type="hidden" name="search" value="@currentSearch" />
+                            <button type="submit" class="progressBtn" @(item.Progress >= item.Anime.Episodes ? "disabled" : "")>+</button>
+                        </form>
+                    </div>
+                </div>
+
+                <form data-ajax="true"
+                      data-ajax-update="#target"
+                      data-ajax-loading="#loader"
+                      data-ajax-confirm="@localizer["Remove this anime from your watchlist?"].Value"
+                      method="post"
+                      asp-action="Remove"
+                      class="watchlistRemoveForm">
+                    <input type="hidden" name="animeWatchListId" value="@item.AnimeWatchListId" />
+                    <input type="hidden" name="currentFilterStatus" value="@currentStatus" />
+                    <input type="hidden" name="search" value="@currentSearch" />
+                    <button type="submit" class="watchlistRemoveBtn">&times;</button>
+                </form>
+            </div>
+        }
+    </div>
+}

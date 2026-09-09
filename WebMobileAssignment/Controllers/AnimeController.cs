@@ -13,6 +13,11 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
     // ANIME CATALOGUE
     public IActionResult Index(string? search, int? studioId, List<int> genreIds, int? min, int? max)
     {
+        // Redirect Admin directly to the admin dashboard
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Admin");
+        }
         search = search?.Trim() ?? "";
 
         var query = db.Animes
@@ -65,58 +70,19 @@ public class AnimeController(DB db, Helper hp, IStringLocalizer<SharedResource> 
         return View(m);
     }
 
-    // GET: /Anime/Details/5
-    public async Task<IActionResult> Details(int? id, int? ratingFilter, string sort = "newest")
+    public IActionResult Details(int id)
     {
-        if (!id.HasValue)
-        {
-            return RedirectToAction(nameof(Index));
-        }
-
-        var anime = await db.Animes
-            .Include(a => a.AnimeImages)
-            .Include(a => a.Genres)
+        var anime = db.Animes
             .Include(a => a.Studio)
+            .Include(a => a.Genres)
+            .Include(a => a.AnimeImages)
             .Include(a => a.Reviews)
-                .ThenInclude(r => r.Member)
-            .FirstOrDefaultAsync(a => a.AnimeId == id.Value);
+            .FirstOrDefault(a => a.AnimeId == id);
 
         if (anime == null)
         {
             return NotFound();
         }
-
-        // Apply rating filter and sorting on reviews
-        if (anime.Reviews != null && anime.Reviews.Any())
-        {
-            var reviewsQuery = anime.Reviews.AsEnumerable();
-
-            if (ratingFilter.HasValue && ratingFilter > 0)
-            {
-                reviewsQuery = reviewsQuery.Where(r => r.Rating == ratingFilter.Value);
-            }
-
-            anime.Reviews = sort switch
-            {
-                "oldest" => reviewsQuery.OrderBy(r => r.CreatedAt).ToList(),
-                "highest" => reviewsQuery.OrderByDescending(r => r.Rating).ToList(),
-                "lowest" => reviewsQuery.OrderBy(r => r.Rating).ToList(),
-                _ => reviewsQuery.OrderByDescending(r => r.CreatedAt).ToList()
-            };
-        }
-
-        // Identify logged-in member & existing review
-        int? currentUserId = HttpContext.Session.GetInt32("UserId");
-        ViewBag.CurrentUserId = currentUserId;
-
-        if (currentUserId.HasValue && anime.Reviews != null)
-        {
-            ViewBag.MyReview = anime.Reviews.FirstOrDefault(r => r.Member?.UserId == currentUserId.Value);
-        }
-
-        ViewBag.ReviewSort = sort;
-        ViewBag.CurrentRatingFilter = ratingFilter;
-
         return View(anime);
     }
 

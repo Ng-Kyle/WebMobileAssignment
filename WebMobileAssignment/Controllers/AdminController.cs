@@ -7,6 +7,7 @@ using X.PagedList.Extensions;
 
 namespace WebMobileAssignment.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class AdminController(DB db) : Controller
 {
     // GET: /Admin

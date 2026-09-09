@@ -1,5 +1,6 @@
 global using WebMobileAssignment;
 global using WebMobileAssignment.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,10 +10,10 @@ builder.Services.AddControllersWithViews().AddViewLocalization()
         options.DataAnnotationLocalizerProvider = (type, factory) => factory.Create(typeof(SharedResource));
     });
 
-// Updated: Fetch connection string from appsettings.json
-builder.Services.AddSqlServer<DB>(
-    builder.Configuration.GetConnectionString("DefaultConnection")
-);
+builder.Services.AddSqlServer<DB>($@"
+    Data Source=(LocalDB)\MSSQLLocalDB;
+    AttachDbFilename={builder.Environment.ContentRootPath}\DB.mdf;
+");
 
 builder.Services.AddScoped<Helper>();
 builder.Services.AddAuthentication().AddCookie();
@@ -34,7 +35,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRequestLocalization();
 app.UseSession();
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapDefaultControllerRoute();
 
 app.Run();
