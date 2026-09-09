@@ -173,10 +173,14 @@ public class MemberReviewVM
 }
 public class LoginVM
 {
-    [Required, StringLength(100), EmailAddress]
+    [Required(ErrorMessage = "Your email is required.")] 
+    [StringLength(100,ErrorMessage = "Your email cannot exceed 100 characters.")]
+    [EmailAddress(ErrorMessage = "This is not a valid email address.")]
     public string Email { get; set; }
 
-    [Required, StringLength(100, MinimumLength = 5), DataType(DataType.Password)]
+    [Required(ErrorMessage = "Your password is required.")]
+    [StringLength(100, ErrorMessage = "Your password cannot exceed 100 characters.")]
+    [DataType(DataType.Password)]
     public string Password { get; set; }
 
     public bool RememberMe { get; set; }

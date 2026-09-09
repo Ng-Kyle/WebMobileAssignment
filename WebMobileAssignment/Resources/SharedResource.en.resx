@@ -237,4 +237,19 @@
   <data name="MemberUnblocked" xml:space="preserve">
     <value>{0} has been unblocked.</value>
   </data>
+  <data name="Your email is required." xml:space="preserve">
+    <value>Your email is required.</value>
+  </data>
+  <data name="Your email cannot exceed 100 characters." xml:space="preserve">
+    <value>Your email cannot exceed 100 characters.</value>
+  </data>
+  <data name="This is not a valid email address." xml:space="preserve">
+    <value>This is not a valid email address.</value>
+  </data>
+  <data name="Your password cannot exceed 100 characters." xml:space="preserve">
+    <value>Your password cannot exceed 100 characters.</value>
+  </data>
+  <data name="Your password is required." xml:space="preserve">
+    <value>Your password is required.</value>
+  </data>
 </root>

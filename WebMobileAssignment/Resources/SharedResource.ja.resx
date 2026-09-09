@@ -237,4 +237,19 @@
   <data name="MemberUnblocked" xml:space="preserve">
     <value>{0}のブロックが解除されました。</value>
   </data>
+  <data name="Your email is required." xml:space="preserve">
+    <value>メールアドレスは必須です。</value>
+  </data>
+  <data name="Your email cannot exceed 100 characters." xml:space="preserve">
+    <value>メールアドレスは100文字以内で入力してください。</value>
+  </data>
+  <data name="This is not a valid email address." xml:space="preserve">
+    <value>有効なメールアドレスを入力してください。</value>
+  </data>
+  <data name="Your password cannot exceed 100 characters." xml:space="preserve">
+    <value>パスワードは100文字以内で入力してください。</value>
+  </data>
+  <data name="Your password is required." xml:space="preserve">
+    <value>パスワードは必須です。</value>
+  </data>
 </root>
