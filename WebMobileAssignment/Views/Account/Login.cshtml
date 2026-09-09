@@ -13,18 +13,16 @@
         <input type="hidden" name="returnURL" value="@ViewBag.ReturnURL" />
 
         <label asp-for="Email">@localizer["Email"]</label>
-        <input asp-for="Email" autofocus />
+        <input asp-for="Email   " autofocus />
         <span asp-validation-for="Email"></span>
 
         <label asp-for="Password">@localizer["Password"]</label>
         <input asp-for="Password" />
         <span asp-validation-for="Password"></span>
 
-        <label></label>
-        <div>
-            <label>
-                <input asp-for="RememberMe" /> @localizer["Remember Me"]
-            </label>
+        <label asp-for="RememberMe">@localizer["Remember Me"]</label>
+        <div style="display: flex; align-items: center;">
+            <input asp-for="RememberMe" style="width: 20px; height: 20px; cursor: pointer;" />
         </div>
         <span></span>
 
