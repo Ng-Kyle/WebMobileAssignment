@@ -1,0 +1,216 @@
+﻿@model WebMobileAssignment.Models.RegisterAdminVM
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.AdminListing = "admin_sidenav-active";
+    ViewBag.Title = "Admin Management";
+    var currentUserEmail = User.Identity?.Name ?? "";
+    var admins = ViewBag.Admins as IEnumerable<WebMobileAssignment.Models.User> ?? Enumerable.Empty<WebMobileAssignment.Models.User>();
+}
+
+<div class="admin_card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h1>Admin List</h1>
+        <a href="#register-section" id="btnScrollToRegister" class="addanime_button" style="flex: none; width: fit-content; padding: 0 1.25rem; text-decoration: none; border: 1px solid black;">
+            + Register Admin
+        </a>
+    </div>
+
+    <table class="anime_table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th class="anime_blank" style="width: 140px; text-align: center;">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (admins.Any())
+            {
+                @foreach (var admin in admins)
+                {
+                    var isSelf = admin.Email.Equals(currentUserEmail, StringComparison.OrdinalIgnoreCase);
+
+                    <tr>
+                        <td>
+                            <b>@admin.UserName</b>
+                            @if (isSelf)
+                            {
+                                <span style="background-color: #B2E4FF; border: 1.5px solid black; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-left: 8px;">
+                                    You
+                                </span>
+                            }
+                        </td>
+                        <td>@admin.Email</td>
+                        <td class="anime_table-buttons-td">
+                            <div class="anime_table-buttons">
+                                @if (!isSelf)
+                                {
+                                    <a class="anime_table-delete" data-post="/Admin/DeleteAdmin?email=@admin.Email">Delete</a>
+                                }
+                                else
+                                {
+                                    <span style="color: #333; font-weight: bold; font-size: 0.9rem;">Protected</span>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td class="anime_empty" colspan="3">There were no admins found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+
+<div class="admin_card" id="register-section">
+    <h1 style="margin-bottom: 1.5rem;">Register Admin</h1>
+
+    <form class="addanime_form" method="post" asp-action="RegisterAdmin" id="adminRegisterForm">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="addanime_input-container">
+            <label class="addanime_label" asp-for="Email">Email</label>
+            <input asp-for="Email" class="addanime_input-text" autocomplete="off" style="flex: none; width: 380px;" />
+            <span id="email-status" style="font-weight: bold; font-size: 0.85rem; margin-left: 12px;"></span>
+            <span asp-validation-for="Email" style="margin-left: 8px;"></span>
+        </div>
+
+        <div class="addanime_input-container">
+            <label class="addanime_label" asp-for="UserName">Username</label>
+            <input asp-for="UserName" class="addanime_input-text" autocomplete="off" style="flex: none; width: 380px;" />
+            <span id="username-status" style="font-weight: bold; font-size: 0.85rem; margin-left: 12px;"></span>
+            <span asp-validation-for="UserName" style="margin-left: 8px;"></span>
+        </div>
+
+        <div class="addanime_input-container">
+            <label class="addanime_label" asp-for="Password">Password</label>
+            <input asp-for="Password" class="addanime_input-text" type="password" style="flex: none; width: 380px;" />
+            <span asp-validation-for="Password" style="margin-left: 12px;"></span>
+        </div>
+
+        <div class="addanime_input-container">
+            <label class="addanime_label" asp-for="ConfirmPassword">Confirm</label>
+            <input asp-for="ConfirmPassword" class="addanime_input-text" type="password" style="flex: none; width: 380px;" />
+            <span asp-validation-for="ConfirmPassword" style="margin-left: 12px;"></span>
+        </div>
+
+        <div class="addanime_button-area" style="max-width: 510px; margin-top: 1rem;">
+            <button type="submit" id="btnSubmitAdmin" class="addanime_button">Register Admin</button>
+            <button type="reset" id="btnResetAdmin" class="addanime_button" style="background-color: #ffffff; border: 1px solid black;">Reset</button>
+        </div>
+    </form>
+</div>
+
+@section foot {
+    <script>
+        // Smooth scroll to the registration card inside .admin_main
+        document.getElementById('btnScrollToRegister').addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.getElementById('register-section');
+            target.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                document.getElementById('Email').focus();
+            }, 400);
+        });
+
+        const emailInput = document.getElementById('Email');
+        const emailStatus = document.getElementById('email-status');
+        const usernameInput = document.getElementById('UserName');
+        const usernameStatus = document.getElementById('username-status');
+        const submitBtn = document.getElementById('btnSubmitAdmin');
+        const resetBtn = document.getElementById('btnResetAdmin');
+
+        let emailTimer;
+        let userTimer;
+
+        function checkFormState() {
+            const hasBlocked = emailStatus.style.color === 'rgb(220, 53, 69)' || usernameStatus.style.color === 'rgb(220, 53, 69)';
+            submitBtn.disabled = hasBlocked;
+            submitBtn.style.opacity = hasBlocked ? "0.5" : "1";
+            submitBtn.style.cursor = hasBlocked ? "not-allowed" : "pointer";
+        }
+
+        // Live Debounced Email Check
+        emailInput.addEventListener('input', () => {
+            clearTimeout(emailTimer);
+            const email = emailInput.value.trim();
+
+            if (!email || !email.includes('@@')) {
+                emailStatus.textContent = '';
+                checkFormState();
+                return;
+            }
+
+            emailStatus.style.color = '#6c757d';
+            emailStatus.textContent = 'Checking...';
+
+            emailTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/Admin/CheckEmail?email=${encodeURIComponent(email)}`);
+                    const data = await res.json();
+
+                    if (data.exists) {
+                        emailStatus.style.color = '#dc3545';
+                        emailStatus.textContent = data.message;
+                    } else {
+                        emailStatus.style.color = '#198754';
+                        emailStatus.textContent = 'Available';
+                    }
+                } catch {
+                    emailStatus.textContent = '';
+                }
+                checkFormState();
+            }, 400);
+        });
+
+        // Live Debounced Username Check
+        usernameInput.addEventListener('input', () => {
+            clearTimeout(userTimer);
+            const userName = usernameInput.value.trim();
+
+            if (!userName) {
+                usernameStatus.textContent = '';
+                checkFormState();
+                return;
+            }
+
+            usernameStatus.style.color = '#6c757d';
+            usernameStatus.textContent = 'Checking...';
+
+            userTimer = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/Admin/CheckUserName?userName=${encodeURIComponent(userName)}`);
+                    const data = await res.json();
+
+                    if (data.exists) {
+                        usernameStatus.style.color = '#dc3545';
+                        usernameStatus.textContent = data.message || 'Already taken';
+                    } else {
+                        usernameStatus.style.color = '#198754';
+                        usernameStatus.textContent = 'Available';
+                    }
+                } catch {
+                    usernameStatus.textContent = '';
+                }
+                checkFormState();
+            }, 400);
+        });
+
+        // Clear status indicators on Reset
+        resetBtn.addEventListener('click', () => {
+            emailStatus.textContent = '';
+            usernameStatus.textContent = '';
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = "1";
+            submitBtn.style.cursor = "pointer";
+        });
+    </script>
+}

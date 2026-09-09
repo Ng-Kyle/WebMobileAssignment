@@ -9,11 +9,104 @@ using X.PagedList.Extensions;
 namespace WebMobileAssignment.Controllers;
 
 [Authorize(Roles = "Admin")]
-public class AdminController(DB db) : Controller
+public class AdminController(DB db, Helper hp) : Controller
 {
     public IActionResult Index()
     {
         return RedirectToAction("Management", "Anime");
+    }
+
+    public IActionResult Admins()
+    {
+        ViewBag.AdminListing = "admin_sidenav-active";
+        ViewBag.Admins = db.Users.OfType<Admin>().ToList();
+        return View(new RegisterAdminVM());
+    }
+
+    // 2. Admin Register (POST)
+    [HttpPost]
+    public async Task<IActionResult> RegisterAdmin(RegisterAdminVM vm)
+    {
+        var existingUser = db.Users.FirstOrDefault(u => u.Email == vm.Email);
+        if (existingUser != null)
+        {
+            if (existingUser.Role == "Member")
+            {
+                ModelState.AddModelError("Email", "This email belongs to a Member (cannot promote to Admin).");
+            }
+            else
+            {
+                ModelState.AddModelError("Email", "Email is already in use by an Admin.");
+            }
+        }
+
+        if (db.Users.Any(u => u.UserName == vm.UserName))
+        {
+            ModelState.AddModelError("UserName", "Username is already taken.");
+        }
+
+        if (ModelState.IsValid)
+        {
+            var admin = new Admin
+            {
+                UserName = vm.UserName.Trim(),
+                Email = vm.Email.Trim(),
+                PasswordHash = hp.HashPassword(vm.Password)
+            };
+
+            db.Add(admin);
+            await db.SaveChangesAsync();
+
+            TempData["Info"] = $"Admin account '{admin.UserName}' created successfully.";
+            return RedirectToAction(nameof(Admins));
+        }
+
+        // If validation fails, reload the admin list and stay on the page
+        ViewBag.AdminListing = "admin_sidenav-active";
+        ViewBag.Admins = db.Users.OfType<Admin>().ToList();
+        return View("Admins", vm);
+    }
+
+    [HttpGet]
+    public IActionResult CheckEmail(string email)
+    {
+        var user = db.Users.FirstOrDefault(u => u.Email == email);
+        if (user != null)
+        {
+            string message = user.Role == "Member"
+                ? "This email belongs to a Member (cannot promote to Admin)."
+                : "Email is already in use by an Admin.";
+
+            return Json(new { exists = true, message });
+        }
+
+        return Json(new { exists = false });
+    }
+
+    [HttpGet]
+    public IActionResult CheckUserName(string userName)
+    {
+        bool exists = db.Users.Any(u => u.UserName == userName);
+        return Json(new { exists, message = exists ? "Username is already taken." : "" });
+    }
+
+    [HttpPost]
+    public IActionResult DeleteAdmin(string email)
+    {
+        if (email.Equals(User.Identity!.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            TempData["Info"] = "Action denied: You cannot delete your own admin account.";
+            return RedirectToAction(nameof(Admins));
+        }
+        var target = db.Users.OfType<Admin>().FirstOrDefault(u => u.Email == email);
+        if (target != null)
+        {
+            db.Users.Remove(target);
+            db.SaveChanges();
+            TempData["Info"] = $"Admin '{target.UserName}' has been deleted.";
+        }
+
+        return RedirectToAction(nameof(Admins));
     }
 
     // GET: Admin Review Listing, Search, & Filter

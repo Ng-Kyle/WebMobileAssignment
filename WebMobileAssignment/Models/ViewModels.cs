@@ -233,3 +233,19 @@ public class UpdatePasswordVM
     [DisplayName("Confirm Password")]
     public string Confirm { get; set; }
 }
+
+public class RegisterAdminVM
+{
+    [Required, EmailAddress, MaxLength(100)]
+    public string Email { get; set; } = null!;
+
+    [Required, MaxLength(50)]
+    public string UserName { get; set; } = null!;
+
+    [Required, DataType(DataType.Password), StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters.")]
+    public string Password { get; set; } = null!;
+
+    [Required, DataType(DataType.Password)]
+    [Compare("Password", ErrorMessage = "Passwords do not match.")]
+    public string ConfirmPassword { get; set; } = null!;
+}

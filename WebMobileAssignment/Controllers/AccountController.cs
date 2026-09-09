@@ -173,14 +173,40 @@ public class AccountController(DB db, Helper hp) : Controller
             db.SaveChanges();
 
             var mail = new MailMessage();
+
+            // 1. Custom Sender Name & Address
+            mail.From = new MailAddress("anonfigures@gmail.com", "AnonAnimeList Support");
             mail.To.Add(new MailAddress(u.Email, u.UserName));
-            mail.Subject = "Your Account Password Has Been Reset";
+            mail.Subject = "Reset Password - AnonAnimeList";
             mail.IsBodyHtml = true;
+
+            string loginUrl = Url.Action("Login", "Account", null, Request.Scheme) ?? "/Account/Login";
+
             mail.Body = $@"
-                <h3>Hello {u.UserName},</h3>
-                <p>Your password has been temporarily reset to:</p>
-                <h2 style='color:red;'>{randomPass}</h2>
-                <p>Please log in and change your password immediately.</p>";
+            <div style=""max-width: 500px; margin: 20px auto; background-color: #FFF4ED; border: 2px solid #000000; border-radius: 12px; padding: 24px; font-family: Arial, sans-serif; box-shadow: 4px 4px 0px #000000;"">
+                <h2 style=""color: #000000; margin-top: 0; padding-bottom: 10px; border-bottom: 2px solid #000000;"">AnonAnimeList</h2>
+            
+                <p style=""font-size: 16px; color: #111111;"">Hello <b>{u.UserName}</b>,</p>
+                <p style=""font-size: 14px; color: #333333; line-height: 1.5;"">
+                    We received a request to reset your password. Your temporary password is:
+                </p>
+            
+                <div style=""text-align: center; margin: 24px 0;"">
+                    <span style=""display: inline-block; background-color: #FFFFFF; border: 2px dashed #000000; border-radius: 8px; padding: 12px 28px; font-size: 22px; font-weight: bold; letter-spacing: 3px; color: #D6336C;"">
+                        {randomPass}
+                    </span>
+                </div>
+
+                <p style=""font-size: 13px; color: #555555; text-align: center;"">
+                    Please log in using this password and immediately change it in your profile.
+                </p>
+
+                <div style=""text-align: center; margin-top: 24px;"">
+                    <a href=""{loginUrl}"" style=""background-color: #FFB2BD; color: #000000; text-decoration: none; padding: 10px 24px; border: 2px solid #000000; border-radius: 6px; font-weight: bold; display: inline-block;"">
+                        Go to Login
+                    </a>
+                </div>
+            </div>";
 
             try
             {
