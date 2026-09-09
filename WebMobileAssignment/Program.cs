@@ -1,5 +1,6 @@
 global using WebMobileAssignment;
 global using WebMobileAssignment.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,9 +35,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRequestLocalization();
 app.UseSession();
-
-app.MapDefaultControllerRoute();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapDefaultControllerRoute();
 
 app.Run();

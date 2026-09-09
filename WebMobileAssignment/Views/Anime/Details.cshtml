@@ -212,40 +212,52 @@
             || (Model.ReleaseDate.HasValue && Model.ReleaseDate.Value > DateOnly.FromDateTime(DateTime.Today));
         }
 
-        <div class="watchlistActionBox">
-            <h4>@localizer["Update Watchlist"]</h4>
-            <form asp-controller="Watchlist" asp-action="SaveOrUpdate" method="post" class="productDetailsAddCartButton">
-                <input type="hidden" name="animeId" value="@Model.AnimeId" />
+        @if (User.IsInRole("Member"))
+        {
+            <div class="watchlistActionBox">
+                <h4>@localizer["Update Watchlist"]</h4>
+                <form asp-controller="Watchlist" asp-action="SaveOrUpdate" method="post" class="productDetailsAddCartButton">
+                    <input type="hidden" name="animeId" value="@Model.AnimeId" />
 
-                <div class="formRowGroup">
-                    <div class="productDetailsQuantityInput">
-                        <label>@localizer["Status"]:</label>
-                        <select name="status" id="watchlistStatus" onchange="handleStatusChange()">
-                            @if (isUnreleased)
-                            {
-                                <option value="Plan to Watch" selected>@localizer["Plan to Watch"]</option>
-                            }
-                            else
-                            {
-                                <option value="Plan to Watch" selected>@localizer["Plan to Watch"]</option>
-                                <option value="Watching">@localizer["Watching"]</option>
-                                <option value="Completed">@localizer["Completed"]</option>
-                                <option value="On-Hold">@localizer["On-Hold"]</option>
-                                <option value="Dropped">@localizer["Dropped"]</option>
-                            }
-                        </select>
+                    <div class="formRowGroup">
+                        <div class="productDetailsQuantityInput">
+                            <label>@localizer["Status"]:</label>
+                            <select name="status" id="watchlistStatus" onchange="handleStatusChange()">
+                                @if (isUnreleased)
+                                {
+                                    <option value="Plan to Watch" selected>@localizer["Plan to Watch"]</option>
+                                }
+                                else
+                                {
+                                    <option value="Plan to Watch" selected>@localizer["Plan to Watch"]</option>
+                                    <option value="Watching">@localizer["Watching"]</option>
+                                    <option value="Completed">@localizer["Completed"]</option>
+                                    <option value="On-Hold">@localizer["On-Hold"]</option>
+                                    <option value="Dropped">@localizer["Dropped"]</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="productDetailsQuantityInput">
+                            <label>@localizer["Progress"]:</label>
+                            <input type="number" name="progress" id="watchlistProgress" min="0" max="@Model.Episodes" value="0" />
+                            <span>/ @Model.Episodes @localizer["eps"]</span>
+                        </div>
                     </div>
 
-                    <div class="productDetailsQuantityInput">
-                        <label>@localizer["Progress"]:</label>
-                        <input type="number" name="progress" id="watchlistProgress" min="0" max="@Model.Episodes" value="0" />
-                        <span>/ @Model.Episodes @localizer["eps"]</span>
-                    </div>
-                </div>
-
-                <button type="submit" class="productDetailsBtn">+ @localizer["Save to Watchlist"]</button>
-            </form>
-        </div>
+                    <button type="submit" class="productDetailsBtn">+ @localizer["Save to Watchlist"]</button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <div class="watchlistActionBox" style="text-align: center; padding: 1.5rem;">
+                <p>Want to track this anime?</p>
+                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="productDetailsBtn" style="display: inline-block; text-decoration: none;">
+                    Log in to add to Watchlist
+                </a>
+            </div>
+        }
     </div>
 </div>
 
